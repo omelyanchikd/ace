@@ -1,4 +1,8 @@
 from world import World
+import json
 
-world = World(30)
+with open('config.json', 'r') as f:
+    config = json.load(f)
+
+world = World(config)
 world.go()

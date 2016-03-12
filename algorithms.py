@@ -1,1 +1,2 @@
 from base_algorithm import BaseAlgorithm
+from ideal_world_algorithm import IdealWorldAlgorithm

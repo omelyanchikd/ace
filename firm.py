@@ -8,8 +8,13 @@ class Firm:
         self.algorithm = algorithm
 
     def work(self):
-        print("Hi, I am working with algorithm", self.algorithm.__class__.__name__)
+        # print("Hi, I am working with algorithm", self.algorithm.__class__.__name__)
         return self.algorithm.decide(self)
+
+    def apply_result(self, result):
+        for worker in result.new_workers:
+            self.add_worker(worker)
+        pass
 
     def add_worker(self, worker):
         worker.employer = self.id
@@ -17,4 +22,5 @@ class Firm:
         self.workers.add(worker)
 
     def remove_worker(self, worker):
+        worker.employer = None
         self.workers.clear(worker)

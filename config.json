@@ -1,0 +1,10 @@
+{
+  "global": {
+    "steps": 10,
+    "workers_count": 30,
+    "world_algorithm": "IdealWorldAlgorithm"
+  },
+  "algorithms": {
+    "BaseAlgorithm": 10
+  }
+}
