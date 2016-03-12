@@ -2,14 +2,14 @@ import random
 
 
 class Firm:
-    def __init__(self, id):
+    def __init__(self, id, algorithm):
         self.workers = set()
         self.id = id
+        self.algorithm = algorithm
 
     def work(self):
-        print("Look, I am a cool firm with id", self.id)
-        for worker in self.workers:
-            print("I have a worker with id", worker.id)
+        print("Hi, I am working with algorithm", self.algorithm.__class__.__name__)
+        return self.algorithm.decide(self)
 
     def add_worker(self, worker):
         worker.employer = self.id
