@@ -29,5 +29,5 @@ class IdealWorld(World):
                 self.workers.append(worker)
                 workers.append(worker)
         # all your stuff is sold!
-        sold_count = firm_action.sell_count
+        sold_count = firm_action.production_count
         return FirmResult(workers, firm_action.salary, sold_count)

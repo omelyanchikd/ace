@@ -44,6 +44,7 @@ class World:
             for firm in self.firms:
                 print(firm)
                 firm.work()
+                print(firm)
                 self.firm_actions[firm.id] = firm.decide()
             for firm_id, firm_action in enumerate(self.firm_actions):
                 firm_result = self.apply_firm_action(firm_id)
