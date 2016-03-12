@@ -2,9 +2,9 @@
   "global": {
     "steps": 10,
     "workers_count": 30,
-    "world_algorithm": "IdealWorldAlgorithm"
+    "world_algorithm": "IdealWorld"
   },
   "algorithms": {
-    "BaseAlgorithm": 10
+    "StupidFirm": 3
   }
 }

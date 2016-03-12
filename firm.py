@@ -1,26 +1,51 @@
 import random
+from abc import ABCMeta, abstractmethod
+from firm_result import FirmResult
 
 
 class Firm:
-    def __init__(self, id, algorithm):
+    __metaclass__ = ABCMeta
+
+    def __init__(self, id):
         self.workers = set()
         self.id = id
-        self.algorithm = algorithm
+        self.stock = 0
+        self.price = 100
+        self.money = 1000
+        self.efficiency_coefficient = 10
+        self.current_salary = 10
 
     def work(self):
-        # print("Hi, I am working with algorithm", self.algorithm.__class__.__name__)
-        return self.algorithm.decide(self)
+        for worker in self.workers:
+            self.stock += worker.productivity * self.efficiency_coefficient
+            self.money -= worker.salary
 
     def apply_result(self, result):
-        for worker in result.new_workers:
-            self.add_worker(worker)
-        pass
+        """
 
-    def add_worker(self, worker):
+        :type result: FirmResult
+        """
+        for worker in result.new_workers:
+            self.add_worker(worker, result.salary)
+        self.stock -= result.sold_count
+        self.money += self.price * result.sold_count
+
+    def add_worker(self, worker, salary):
         worker.employer = self.id
-        worker.salary = random.randint(100, 150)
+        worker.salary = salary
         self.workers.add(worker)
 
     def remove_worker(self, worker):
         worker.employer = None
         self.workers.clear(worker)
+
+    @abstractmethod
+    def decide(self):
+        pass
+
+    def __str__(self):
+        return u"Firm id: {0:d}. Stock: {1:d} Price: {2:d} Money: {3:d} Workers: {4:d}" \
+            .format(self.id, self.stock, self.price, self.money, len(self.workers))
+
+    def __repr__(self):
+        return self.__str__()

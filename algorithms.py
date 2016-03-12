@@ -1,2 +1,2 @@
-from base_algorithm import BaseAlgorithm
-from ideal_world_algorithm import IdealWorldAlgorithm
+from stupid_firm import StupidFirm
+from ideal_world import IdealWorld
