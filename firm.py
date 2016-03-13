@@ -1,5 +1,5 @@
-import random
 from abc import ABCMeta, abstractmethod
+
 from firm_result import FirmResult
 
 
@@ -10,10 +10,10 @@ class Firm:
         self.workers = set()
         self.id = id
         self.stock = 0
-        self.price = 100
+        self.price = 20
         self.money = 1000
         self.efficiency_coefficient = 10
-        self.current_salary = 10
+        self.current_salary = 200
 
     def work(self):
         for worker in self.workers:

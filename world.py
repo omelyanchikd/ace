@@ -46,6 +46,10 @@ class World:
                 firm.work()
                 print(firm)
                 self.firm_actions[firm.id] = firm.decide()
+            for j in range(10):
+                worker = Worker(len(self.workers) + j)
+                self.workers.append(worker)
             for firm_id, firm_action in enumerate(self.firm_actions):
                 firm_result = self.apply_firm_action(firm_id)
                 self.firms[firm_id].apply_result(firm_result)
+                print(self.firms[firm_id])
