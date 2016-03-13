@@ -1,10 +1,11 @@
 {
   "global": {
     "steps": 10,
-    "workers_count": 30,
+    "workers_count": 500,
+    "birth_rate": 10,
     "world_algorithm": "IdealWorld"
   },
   "algorithms": {
-    "StupidFirm": 3
+    "StupidFirm": 10
   }
 }

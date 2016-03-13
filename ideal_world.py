@@ -1,7 +1,6 @@
-from world import World
 from firm_action import FirmAction
 from firm_result import FirmResult
-from worker import Worker
+from world import World
 
 
 class IdealWorld(World):
@@ -21,13 +20,15 @@ class IdealWorld(World):
             if worker.employer is None:
                 workers.append(worker)
                 workers_count -= 1
+                if workers_count == 0:
+                    break
         # if it's not enough - here you have more!
-        if workers_count > 0:
-            for w in range(workers_count):
-                new_worker_id = len(self.workers)
-                worker = Worker(new_worker_id)
-                self.workers.append(worker)
-                workers.append(worker)
+        # if workers_count > 0:
+        #    for w in range(workers_count):
+        #        new_worker_id = len(self.workers)
+        #        worker = Worker(new_worker_id)
+        #        self.workers.append(worker)
+        #        workers.append(worker)
         # all your stuff is sold!
         sold_count = firm_action.production_count
         return FirmResult(workers, firm_action.salary, sold_count)
