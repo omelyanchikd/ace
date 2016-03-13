@@ -1,7 +1,7 @@
-from firm import Firm
-from worker import Worker
-import algorithms
 from abc import ABCMeta, abstractmethod
+
+import algorithms
+from worker import Worker
 
 
 class World:
@@ -18,6 +18,7 @@ class World:
 
         self.firm_algorithms = config['algorithms']
         workers_count = config['global']['workers_count']
+        self.config = config
         firm_counter = 0
         for class_, count in self.firm_algorithms.items():
             for i in range(int(count)):
@@ -39,6 +40,7 @@ class World:
 
     def go(self):
         print("It's alive!!")
+        birth_rate = self.config['global']['birth_rate']
         for i in range(self.steps):
             print("Step:", i)
             for firm in self.firms:
@@ -46,8 +48,8 @@ class World:
                 firm.work()
                 print(firm)
                 self.firm_actions[firm.id] = firm.decide()
-            for j in range(10):
-                worker = Worker(len(self.workers) + j)
+            for j in range(birth_rate):
+                worker = Worker(len(self.workers))
                 self.workers.append(worker)
             for firm_id, firm_action in enumerate(self.firm_actions):
                 firm_result = self.apply_firm_action(firm_id)
