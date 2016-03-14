@@ -1,6 +1,7 @@
 from abc import ABCMeta, abstractmethod
 
 import algorithms
+from history import History
 from worker import Worker
 
 
@@ -39,19 +40,24 @@ class World:
         self.firm_results = [0] * firm_count
 
     def go(self):
+        histories = []
+        for i in range(len(self.firms)):
+            histories.append(History(self.steps))
         print("It's alive!!")
         birth_rate = self.config['global']['birth_rate']
-        for i in range(self.steps):
-            print("Step:", i)
+        for step in range(self.steps):
+            # print("Step:", step)
             for firm in self.firms:
-                print(firm)
+                # print(firm)
                 firm.work()
-                print(firm)
+                # print(firm)
                 self.firm_actions[firm.id] = firm.decide()
             for j in range(birth_rate):
                 worker = Worker(len(self.workers))
                 self.workers.append(worker)
             for firm_id, firm_action in enumerate(self.firm_actions):
                 firm_result = self.apply_firm_action(firm_id)
-                self.firms[firm_id].apply_result(firm_result)
-                print(self.firms[firm_id])
+                firm = self.firms[firm_id]
+                firm.apply_result(firm_result)
+                histories[firm_id].add_record(step, firm)
+        return histories

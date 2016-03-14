@@ -3,7 +3,11 @@
     "steps": 10,
     "workers_count": 500,
     "birth_rate": 10,
-    "world_algorithm": "IdealWorld"
+    "world_algorithm": "IdealWorld",
+    "properties_to_plot": [
+      "salaries",
+      "workers_counts"
+    ]
   },
   "algorithms": {
     "StupidFirm": 10
