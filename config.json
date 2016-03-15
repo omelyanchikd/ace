@@ -1,9 +1,10 @@
 {
   "global": {
+    "seed": 100,
     "steps": 10,
     "workers_count": 500,
     "birth_rate": 10,
-    "world_algorithm": "IdealWorld",
+    "world_algorithm": "BasicWorld",
     "properties_to_plot": [
       "salaries",
       "workers_counts"

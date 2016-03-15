@@ -4,7 +4,6 @@ import algorithms
 from history import History
 from worker import Worker
 
-
 class World:
     __metaclass__ = ABCMeta
 
@@ -39,6 +38,9 @@ class World:
         self.firm_actions = [0] * firm_count
         self.firm_results = [0] * firm_count
 
+    def manage_firm_actions(self, firm_actions):
+        pass
+
     def go(self):
         histories = []
         for i in range(len(self.firms)):
@@ -55,6 +57,7 @@ class World:
             for j in range(birth_rate):
                 worker = Worker(len(self.workers))
                 self.workers.append(worker)
+            self.firm_results = self.manage_firm_actions(self.firm_actions)
             for firm_id, firm_action in enumerate(self.firm_actions):
                 firm_result = self.apply_firm_action(firm_id)
                 firm = self.firms[firm_id]
