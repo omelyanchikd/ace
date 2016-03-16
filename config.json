@@ -5,7 +5,7 @@
     "workers_count": 500,
     "birth_rate": 10,
     "initial_money": 100000,
-    "money_growth": 2000,
+    "money_growth": 20000,
     "world_algorithm": "BasicWorld",
     "properties_to_plot": [
       "salaries",
