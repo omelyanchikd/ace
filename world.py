@@ -4,7 +4,6 @@ import algorithms
 from history import History
 from worker import Worker
 
-
 class World:
     __metaclass__ = ABCMeta
 
@@ -15,6 +14,7 @@ class World:
     def __init__(self, config):
         self.firms = []
         self.workers = []
+        self.money = config['global']['initial_money']
         self.steps = config['global']['steps']
 
         self.firm_algorithms = config['algorithms']
@@ -39,12 +39,16 @@ class World:
         self.firm_actions = [0] * firm_count
         self.firm_results = [0] * firm_count
 
+    def manage_firm_actions(self, firm_actions):
+        pass
+
     def go(self):
         histories = []
         for i in range(len(self.firms)):
             histories.append(History(self.steps))
         print("It's alive!!")
         birth_rate = self.config['global']['birth_rate']
+        money_growth = self.config['global']['money_growth']
         for step in range(self.steps):
             # print("Step:", step)
             for firm in self.firms:
@@ -55,9 +59,10 @@ class World:
             for j in range(birth_rate):
                 worker = Worker(len(self.workers))
                 self.workers.append(worker)
+            self.manage_firm_actions(self.firm_actions)
             for firm_id, firm_action in enumerate(self.firm_actions):
-                firm_result = self.apply_firm_action(firm_id)
                 firm = self.firms[firm_id]
-                firm.apply_result(firm_result)
+                firm.apply_result(self.firm_results[firm_id])
                 histories[firm_id].add_record(step, firm)
+            self.money += money_growth
         return histories
