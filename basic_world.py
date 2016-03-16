@@ -14,9 +14,9 @@ class BasiclWorld(World):
         :param firm_actions:
         :return:
         """
-        prices = []
-        salaries = []
-        firms = []
+        prices = [0] * len(self.firms)
+        salaries = [0] * len(self.firms)
+        workers = [0] * len(self.firms)
 
         for firm_id, firm_action in enumerate(self.firm_actions):
             firm_action = self.firm_actions[firm_id]
@@ -26,17 +26,24 @@ class BasiclWorld(World):
 
             if firm_action.offer_count > 0:
                 salaries[firm_id] = firm_action.salary
-                firms[firm_id] = self.firms[firm_id]
 
+        # Basic selection algorithm for labor market
         unemployed_workers = []
         for worker in self.workers:
             if worker.employer is None:
                 unemployed_workers.append(worker)
         while len(unemployed_workers) > 0:
             worker = random.choice(unemployed_workers)
-            worker.employer = numpy.random.choice(firms, p=salaries / sum(salaries))
+            employer = numpy.random.choice(self.firms, p=salaries / sum(salaries))
             unemployed_workers.remove(worker)
-            assert isinstance(worker.employer, Firm)
+            assert isinstance(employer, Firm)
+            # this shoud be rewritten, but I don't know how yet
+            (workers[employer.id]).append(worker)
+            if self.firm_actions[employer.id].offer_count == len(workers[employer.id]):
+                salaries[employer.id] = 0
+
+                #Basic selection algorithm for good market
+
 
     def apply_firm_action(self, firm_id):
         """
