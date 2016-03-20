@@ -42,7 +42,7 @@ class Firm:
     def remove_worker(self, worker):
         worker.employer = None
         worker.salary = 0
-        self.workers.clear(worker)
+        self.workers.remove(worker)
 
     @abstractmethod
     def decide(self):
