@@ -7,6 +7,13 @@ from firm_result import FirmResult
 from world import World
 
 
+def invert(x):
+    if (x != 0):
+        return 1 / x
+    else:
+        return 0
+
+
 class BasicWorld(World):
     def manage_firm_actions(self, firm_actions):
         """
@@ -35,7 +42,8 @@ class BasicWorld(World):
             if firm_action.production_count == 0:
                 prices[firm_id] = 0
 
-        prices = numpy.array(prices)
+        inverse = numpy.vectorize(invert)
+        prices = inverse(numpy.array(prices))
         salaries = numpy.array(salaries)
         # Basic selection algorithm for labor market
         # unemployed_workers = []
