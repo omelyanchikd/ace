@@ -18,6 +18,7 @@ class BasicWorld(World):
         salaries = [0] * len(self.firms)
         workers = [[] for i in range(len(self.firms))]
         sales = [0] * len(self.firms)
+        money = self.money
 
         for firm_id, firm_action in enumerate(self.firm_actions):
             # Read actions in
@@ -56,12 +57,12 @@ class BasicWorld(World):
                 salaries[employer.id] = 0
 
         # Basic selection algorithm for good market
-        while sum(prices) > 0 and self.money > 0:
+        while sum(prices) > 0 and money > 0:
             seller = numpy.random.choice(self.firms, replace=False, p=prices / sum(prices))
             assert isinstance(seller, Firm)
 
             sales[seller.id] += 1
-            self.money -= prices[seller.id]
+            money -= prices[seller.id]
             if self.firm_actions[seller.id].production_count == sales[seller.id]:
                 prices[seller.id] = 0
 

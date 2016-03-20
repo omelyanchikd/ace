@@ -14,6 +14,7 @@ class Firm:
         self.money = 1000
         self.efficiency_coefficient = 10
         self.current_salary = 200
+        self.sales = 0
 
     def work(self):
         for worker in self.workers:
@@ -28,6 +29,7 @@ class Firm:
         for worker in result.new_workers:
             self.add_worker(worker, result.salary)
         self.stock -= result.sold_count
+        self.sales = self.price * result.sold_count
         self.money += self.price * result.sold_count
 
     def add_worker(self, worker, salary):

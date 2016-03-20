@@ -9,7 +9,10 @@
     "world_algorithm": "BasicWorld",
     "properties_to_plot": [
       "salaries",
-      "workers_counts"
+      "workers_counts",
+      "prices",
+      "sales",
+      "storage"
     ]
   },
   "algorithms": {
