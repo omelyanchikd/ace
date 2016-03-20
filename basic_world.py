@@ -37,17 +37,21 @@ class BasicWorld(World):
         prices = numpy.array(prices)
         salaries = numpy.array(salaries)
         # Basic selection algorithm for labor market
-        unemployed_workers = []
-        for worker in self.workers:
-            if worker.employer is None:
-                unemployed_workers.append(worker)
+        # unemployed_workers = []
+        unemployed_workers = self.workers
+        quited = [[] for i in range(len(self.firms))]
+        # for worker in self.workers:
+        #    if worker.employer is None:
+        #        unemployed_workers.append(worker)
         while len(unemployed_workers) > 0 and sum(salaries) > 0:
             worker = random.choice(unemployed_workers)
             employer = numpy.random.choice(self.firms, replace=False, p=salaries / sum(salaries))
             assert isinstance(employer, Firm)
-            unemployed_workers.remove(worker)
-            # this shoud be rewritten, but I don't know how yet
-            workers[employer.id].append(worker)
+            if worker.salary < salaries[employer.id]:
+                unemployed_workers.remove(worker)
+                workers[employer.id].append(worker)
+                if worker.employer is not None:
+                    quited[worker.employer].append(worker)
             if self.firm_actions[employer.id].offer_count == len(workers[employer.id]):
                 salaries[employer.id] = 0
 
@@ -63,7 +67,7 @@ class BasicWorld(World):
 
         # Aggregate firm results
         for firm in self.firms:
-            self.firm_results[firm.id] = FirmResult(workers[firm.id], salaries[firm.id], sales[firm.id])
+            self.firm_results[firm.id] = FirmResult(workers[firm.id], quited[firm.id], salaries[firm.id], sales[firm.id])
 
 
 
