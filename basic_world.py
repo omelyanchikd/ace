@@ -24,11 +24,6 @@ class BasicWorld(World):
             firm_action = self.firm_actions[firm_id]
             assert isinstance(firm_action, FirmAction)
 
-            # Fire fired workers
-            fired_workers = firm_action.fire_people
-            for id in fired_workers:
-                self.workers[id].employer = None
-
             # Get new salary and price info
             prices[firm_id] = firm_action.price
             salaries[firm_id] = firm_action.salary
