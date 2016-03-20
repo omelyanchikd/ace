@@ -20,12 +20,20 @@ class BasicWorld(World):
         sales = [0] * len(self.firms)
 
         for firm_id, firm_action in enumerate(self.firm_actions):
+            # Read actions in
             firm_action = self.firm_actions[firm_id]
             assert isinstance(firm_action, FirmAction)
 
+            # Fire fired workers
+            fired_workers = firm_action.fire_people
+            for id in fired_workers:
+                self.workers[id].employer = None
+
+            # Get new salary and price info
             prices[firm_id] = firm_action.price
             salaries[firm_id] = firm_action.salary
 
+            # If the firm has nothing to sell or nobody to hire, price and salary should be equal to 0
             if firm_action.offer_count == 0:
                 salaries[firm_id] = 0
             if firm_action.production_count == 0:
