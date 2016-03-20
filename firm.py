@@ -28,6 +28,8 @@ class Firm:
         """
         for worker in result.new_workers:
             self.add_worker(worker, result.salary)
+        for worker in result.quit_workers:
+            self.remove_worker(worker)
         self.stock -= result.sold_count
         self.sales = self.price * result.sold_count
         self.money += self.price * result.sold_count
@@ -39,6 +41,7 @@ class Firm:
 
     def remove_worker(self, worker):
         worker.employer = None
+        worker.salary = 0
         self.workers.clear(worker)
 
     @abstractmethod
