@@ -46,10 +46,10 @@ class BasicWorld(World):
         #        unemployed_workers.append(worker)
         while len(potential_candidates) > 0 and sum(salaries) > 0:
             worker = random.choice(potential_candidates)
+            potential_candidates.remove(worker)
             employer = numpy.random.choice(self.firms, replace=False, p=salaries / sum(salaries))
             assert isinstance(employer, Firm)
             if worker.salary < salaries[employer.id]:
-                potential_candidates.remove(worker)
                 workers[employer.id].append(worker)
                 if worker.employer is not None:
                     quited[worker.employer].append(worker)
