@@ -47,18 +47,22 @@ class BasicWorld(World):
         salaries = numpy.array(salaries)
         # Basic selection algorithm for labor market
         # unemployed_workers = []
-        potential_candidates = self.workers
+        potential_candidates = []
+        max_salary = max(salaries)
+        for worker in self.workers:
+            if worker.salary < max_salary:
+                potential_candidates.append(worker)
         quited = [[] for i in range(len(self.firms))]
         # for worker in self.workers:
         #    if worker.employer is None:
         #        unemployed_workers.append(worker)
         while len(potential_candidates) > 0 and sum(salaries) > 0:
             worker = random.choice(potential_candidates)
-            potential_candidates.remove(worker)
             employer = numpy.random.choice(self.firms, replace=False, p=salaries / sum(salaries))
             assert isinstance(employer, Firm)
             if worker.salary < salaries[employer.id]:
                 workers[employer.id].append(worker)
+                potential_candidates.remove(worker)
                 if worker.employer is not None:
                     quited[worker.employer].append(worker)
             if self.firm_actions[employer.id].offer_count == len(workers[employer.id]):
