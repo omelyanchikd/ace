@@ -7,7 +7,7 @@ class History:
         self.storage = [0] * step_count
 
     def add_record(self, step, firm):
-        self.salaries[step] = firm.current_salary
+        self.salaries[step] = firm.salary
         self.prices[step] = firm.price
         self.workers_counts[step] = len(firm.workers)
         self.sales[step] = firm.sales
