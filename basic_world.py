@@ -44,11 +44,11 @@ class BasicWorld(World):
 
         inverse = numpy.vectorize(invert)
         prices = inverse(numpy.array(prices))
-        salaries = numpy.array(salaries)
+        salaries_array = numpy.array(salaries)
         # Basic selection algorithm for labor market
         # unemployed_workers = []
         potential_candidates = []
-        max_salary = max(salaries)
+        max_salary = max(salaries_array)
         for worker in self.workers:
             if worker.salary < max_salary:
                 potential_candidates.append(worker)
@@ -56,17 +56,17 @@ class BasicWorld(World):
         # for worker in self.workers:
         #    if worker.employer is None:
         #        unemployed_workers.append(worker)
-        while len(potential_candidates) > 0 and sum(salaries) > 0:
+        while len(potential_candidates) > 0 and sum(salaries_array) > 0:
             worker = random.choice(potential_candidates)
-            employer = numpy.random.choice(self.firms, replace=False, p=salaries / sum(salaries))
+            employer = numpy.random.choice(self.firms, replace=False, p=salaries_array / sum(salaries_array))
+            potential_candidates.remove(worker)
             assert isinstance(employer, Firm)
-            if worker.salary < salaries[employer.id]:
+            if worker.salary < salaries_array[employer.id]:
                 workers[employer.id].append(worker)
-                potential_candidates.remove(worker)
                 if worker.employer is not None:
                     quited[worker.employer].append(worker)
             if self.firm_actions[employer.id].offer_count == len(workers[employer.id]):
-                salaries[employer.id] = 0
+                salaries_array[employer.id] = 0
 
         # Basic selection algorithm for good market
         while sum(prices) > 0 and money > 0:

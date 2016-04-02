@@ -9,4 +9,4 @@ class BasicFirm(Firm):
 
     def decide(self):
         self.current_salary = 2000
-        return FirmAction(500, self.current_salary, self.stock, 10, 0, 0, [])
+        return FirmAction(50, self.current_salary, self.stock, 10, 0, 0, [])

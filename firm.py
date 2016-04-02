@@ -28,10 +28,10 @@ class Firm:
         :type result: FirmResult
         """
         self.salary = 0
-        for worker in result.new_workers:
-            self.add_worker(worker, result.salary)
         for worker in result.quit_workers:
             self.remove_worker(worker)
+        for worker in result.new_workers:
+            self.add_worker(worker, result.salary)
         for worker in self.workers:
             self.salary += worker.salary
         if len(self.workers) > 0:
@@ -45,9 +45,12 @@ class Firm:
         worker.salary = salary
         self.workers.add(worker)
 
-    def remove_worker(self, worker):
+    def fire_worker(self, worker):
         worker.employer = None
         worker.salary = 0
+        self.workers.remove(worker)
+
+    def remove_worker(self, worker):
         self.workers.remove(worker)
 
     @abstractmethod
