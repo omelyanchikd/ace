@@ -8,7 +8,7 @@ class Visualiser:
         print(prop)
         for i, history in enumerate(histories):
             line = getattr(history, prop)
-            data.append(Scatter(x=list(range(len(line))), y=list(line), name="Firm " + str(i)))
+            data.append(Scatter(x=list(range(len(line))), y=list(line), name=history.title + " " + str(i)))
         plotly.offline.plot(figure_or_data={
             "data": data,
             "layout": Layout(

@@ -14,7 +14,7 @@ class Firm:
         self.stock = 0
         self.sold = 0
         self.price = 20
-        self.money = 1000
+        self.money = 100000
         self.efficiency_coefficient = 10
         self.current_salary = 200
         self.sales = 0

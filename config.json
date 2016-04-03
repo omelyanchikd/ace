@@ -13,11 +13,12 @@
       "prices",
       "sales",
       "storage",
-      "profits"
+      "profits",
+      "money"
     ]
   },
   "algorithms": {
-    "StupidFirm": 9,
-    "BasicFirm": 1
+    "StupidFirm": 10,
+    "DianaFirm": 1
   }
 }
