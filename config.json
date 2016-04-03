@@ -1,7 +1,7 @@
 {
   "global": {
     "seed": 100,
-    "steps": 5,
+    "steps": 50,
     "workers_count": 500,
     "birth_rate": 10,
     "initial_money": 100000,
@@ -14,7 +14,8 @@
       "sales",
       "storage",
       "profits",
-      "money"
+      "money",
+      "sold"
     ]
   },
   "algorithms": {
