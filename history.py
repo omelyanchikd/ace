@@ -8,6 +8,7 @@ class History:
         self.storage = [0] * step_count
         self.profits = [0] * step_count
         self.money = [0] * step_count
+        self.sold = [0] * step_count
 
     def add_record(self, step, firm):
         self.salaries[step] = firm.salary
@@ -17,3 +18,4 @@ class History:
         self.storage[step] = firm.stock
         self.profits[step] = firm.profit
         self.money[step] = firm.money
+        self.sold[step] = firm.sold

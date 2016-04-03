@@ -4,6 +4,7 @@ import numpy
 
 from firm import Firm
 from firm_result import FirmResult
+from worker import Worker
 from world import World
 
 
@@ -22,6 +23,8 @@ class BasicWorld(World):
         :return:
         """
         salaries = numpy.array(list(firm_action.salary for firm_action in self.firm_actions))
+
+        self.fire()
 
         new_workers, quited = self.manage_job_offers()
 
@@ -72,3 +75,11 @@ class BasicWorld(World):
             if self.firm_actions[seller.id].production_count == sales[seller.id]:
                 prices[seller.id] = 0
         return sales
+
+    def fire(self):
+        fired_workers = list(firm_action.fire_people for firm_action in self.firm_actions)
+
+# for worker in fired_workers:
+#            assert isinstance(worker, Worker)
+#            worker.employer = None
+#            worker.salary = 0
