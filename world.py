@@ -1,15 +1,12 @@
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta
 
 import algorithms
 from history import History
 from worker import Worker
 
+
 class World:
     __metaclass__ = ABCMeta
-
-    @abstractmethod
-    def apply_firm_action(self, firm_id):
-        pass
 
     def __init__(self, config):
         self.firms = []
@@ -77,7 +74,6 @@ class World:
                 unemployed += 1
         if len(self.workers) > 0:
             self.unemployment_rate = unemployed / len(self.workers)
-
 
     def go(self):
         histories = []
