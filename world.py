@@ -78,7 +78,7 @@ class World:
     def go(self):
         histories = []
         for i in range(len(self.firms)):
-            histories.append(History(self.steps))
+            histories.append(History(self.steps, self.firms[i].__class__.__name__))
         print("It's alive!!")
         birth_rate = self.config['global']['birth_rate']
         money_growth = self.config['global']['money_growth']
