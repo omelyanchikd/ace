@@ -14,11 +14,15 @@ class World:
     def __init__(self, config):
         self.firms = []
         self.workers = []
+
         self.price = 0
         self.salary = 0
         self.sold = 0
         self.stock = 0
         self.sales = 0
+        self.salary = 0
+        self.unemployment_rate = 0
+
         self.money = config['global']['initial_money']
         self.steps = config['global']['steps']
 
@@ -47,16 +51,32 @@ class World:
     def manage_firm_actions(self, firm_actions):
         pass
 
-    def get_stats(self):
+    def compute_stats(self):
         self.price = 0
         self.stock = 0
         self.sales = 0
         self.sold = 0
+        employed = 0
         for firm in self.firms:
             self.price += firm.price
             self.stock += firm.stock  # this needs to be rewritten, since in the end of iteration firm stock should be zero
-            # self.sold += firm.sold #this needs to be rewritten, since sold is not firms parameter yet
+            self.sold += firm.sold  # this needs to be rewritten, since sold is not firms parameter yet
             self.sales += firm.sales
+            employed += len(firm.workers)
+        if self.sold > 0:
+            self.price /= self.sold
+        else:
+            self.price = 0
+        if employed > 0:
+            self.salary /= employed
+        else:
+            self.salary = 0
+        unemployed = 0
+        for worker in self.workers:
+            if worker.employer is None:
+                unemployed += 1
+        if len(self.workers) > 0:
+            self.unemployment_rate = unemployed / len(self.workers)
 
 
     def go(self):
@@ -68,6 +88,7 @@ class World:
         money_growth = self.config['global']['money_growth']
         for step in range(self.steps):
             # print("Step:", step)
+            self.compute_stats()
             for firm in self.firms:
                 # print(firm)
                 firm.work()

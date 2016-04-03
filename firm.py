@@ -2,6 +2,8 @@ from abc import ABCMeta, abstractmethod
 
 from firm_result import FirmResult
 
+import numpy
+
 
 class Firm:
     __metaclass__ = ABCMeta
@@ -10,6 +12,7 @@ class Firm:
         self.workers = set()
         self.id = id
         self.stock = 0
+        self.sold = 0
         self.price = 20
         self.money = 1000
         self.efficiency_coefficient = 10
@@ -36,6 +39,7 @@ class Firm:
             self.add_worker(worker, result.salary)
         for worker in self.workers:
             self.salary += worker.salary
+        self.sold = result.sold_count
         self.stock -= result.sold_count
         self.sales = self.price * result.sold_count
         self.profit = self.sales - self.salary
