@@ -14,6 +14,11 @@ class World:
     def __init__(self, config):
         self.firms = []
         self.workers = []
+        self.price = 0
+        self.salary = 0
+        self.sold = 0
+        self.stock = 0
+        self.sales = 0
         self.money = config['global']['initial_money']
         self.steps = config['global']['steps']
 
@@ -41,6 +46,18 @@ class World:
 
     def manage_firm_actions(self, firm_actions):
         pass
+
+    def get_stats(self):
+        self.price = 0
+        self.stock = 0
+        self.sales = 0
+        self.sold = 0
+        for firm in self.firms:
+            self.price += firm.price
+            self.stock += firm.stock  # this needs to be rewritten, since in the end of iteration firm stock should be zero
+            # self.sold += firm.sold #this needs to be rewritten, since sold is not firms parameter yet
+            self.sales += firm.sales
+
 
     def go(self):
         histories = []
