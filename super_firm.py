@@ -24,8 +24,8 @@ class SuperFirm(Firm):
             self.plan.salary += self.salary_step
         if self.last_result.sold_count < self.plan.offer_count:
             self.plan.price -= self.price_step
-        else:
-            self.plan.price += self.price_step
+            # else:
+            #     self.plan.price += self.price_step
 
     def decide(self):
         self.rethink()

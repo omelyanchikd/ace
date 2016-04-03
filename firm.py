@@ -2,8 +2,6 @@ from abc import ABCMeta, abstractmethod
 
 from firm_result import FirmResult
 
-import numpy
-
 
 class Firm:
     __metaclass__ = ABCMeta
@@ -59,6 +57,11 @@ class Firm:
 
     def remove_worker(self, worker):
         self.workers.remove(worker)
+
+    def bankrupt(self):
+        for worker in self.workers:
+            worker.employer = None
+            worker.salary = 0
 
     @abstractmethod
     def decide(self):

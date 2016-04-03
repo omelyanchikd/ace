@@ -85,7 +85,13 @@ class World:
         for step in range(self.steps):
             # print("Step:", step)
             self.compute_stats()
-            for firm in self.firms:
+            for i, firm in enumerate(self.firms):
+                # @todo: enable bankrupt
+                # if firm.money < self.config['global']['bankrupt_rate']:
+                #     firm.bankrupt()
+                #     del self.firms[i]
+                #     del self.firm_actions[i]
+                #     continue
                 # print(firm)
                 firm.work()
                 # print(firm)
