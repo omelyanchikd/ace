@@ -14,4 +14,4 @@ class Visualiser:
             "layout": Layout(
                 title=prop
             )
-        }, filename=prop + '.html')
+        }, filename='graphs/' + prop + '.html')
