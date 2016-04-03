@@ -1,14 +1,14 @@
-import numpy
 import random
 
+import numpy
+
 from firm import Firm
-from firm_action import FirmAction
 from firm_result import FirmResult
 from world import World
 
 
 def invert(x):
-    if (x != 0):
+    if x != 0:
         return 1 / x
     else:
         return 0
@@ -17,58 +17,52 @@ def invert(x):
 class BasicWorld(World):
     def manage_firm_actions(self, firm_actions):
         """
-        Basic World! Contains basic algotithms for labor market and good market.
+        Basic World! Contains basic algorithms for labor market and good market.
         :param firm_actions:
         :return:
         """
-        prices = [0] * len(self.firms)
-        salaries = [0] * len(self.firms)
-        workers = [[] for i in range(len(self.firms))]
-        sales = [0] * len(self.firms)
-        money = self.money
+        salaries = numpy.array(list(firm_action.salary for firm_action in self.firm_actions))
 
-        for firm_id, firm_action in enumerate(self.firm_actions):
-            # Read actions in
-            firm_action = self.firm_actions[firm_id]
-            assert isinstance(firm_action, FirmAction)
+        new_workers, quited = self.manage_job_offers()
 
-            # Get new salary and price info
-            prices[firm_id] = firm_action.price
-            salaries[firm_id] = firm_action.salary
+        sales = self.manage_sales()
+        # Aggregate firm results
+        for firm in self.firms:
+            self.firm_results[firm.id] = FirmResult(new_workers[firm.id], quited[firm.id], salaries[firm.id],
+                                                    sales[firm.id])
 
-            # If the firm has nothing to sell or nobody to hire, price and salary should be equal to 0
-            if firm_action.offer_count == 0:
-                salaries[firm_id] = 0
-            if firm_action.production_count == 0:
-                prices[firm_id] = 0
+    def manage_job_offers(self):
+        salaries = numpy.array(list(firm_action.salary for firm_action in self.firm_actions))
+        max_salary = max(salaries)
 
-        inverse = numpy.vectorize(invert)
-        prices = inverse(numpy.array(prices))
-        salaries_array = numpy.array(salaries)
-        # Basic selection algorithm for labor market
-        # unemployed_workers = []
-        potential_candidates = []
-        max_salary = max(salaries_array)
-        for worker in self.workers:
-            if worker.salary < max_salary:
-                potential_candidates.append(worker)
         quited = [[] for i in range(len(self.firms))]
-        # for worker in self.workers:
-        #    if worker.employer is None:
-        #        unemployed_workers.append(worker)
-        while len(potential_candidates) > 0 and sum(salaries_array) > 0:
+        new_workers = [[] for i in range(len(self.firms))]
+
+        potential_candidates = []
+        for worker in self.workers:
+            if worker.employer is None or worker.salary < max_salary:
+                potential_candidates.append(worker)
+
+        while len(potential_candidates) > 0 and sum(salaries) > 0:
             worker = random.choice(potential_candidates)
-            employer = numpy.random.choice(self.firms, replace=False, p=salaries_array / sum(salaries_array))
-            potential_candidates.remove(worker)
+            employer = numpy.random.choice(self.firms, replace=False, p=salaries / sum(salaries))
             assert isinstance(employer, Firm)
-            if worker.salary < salaries_array[employer.id]:
-                workers[employer.id].append(worker)
+
+            potential_candidates.remove(worker)
+            if worker.salary < salaries[employer.id]:
+                new_workers[employer.id].append(worker)
                 if worker.employer is not None:
                     quited[worker.employer].append(worker)
-            if self.firm_actions[employer.id].offer_count == len(workers[employer.id]):
-                salaries_array[employer.id] = 0
+            if self.firm_actions[employer.id].offer_count == len(new_workers[employer.id]):
+                salaries[employer.id] = 0
 
+        return new_workers, quited
+
+    def manage_sales(self):
         # Basic selection algorithm for good market
+        prices = numpy.array(list(firm_action.price for firm_action in self.firm_actions))
+        sales = [0] * len(self.firms)
+        money = self.money
         while sum(prices) > 0 and money > 0:
             seller = numpy.random.choice(self.firms, replace=False, p=prices / sum(prices))
             assert isinstance(seller, Firm)
@@ -77,38 +71,4 @@ class BasicWorld(World):
             money -= prices[seller.id]
             if self.firm_actions[seller.id].production_count == sales[seller.id]:
                 prices[seller.id] = 0
-
-        # Aggregate firm results
-        for firm in self.firms:
-            self.firm_results[firm.id] = FirmResult(workers[firm.id], quited[firm.id], salaries[firm.id], sales[firm.id])
-
-
-
-    def apply_firm_action(self, firm_id):
-        """
-        Basic World! Contains basic algorithms for labor market and good market.
-
-        :type firm_id: int
-        """
-        firm_action = self.firm_actions[firm_id]
-        assert isinstance(firm_action, FirmAction)
-
-        workers_count = firm_action.offer_count
-        workers = []
-        # here you have everyone non-employed
-        for worker in self.workers:
-            if worker.employer is None:
-                workers.append(worker)
-                workers_count -= 1
-                if workers_count == 0:
-                    break
-        # if it's not enough - here you have more!
-        # if workers_count > 0:
-        #    for w in range(workers_count):
-        #        new_worker_id = len(self.workers)
-        #        worker = Worker(new_worker_id)
-        #        self.workers.append(worker)
-        #        workers.append(worker)
-        # all your stuff is sold!
-        sold_count = firm_action.production_count
-        return FirmResult(workers, firm_action.salary, sold_count)
+        return sales
