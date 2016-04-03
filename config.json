@@ -19,6 +19,7 @@
   },
   "algorithms": {
     "StupidFirm": 10,
-    "DianaFirm": 1
-  }
+    "SuperFirm": 1
+  },
+  "visualise": true
 }
