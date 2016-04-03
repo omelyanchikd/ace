@@ -14,11 +14,15 @@ class World:
     def __init__(self, config):
         self.firms = []
         self.workers = []
+
         self.price = 0
         self.salary = 0
         self.sold = 0
         self.stock = 0
         self.sales = 0
+        self.salary = 0
+        self.unemployment_rate = 0
+
         self.money = config['global']['initial_money']
         self.steps = config['global']['steps']
 
@@ -57,6 +61,15 @@ class World:
             self.stock += firm.stock  # this needs to be rewritten, since in the end of iteration firm stock should be zero
             # self.sold += firm.sold #this needs to be rewritten, since sold is not firms parameter yet
             self.sales += firm.sales
+        if len(self.firms) > 0:
+            self.price /= len(self.firms)
+            self.salary /= len(self.firms)
+        unemployed = 0
+        for worker in self.workers:
+            if worker.employer is None:
+                unemployed += 1
+        if len(self.workers) > 0:
+            self.unemployment_rate = unemployed / len(self.workers)
 
 
     def go(self):
@@ -68,6 +81,7 @@ class World:
         money_growth = self.config['global']['money_growth']
         for step in range(self.steps):
             # print("Step:", step)
+            self.get_stats()
             for firm in self.firms:
                 # print(firm)
                 firm.work()
