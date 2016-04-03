@@ -16,6 +16,7 @@ class Firm:
         self.current_salary = 200
         self.sales = 0
         self.salary = 0
+        self.profit = 0
 
     def work(self):
         for worker in self.workers:
@@ -28,16 +29,18 @@ class Firm:
         :type result: FirmResult
         """
         self.salary = 0
+        self.sales = 0
         for worker in result.quit_workers:
             self.remove_worker(worker)
         for worker in result.new_workers:
             self.add_worker(worker, result.salary)
         for worker in self.workers:
             self.salary += worker.salary
-        if len(self.workers) > 0:
-            self.salary /= len(self.workers)
         self.stock -= result.sold_count
         self.sales = self.price * result.sold_count
+        self.profit = self.sales - self.salary
+        if len(self.workers) > 0:
+            self.salary /= len(self.workers)
         self.money += self.price * result.sold_count
 
     def add_worker(self, worker, salary):

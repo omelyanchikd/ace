@@ -12,7 +12,8 @@
       "workers_counts",
       "prices",
       "sales",
-      "storage"
+      "storage",
+      "profits"
     ]
   },
   "algorithms": {
