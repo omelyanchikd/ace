@@ -23,5 +23,5 @@ class DianaFirm(Firm):
             else:
                 self.plan = self.sold
         self.offer_count = math.floor(self.plan / self.efficiency_coefficient) - len(self.workers)
-        self.salary = 0.95 * (self.price * len(self.workers) + self.offer_count) / self.efficiency_coefficient
+        self.salary = 0.95 * self.price
         return FirmAction(self.offer_count, self.salary, self.stock, self.price, 0, 0, [])

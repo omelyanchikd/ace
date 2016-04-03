@@ -64,10 +64,11 @@ class BasicWorld(World):
     def manage_sales(self):
         # Basic selection algorithm for good market
         prices = numpy.array(list(firm_action.price for firm_action in self.firm_actions))
+        inverted_prices = numpy.array(list(invert(x) for x in prices))
         sales = [0] * len(self.firms)
         money = self.money
         while sum(prices) > 0 and money > 0:
-            seller = numpy.random.choice(self.firms, replace=False, p=prices / sum(prices))
+            seller = numpy.random.choice(self.firms, replace=False, p=inverted_prices / sum(inverted_prices))
             assert isinstance(seller, Firm)
 
             sales[seller.id] += 1

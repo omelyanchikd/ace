@@ -11,7 +11,7 @@ class SuperFirm(Firm):
         super().__init__(id)
         # self.current_salary = 2000
         self.actions = []
-        self.plan = FirmAction(5, self.current_salary, self.stock, 10, 0, 0, [])
+        self.plan = FirmAction(50, self.current_salary, self.stock, 10, 0, 0, [])
         self.last_result = None
 
     def rethink(self):
