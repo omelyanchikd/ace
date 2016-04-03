@@ -20,8 +20,9 @@
     ]
   },
   "algorithms": {
-    "StupidFirm": 10,
-    "SuperFirm": 1
+    "StupidFirm": 8,
+    "SuperFirm": 1,
+    "DianaFirm": 1
   },
   "visualise": true
 }
