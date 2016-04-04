@@ -67,14 +67,20 @@ class BasicWorld(World):
         inverted_prices = numpy.array(list(invert(x) for x in prices))
         sales = [0] * len(self.firms)
         money = self.money
+        for firm in self.firms:
+            if self.firm_actions[firm.id].production_count > self.firms[firm.id].stock:
+                self.firm_actions[firm.id].production_count = self.firms[firm.id].stock
+        production_counts = numpy.array(list(firm_action.production_count for firm_action in self.firm_actions))
         while sum(prices) > 0 and money > 0:
             seller = numpy.random.choice(self.firms, replace=False, p=inverted_prices / sum(inverted_prices))
             assert isinstance(seller, Firm)
 
             sales[seller.id] += 1
+            production_counts[seller.id] -= 1
             money -= prices[seller.id]
-            if self.firm_actions[seller.id].production_count == sales[seller.id]:
+            if production_counts[seller.id] <= 0:
                 prices[seller.id] = 0
+                inverted_prices[seller.id] = 0
         return sales
 
     def fire(self):
