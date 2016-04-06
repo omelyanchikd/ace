@@ -3,6 +3,7 @@ from abc import ABCMeta
 import algorithms
 from history import History
 from worker import Worker
+from stats import Stats
 
 
 class World:
@@ -12,13 +13,7 @@ class World:
         self.firms = []
         self.workers = []
 
-        self.price = 0
-        self.salary = 0
-        self.sold = 0
-        self.stock = 0
-        self.sales = 0
-        self.salary = 0
-        self.unemployment_rate = 0
+        self.stats = Stats()
 
         self.money = config['global']['initial_money']
         self.steps = config['global']['steps']
@@ -49,31 +44,32 @@ class World:
         pass
 
     def compute_stats(self):
-        self.price = 0
-        self.stock = 0
-        self.sales = 0
-        self.sold = 0
+        self.stats.price = 0
+        self.stats.stock = 0
+        self.stats.sales = 0
+        self.stats.sold = 0
         employed = 0
         for firm in self.firms:
-            self.price += firm.price
-            self.stock += firm.stock  # this needs to be rewritten, since in the end of iteration firm stock should be zero
-            self.sold += firm.sold  # this needs to be rewritten, since sold is not firms parameter yet
-            self.sales += firm.sales
+            self.stats.price += firm.price
+            self.stats.stock += firm.stock
+            self.stats.sold += firm.sold
+            self.stats.sales += firm.sales
             employed += len(firm.workers)
-        if self.sold > 0:
-            self.price /= self.sold
+        if self.stats.sold > 0:
+            self.stats.price /= self.stats.sold
         else:
-            self.price = 0
+            self.stats.price = 0
         if employed > 0:
-            self.salary /= employed
+            self.stats.salary /= employed
         else:
-            self.salary = 0
+            self.stats.salary = 0
         unemployed = 0
         for worker in self.workers:
             if worker.employer is None:
                 unemployed += 1
         if len(self.workers) > 0:
-            self.unemployment_rate = unemployed / len(self.workers)
+            self.stats.unemployment_rate = unemployed / len(self.workers)
+        self.stats.money = self.money
 
     def go(self):
         histories = []
@@ -95,7 +91,7 @@ class World:
                 # print(firm)
                 firm.work()
                 # print(firm)
-                self.firm_actions[firm.id] = firm.decide()
+                self.firm_actions[firm.id] = firm.decide(self.stats)
             for j in range(birth_rate):
                 worker = Worker(len(self.workers))
                 self.workers.append(worker)
@@ -104,5 +100,7 @@ class World:
                 firm = self.firms[firm_id]
                 firm.apply_result(self.firm_results[firm_id])
                 histories[firm_id].add_record(step, firm)
+            #            histories.add_stats(step, self.stats) #needs to be rewritten with proper history object in mind
             self.money += money_growth
+
         return histories

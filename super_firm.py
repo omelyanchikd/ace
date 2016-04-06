@@ -27,7 +27,7 @@ class SuperFirm(Firm):
             # else:
             #     self.plan.price += self.price_step
 
-    def decide(self):
+    def decide(self, stats):
         self.rethink()
         action = self.plan
         self.actions.append(action)

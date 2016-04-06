@@ -1,6 +1,7 @@
 from abc import ABCMeta, abstractmethod
 
 from firm_result import FirmResult
+from stats import Stats
 
 
 class Firm:
@@ -64,7 +65,7 @@ class Firm:
             worker.salary = 0
 
     @abstractmethod
-    def decide(self):
+    def decide(self, stats):
         pass
 
     def __str__(self):

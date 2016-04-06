@@ -10,6 +10,13 @@ class History:
         self.money = [0] * step_count
         self.sold = [0] * step_count
 
+        self.world_money = [0] * step_count
+        self.world_price = [0] * step_count
+        self.world_sold = [0] * step_count
+        self.world_sales = [0] * step_count
+        self.world_salary = [0] * step_count
+        self.unemployment_rate = [0] * step_count
+
     def add_record(self, step, firm):
         self.salaries[step] = firm.salary
         self.prices[step] = firm.price
@@ -19,3 +26,11 @@ class History:
         self.profits[step] = firm.profit
         self.money[step] = firm.money
         self.sold[step] = firm.sold
+
+    def add_stats(self, step, stats):
+        self.world_money[step] = stats.money
+        self.world_price[step] = stats.price
+        self.world_sold[step] = stats.sold
+        self.world_sales[step] = stats.sales
+        self.world_salary[step] = stats.salary
+        self.unemployment_rate[step] = stats.unemployment_rate

@@ -11,7 +11,7 @@ class DianaFirm(Firm):
         self.prev_price = 0
         self.salary = 200
 
-    def decide(self):
+    def decide(self, stats):
         if self.sold >= self.plan:
             self.plan += math.floor(self.efficiency_coefficient)
             self.prev_price = self.price
