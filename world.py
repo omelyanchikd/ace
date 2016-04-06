@@ -37,6 +37,8 @@ class World:
             firm = self.firms[firm_id]
             firm.add_worker(worker, firm.current_salary)
 
+        self.history = History(self.steps, self.firms)
+
         self.firm_actions = [0] * firm_count
         self.firm_results = [0] * firm_count
 
@@ -72,9 +74,6 @@ class World:
         self.stats.money = self.money
 
     def go(self):
-        histories = []
-        for i in range(len(self.firms)):
-            histories.append(History(self.steps, self.firms[i].__class__.__name__))
         print("It's alive!!")
         birth_rate = self.config['global']['birth_rate']
         money_growth = self.config['global']['money_growth']
@@ -99,8 +98,8 @@ class World:
             for firm_id, firm_action in enumerate(self.firm_actions):
                 firm = self.firms[firm_id]
                 firm.apply_result(self.firm_results[firm_id])
-                histories[firm_id].add_record(step, firm)
-            #            histories.add_stats(step, self.stats) #needs to be rewritten with proper history object in mind
+                self.history.add_record(step, firm)
+            self.history.add_stats(step, self.stats)  # needs to be rewritten with proper history object in mind
             self.money += money_growth
 
         return histories
