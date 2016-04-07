@@ -15,6 +15,7 @@ history = world.go()
 # print (history_list)
 if config["visualise"]:
     visualiser = Visualiser()
-    properties_to_plot = config['global']['properties_to_plot']
-    for prop in properties_to_plot:
-        visualiser.plot(history, prop)
+    entities_to_plot = config['global']['properties_to_plot']
+    for entity, properties_to_plot in entities_to_plot.items():
+        for prop in properties_to_plot:
+            visualiser.plot(history, prop, entity)
