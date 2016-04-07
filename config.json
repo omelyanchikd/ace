@@ -8,16 +8,26 @@
     "bankrupt_rate": -1000,
     "money_growth": 2000,
     "world_algorithm": "BasicWorld",
-    "properties_to_plot": [
-      "salaries",
-      "workers_counts",
-      "prices",
-      "sales",
-      "storage",
-      "profits",
-      "money",
-      "sold"
-    ]
+    "properties_to_plot": {
+      "firm": [
+        "salaries",
+        "workers_counts",
+        "prices",
+        "sales",
+        "storage",
+        "profits",
+        "money",
+        "sold"
+      ],
+      "world": [
+        "salaries",
+        "prices",
+        "sales",
+        "money",
+        "sold",
+        "unemployment_rate"
+      ]
+    }
   },
   "algorithms": {
     "StupidFirm": 8,
