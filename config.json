@@ -16,7 +16,8 @@
       "storage",
       "profits",
       "money",
-      "sold"
+      "sold",
+      "unemployment_rate"
     ]
   },
   "algorithms": {

@@ -102,4 +102,4 @@ class World:
             self.history.add_stats(step, self.stats)  # needs to be rewritten with proper history object in mind
             self.money += money_growth
 
-        return histories
+        return self.history
