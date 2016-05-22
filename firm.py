@@ -17,7 +17,7 @@ class Firm:
         self.efficiency_coefficient = 10
         self.current_salary = 200
         self.sales = 0
-        self.salary = 0
+        self.salary = 200
         self.profit = 0
 
     def work(self):
