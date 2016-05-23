@@ -22,7 +22,7 @@ class BasicWorld(World):
         :param firm_actions:
         :return:
         """
-        salaries = numpy.array(list(firm_action.salary for firm_action in self.firm_actions))
+        salaries = numpy.array(list(firm_action.salary if firm_action.salary >= 0 else 0 for firm_action in self.firm_actions))
 
         self.fire()
 
@@ -63,7 +63,7 @@ class BasicWorld(World):
 
     def manage_sales(self):
         # Basic selection algorithm for good market
-        prices = numpy.array(list(firm_action.price for firm_action in self.firm_actions))
+        prices = numpy.array(list(firm_action.price if firm_action.price >= 0 else 0 for firm_action in self.firm_actions))
         inverted_prices = numpy.array(list(invert(x) for x in prices))
         sales = [0] * len(self.firms)
         money = self.money
