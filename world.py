@@ -50,6 +50,7 @@ class World:
         self.stats.stock = 0
         self.stats.sales = 0
         self.stats.sold = 0
+        self.stats.salary = 0
         employed = 0
         for firm in self.firms:
             self.stats.price += firm.price
@@ -57,6 +58,8 @@ class World:
             self.stats.sold += firm.sold
             self.stats.sales += firm.sales
             employed += len(firm.workers)
+            for worker in firm.workers:
+                self.stats.salary += worker.salary
         if self.stats.sold > 0:
             self.stats.price /= self.stats.sold
         else:
