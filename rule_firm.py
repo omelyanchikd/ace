@@ -7,6 +7,9 @@ import math
 def isinrange(value, left, right):
     return left <= value < right
 
+def change(new_value, old_value):
+    return (new_value - old_value)/old_value if old_value > 0 else 0
+
 class RuleFirm(Firm):
     def __init__(self, id):
         super().__init__(id)
@@ -32,9 +35,9 @@ class RuleFirm(Firm):
         self.offer_count = 0
 
     def decide(self, stats):
-        self.profit_change = (self.profit - self.prev_profit) / self.prev_profit if self.prev_profit > 0 else 0
-        self.sales_change = (self.sales - self.prev_sales)/ self.prev_sales if self.prev_sales > 0 else 0
-        self.sold_change = (self.sold - self.prev_sold)/ self.prev_sold if self.prev_sold > 0 else 0
+        self.profit_change = change(self.profit, self.prev_profit)
+        self.sales_change = change(self.sales, self.prev_sales)
+        self.sold_change = change(self.sold, self.prev_sold)
         #self.workers_change = (len(self.workers) - self.prev_workers) / self.prev_workers if self.prev_workers > 0 else 0
         self.workers_change = len(self.workers) - self.prev_workers
         self.prev_salary = self.salary
@@ -82,9 +85,9 @@ class RuleFirm(Firm):
         self.price = 1.1 * self.salary
         self.plan *= (1 + self.plan_change)
         self.plan = self.plan if self.plan > 0 else 0
-        self.salary_change = (self.salary - self.prev_salary)/ self.prev_salary if self.prev_salary > 0 else 0
-        self.price_change = (self.price - self.prev_price) / self.prev_price if self.prev_price > 0 else 0
-        self.plan_change = (self.plan - self.prev_plan) / self.prev_plan if self.prev_plan > 0 else 0
+        self.salary_change = change(self.salary, self.prev_salary)
+        self.price_change = change(self.price, self.prev_price)
+        self.plan_change = change(self.plan, self.prev_plan)
 
         self.offer_count = math.floor(self.plan / self.efficiency_coefficient) - len(self.workers) if math.floor(self.plan / self.efficiency_coefficient) - len(self.workers) > 0 else 0
         return FirmAction(self.offer_count, self.salary, self.stock, self.price, 0, 0, [])
