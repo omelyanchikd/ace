@@ -82,13 +82,16 @@ class RuleFirm(Firm):
         self.salary *= (1 + self.salary_change)
         self.salary = self.salary if self.salary > 0 else 0
         #self.price *= (1 + self.price_change)
-        self.price = 1.1 * self.salary
+        self.price = self.salary / (0.95 * self.efficiency_coefficient)
         self.plan *= (1 + self.plan_change)
         self.plan = self.plan if self.plan > 0 else 0
         self.salary_change = change(self.salary, self.prev_salary)
         self.price_change = change(self.price, self.prev_price)
         self.plan_change = change(self.plan, self.prev_plan)
 
-        self.offer_count = math.floor(self.plan / self.efficiency_coefficient) - len(self.workers) if math.floor(self.plan / self.efficiency_coefficient) - len(self.workers) > 0 else 0
+        self.offer_count = math.floor(self.plan / self.efficiency_coefficient) - len(self.workers)
+        while self.offer_count < 0:
+            self.fire_worker(random.choice(list(self.workers)))
+            self.offer_count += 1
         return FirmAction(self.offer_count, self.salary, self.stock, self.price, 0, 0, [])
 
