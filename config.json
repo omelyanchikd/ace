@@ -31,7 +31,7 @@
   },
   "algorithms": {
     "RuleFirm": 2,
-    "StupidFirm": 8
+    "BasicFirm": 8
   },
   "visualise": true
 }
