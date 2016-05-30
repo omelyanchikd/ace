@@ -4,6 +4,8 @@ import algorithms
 from history import History
 from worker import Worker
 from stats import Stats
+from firm_action import FirmAction
+
 
 
 class World:
@@ -80,6 +82,8 @@ class World:
         print("It's alive!!")
         birth_rate = self.config['global']['birth_rate']
         money_growth = self.config['global']['money_growth']
+        for i, firm in enumerate(self.firms):
+            self.firm_actions[firm.id] = FirmAction(0, firm.salary, firm.stock, firm.price, 0, 0, [])
         for step in range(self.steps):
             # print("Step:", step)
             self.compute_stats()
@@ -93,7 +97,7 @@ class World:
                 # print(firm)
                 firm.work()
                 # print(firm)
-                self.firm_actions[firm.id] = firm.decide(self.stats)
+                #self.firm_actions[firm.id] = firm.decide(self.stats)
             for j in range(birth_rate):
                 worker = Worker(len(self.workers))
                 self.workers.append(worker)
@@ -103,6 +107,8 @@ class World:
                 firm.apply_result(self.firm_results[firm_id])
                 self.history.add_record(step, firm)
             self.history.add_stats(step, self.stats)  # needs to be rewritten with proper history object in mind
+            for i, firm in enumerate(self.firms):
+                self.firm_actions[firm.id] = firm.decide(self.stats)
             self.money += money_growth
 
         return self.history

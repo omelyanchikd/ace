@@ -2,6 +2,7 @@ from firm import Firm
 from firm_action import FirmAction
 
 import math
+import random
 
 
 class DianaFirm(Firm):
@@ -10,6 +11,7 @@ class DianaFirm(Firm):
         self.plan = 50 * self.efficiency_coefficient
         self.prev_price = 0
         self.salary = 200
+        self.offer_count = 0
 
     def decide(self, stats):
         if self.sold >= self.plan:
@@ -22,6 +24,11 @@ class DianaFirm(Firm):
                 self.price *= 0.95
             else:
                 self.plan = self.sold
+        self.plan -= self.stock
+        self.plan = self.plan if self.plan >= 0 else 0
         self.offer_count = math.floor(self.plan / self.efficiency_coefficient) - len(self.workers)
-        self.salary = 1.05 * self.price * self.efficiency_coefficient
+        while self.offer_count < 0:
+            self.fire_worker(random.choice(list(self.workers)))
+            self.offer_count += 1
+        self.salary = 0.95 * self.price * self.efficiency_coefficient
         return FirmAction(self.offer_count, self.salary, self.stock, self.price, 0, 0, [])

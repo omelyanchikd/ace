@@ -63,7 +63,7 @@ class RuleFirm(Firm):
         self.salary = self.salary if self.salary > 0 else 0
         #self.price *= (1 + self.price_change)
         self.price = 1.05 * self.salary / self.efficiency_coefficient
-        self.plan *= (1 + self.get_parameter(self.rules_plan, state))
+        self.plan = (1 + self.get_parameter(self.rules_plan, state)) * self.plan - self.stock
         self.plan = self.plan if self.plan > 0 else 0
         self.salary_change = change(self.salary, self.prev_salary)
         self.price_change = change(self.price, self.prev_price)
