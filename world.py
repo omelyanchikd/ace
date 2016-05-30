@@ -97,7 +97,7 @@ class World:
                 # print(firm)
                 firm.work()
                 # print(firm)
-                #self.firm_actions[firm.id] = firm.decide(self.stats)
+                self.firm_actions[firm.id].production_count = firm.stock
             for j in range(birth_rate):
                 worker = Worker(len(self.workers))
                 self.workers.append(worker)

@@ -24,9 +24,6 @@ class Firm:
         for worker in self.workers:
             self.stock += worker.productivity * self.efficiency_coefficient
             self.money -= worker.salary
-        # this should be rewritten, when the correct order of actions in world would be achieved
-        self.sold = len(self.workers) * self.efficiency_coefficient
-        self.sales = self.sold * self.price
 
     def apply_result(self, result):
         """
