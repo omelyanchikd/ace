@@ -30,8 +30,8 @@
     }
   },
   "algorithms": {
-    "RuleFirm": 2,
-    "StupidFirm": 8
+    "RuleFirm": 1,
+    "DianaFirm": 1
   },
   "visualise": true
 }

@@ -5,8 +5,6 @@ from firm_action import FirmAction
 class BasicFirm(Firm):
     def __init__(self, id):
         super().__init__(id)
-        self.current_salary = 2000
 
     def decide(self, stats):
-        self.current_salary = 2000
-        return FirmAction(50, self.current_salary, self.stock, 10, 0, 0, [])
+        return FirmAction(1, self.current_salary, self.stock, self.price, 0, 0, [])
