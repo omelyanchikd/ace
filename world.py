@@ -1,6 +1,7 @@
 from abc import ABCMeta
 
 import algorithms
+
 from history import History
 from worker import Worker
 from stats import Stats
@@ -83,7 +84,7 @@ class World:
         birth_rate = self.config['global']['birth_rate']
         money_growth = self.config['global']['money_growth']
         for i, firm in enumerate(self.firms):
-            self.firm_actions[firm.id] = FirmAction(0, firm.salary, firm.stock, firm.price, 0, 0, [])
+            self.firm_actions[firm.id] = FirmAction(0, firm.salary, firm.efficiency_coefficient * len(firm.workers), firm.price, 0, 0, [])
         for step in range(self.steps):
             # print("Step:", step)
             self.compute_stats()
@@ -97,7 +98,7 @@ class World:
                 # print(firm)
                 firm.work()
                 # print(firm)
-                self.firm_actions[firm.id].production_count = firm.stock
+                #self.firm_actions[firm.id].production_count = firm.stock
             for j in range(birth_rate):
                 worker = Worker(len(self.workers))
                 self.workers.append(worker)

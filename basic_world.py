@@ -3,7 +3,9 @@ import random
 import numpy
 
 from firm import Firm
-from firm_result import FirmResult
+#from firm_result import FirmResult
+from firm_labormarket_result import FirmLaborMarketResult
+from firm_goodmarket_result import FirmGoodMarketResult
 from worker import Worker
 from world import World
 
@@ -35,7 +37,9 @@ class BasicWorld(World):
                                                     sales[firm.id])
 
     def manage_job_offers(self):
-        salaries = numpy.array(list(firm_action.salary for firm_action in self.firm_actions))
+        initial_salaries = numpy.array(list(firm_action.salary if firm_action.salary >= 0 else 0
+                                            for firm_action in self.firm_labormarket_actions))
+        salaries = numpy.array(list(firm_action.salary for firm_action in self.firm_labormarket_actions))
         max_salary = max(salaries)
 
         quited = [[] for i in range(len(self.firms))]
@@ -56,21 +60,24 @@ class BasicWorld(World):
                 new_workers[employer.id].append(worker)
                 if worker.employer is not None:
                     quited[worker.employer].append(worker)
-            if self.firm_actions[employer.id].offer_count == len(new_workers[employer.id]):
+            if self.firm_labormarket_actions[employer.id].offer_count == len(new_workers[employer.id]):
                 salaries[employer.id] = 0
 
-        return new_workers, quited
+        for firm in self.firms:
+            self.firm_labormarket_results[firm.id] = FirmLaborMarketResult(new_workers[firm.id], quited[firm.id], initial_salaries[firm.id])
+
+
 
     def manage_sales(self):
         # Basic selection algorithm for good market
-        prices = numpy.array(list(firm_action.price if firm_action.price >= 0 else 0 for firm_action in self.firm_actions))
+        prices = numpy.array(list(firm_action.price if firm_action.price >= 0 else 0 for firm_action in self.firm_goodmarket_actions))
         inverted_prices = numpy.array(list(invert(x) for x in prices))
         sales = [0] * len(self.firms)
         money = self.money
         for firm in self.firms:
-            if self.firm_actions[firm.id].production_count > self.firms[firm.id].stock:
-                self.firm_actions[firm.id].production_count = self.firms[firm.id].stock
-        production_counts = numpy.array(list(firm_action.production_count for firm_action in self.firm_actions))
+            if self.firm_goodmarket_actions[firm.id].production_count > self.firms[firm.id].stock:
+                self.firm_goodmarket_actions[firm.id].production_count = self.firms[firm.id].stock
+        production_counts = numpy.array(list(firm_action.production_count for firm_action in self.firm_goodmarket_actions))
         while sum(prices) > 0 and money > 0:
             seller = numpy.random.choice(self.firms, replace=False, p=inverted_prices / sum(inverted_prices))
             assert isinstance(seller, Firm)
@@ -81,7 +88,8 @@ class BasicWorld(World):
             if production_counts[seller.id] <= 0:
                 prices[seller.id] = 0
                 inverted_prices[seller.id] = 0
-        return sales
+        for firm in self.firms:
+            self.firm_goodmarket_results[firm.id] = FirmGoodMarketResult(sales[firm.id])
 
     def fire(self):
         fired_workers = list(firm_action.fire_people for firm_action in self.firm_actions)

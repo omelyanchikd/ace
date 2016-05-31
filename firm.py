@@ -68,6 +68,9 @@ class Firm:
     def decide(self, stats):
         pass
 
+    def decide_prices(self, stats):
+        pass
+
     def __str__(self):
         return u"Firm id: {0:d}. Stock: {1:d} Price: {2:d} Money: {3:d} Workers: {4:d}" \
             .format(self.id, self.stock, self.price, self.money, len(self.workers))
