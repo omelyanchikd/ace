@@ -32,9 +32,9 @@ class BasicWorld(World):
 
         sales = self.manage_sales()
         # Aggregate firm results
-        for firm in self.firms:
-            self.firm_results[firm.id] = FirmResult(new_workers[firm.id], quited[firm.id], salaries[firm.id],
-                                                    sales[firm.id])
+        #  for firm in self.firms:
+        #     self.firm_results[firm.id] = FirmResult(new_workers[firm.id], quited[firm.id], salaries[firm.id],
+        #                                            sales[firm.id])
 
     def manage_job_offers(self):
         initial_salaries = numpy.array(list(firm_action.salary if firm_action.salary >= 0 else 0

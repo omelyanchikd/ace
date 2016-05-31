@@ -45,7 +45,19 @@ class World:
         self.firm_actions = [0] * firm_count
         self.firm_results = [0] * firm_count
 
+        self.firm_labormarket_actions = [0] * firm_count
+        self.firm_goodmarket_actions = [0] * firm_count
+
+        self.firm_labormarket_results = [0] * firm_count
+        self.firm_goodmarket_results = [0] * firm_count
+
     def manage_firm_actions(self, firm_actions):
+        pass
+
+    def manage_sales(self):
+        pass
+
+    def manage_job_offers(self):
         pass
 
     def compute_stats(self):
@@ -102,14 +114,18 @@ class World:
             for j in range(birth_rate):
                 worker = Worker(len(self.workers))
                 self.workers.append(worker)
-            self.manage_firm_actions(self.firm_actions)
-            for firm_id, firm_action in enumerate(self.firm_actions):
+            self.manage_sales()
+            for firm_id, firm_action in enumerate(self.firm_goodmarket_actions):
                 firm = self.firms[firm_id]
-                firm.apply_result(self.firm_results[firm_id])
+                firm.apply_goodmarket_result(self.firm_goodmarket_results[firm_id])
                 self.history.add_record(step, firm)
             self.history.add_stats(step, self.stats)  # needs to be rewritten with proper history object in mind
             for i, firm in enumerate(self.firms):
                 self.firm_actions[firm.id] = firm.decide(self.stats)
+            self.manage_job_offers()
+            for firm_id, firm_action in enumerate(self.firm_labormarket_actions):
+                firm = self.firms[firm_id]
+                firm.apply_labormarket_result(self.firm_labormarket_results[firm_id])
             self.money += money_growth
 
         return self.history
