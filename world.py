@@ -6,6 +6,8 @@ from history import History
 from worker import Worker
 from stats import Stats
 from firm_action import FirmAction
+from firm_goodmarket_action import FirmGoodMarketAction
+from firm_labormarket_action import FirmLaborMarketAction
 
 
 
@@ -68,7 +70,6 @@ class World:
         self.stats.salary = 0
         employed = 0
         for firm in self.firms:
-            self.stats.price += firm.price
             self.stats.stock += firm.stock
             self.stats.sold += firm.sold
             self.stats.sales += firm.sales
@@ -76,7 +77,7 @@ class World:
             for worker in firm.workers:
                 self.stats.salary += worker.salary
         if self.stats.sold > 0:
-            self.stats.price /= self.stats.sold
+            self.stats.price = self.stats.sales / self.stats.sold
         else:
             self.stats.price = 0
         if employed > 0:
@@ -95,11 +96,8 @@ class World:
         print("It's alive!!")
         birth_rate = self.config['global']['birth_rate']
         money_growth = self.config['global']['money_growth']
-        for i, firm in enumerate(self.firms):
-            self.firm_actions[firm.id] = FirmAction(0, firm.salary, firm.efficiency_coefficient * len(firm.workers), firm.price, 0, 0, [])
         for step in range(self.steps):
             # print("Step:", step)
-            self.compute_stats()
             for i, firm in enumerate(self.firms):
                 # @todo: enable bankrupt
                 # if firm.money < self.config['global']['bankrupt_rate']:
@@ -110,18 +108,19 @@ class World:
                 # print(firm)
                 firm.work()
                 # print(firm)
-                #self.firm_actions[firm.id].production_count = firm.stock
-            for j in range(birth_rate):
-                worker = Worker(len(self.workers))
-                self.workers.append(worker)
+                self.firm_goodmarket_actions[firm.id] = firm.decide_price(self.stats)
             self.manage_sales()
             for firm_id, firm_action in enumerate(self.firm_goodmarket_actions):
                 firm = self.firms[firm_id]
                 firm.apply_goodmarket_result(self.firm_goodmarket_results[firm_id])
                 self.history.add_record(step, firm)
+            self.compute_stats()
             self.history.add_stats(step, self.stats)  # needs to be rewritten with proper history object in mind
+            for j in range(birth_rate):
+                worker = Worker(len(self.workers))
+                self.workers.append(worker)
             for i, firm in enumerate(self.firms):
-                self.firm_actions[firm.id] = firm.decide(self.stats)
+                self.firm_labormarket_actions[firm.id] = firm.decide_salary(self.stats)
             self.manage_job_offers()
             for firm_id, firm_action in enumerate(self.firm_labormarket_actions):
                 firm = self.firms[firm_id]

@@ -53,6 +53,7 @@ class Firm:
             self.add_worker(worker, result.salary)
 
     def apply_goodmarket_result(self, result):
+        self.salary = 0
         for worker in self.workers:
             self.salary += worker.salary
         self.sold = result.sold_count
@@ -85,7 +86,10 @@ class Firm:
     def decide(self, stats):
         pass
 
-    def decide_prices(self, stats):
+    def decide_price(self, stats):
+        pass
+
+    def decide_salary(self, stats):
         pass
 
     def __str__(self):

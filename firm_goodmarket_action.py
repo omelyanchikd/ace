@@ -1,5 +1,5 @@
 class FirmGoodMarketAction:
-    def __init__(self, job_offer_count, salary, fire_people):
-        self.offer_count = job_offer_count
-        self.salary = salary
-        self.fire_people = fire_people
+    def __init__(self, production_count, price, marketing):
+        self.production_count = production_count
+        self.price = price
+        self.marketing = marketing
