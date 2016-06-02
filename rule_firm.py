@@ -1,5 +1,7 @@
 from firm import Firm
 from firm_action import FirmAction
+from firm_labormarket_action import FirmLaborMarketAction
+from firm_goodmarket_action import FirmGoodMarketAction
 
 import random
 import math
@@ -44,7 +46,7 @@ class RuleFirm(Firm):
         self.offer_count = 0
 
 
-    def decide(self, stats):
+    def decide_salary(self, stats):
         self.profit_change = change(self.profit, self.prev_profit)
         self.sales_change = change(self.sales, self.prev_sales)
         self.sold_change = change(self.sold, self.prev_sold)
@@ -73,7 +75,10 @@ class RuleFirm(Firm):
         while self.offer_count < 0:
             self.fire_worker(random.choice(list(self.workers)))
             self.offer_count += 1
-        return FirmAction(self.offer_count, self.salary, self.stock, self.price, 0, 0, [])
+        return FirmLaborMarketAction(self.offer_count, self.salary, [])
+
+    def decide_price(self, stats):
+        return FirmGoodMarketAction(self.stock, self.price, 0)
 
     def get_parameter(self, rules, state):
         for rule in rules:

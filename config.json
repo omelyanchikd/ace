@@ -30,7 +30,9 @@
     }
   },
   "algorithms": {
-    "BasicFirm": 10
+    "BasicFirm": 6,
+    "DianaFirm": 2,
+    "RuleFirm": 2
   },
   "visualise": true
 }

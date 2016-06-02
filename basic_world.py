@@ -37,9 +37,10 @@ class BasicWorld(World):
         #                                            sales[firm.id])
 
     def manage_job_offers(self):
-        initial_salaries = numpy.array(list(firm_action.salary if firm_action.salary >= 0 else 0
-                                            for firm_action in self.firm_labormarket_actions))
-        salaries = numpy.array(list(firm_action.salary for firm_action in self.firm_labormarket_actions))
+        initial_salaries = numpy.array(list(firm_action.salary if firm_action.salary >= 0 and firm_action.offer_count > 0
+                                            else 0 for firm_action in self.firm_labormarket_actions))
+        salaries = numpy.array(list(firm_action.salary if firm_action.salary > 0 else 0
+                                    for firm_action in self.firm_labormarket_actions))
         max_salary = max(salaries)
 
         quited = [[] for i in range(len(self.firms))]
@@ -70,7 +71,8 @@ class BasicWorld(World):
 
     def manage_sales(self):
         # Basic selection algorithm for good market
-        prices = numpy.array(list(firm_action.price if firm_action.price >= 0 else 0 for firm_action in self.firm_goodmarket_actions))
+        prices = numpy.array(list(firm_action.price if firm_action.price >= 0 and firm_action.production_count > 0
+                                  else 0 for firm_action in self.firm_goodmarket_actions))
         inverted_prices = numpy.array(list(invert(x) for x in prices))
         sales = [0] * len(self.firms)
         money = self.money
