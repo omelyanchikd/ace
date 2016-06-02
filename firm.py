@@ -53,15 +53,15 @@ class Firm:
             self.add_worker(worker, result.salary)
 
     def apply_goodmarket_result(self, result):
-        self.salary = 0
+        total_salary = 0
         for worker in self.workers:
-            self.salary += worker.salary
+            total_salary += worker.salary
         self.sold = result.sold_count
         self.stock -= result.sold_count
         self.sales = self.price * result.sold_count
-        self.profit = self.sales - self.salary
+        self.profit = self.sales - total_salary
         if len(self.workers) > 0:
-            self.salary /= len(self.workers)
+            self.salary = total_salary / len(self.workers)
         self.money += self.price * result.sold_count
 
     def add_worker(self, worker, salary):

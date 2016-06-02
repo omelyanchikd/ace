@@ -39,7 +39,7 @@ class BasicWorld(World):
     def manage_job_offers(self):
         initial_salaries = numpy.array(list(firm_action.salary if firm_action.salary >= 0 and firm_action.offer_count > 0
                                             else 0 for firm_action in self.firm_labormarket_actions))
-        salaries = numpy.array(list(firm_action.salary if firm_action.salary > 0 else 0
+        salaries = numpy.array(list(firm_action.salary if firm_action.salary > 0 and firm_action.offer_count > 0 else 0
                                     for firm_action in self.firm_labormarket_actions))
         max_salary = max(salaries)
 
