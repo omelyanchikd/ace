@@ -82,10 +82,10 @@ class RuleFirm(Firm):
 
     def get_parameter(self, rules, state):
         for rule in rules:
-            for i in range(0, 2 * len(state) - 2, 2):
+            for i in range(0, 2 * len(state), 2):
                 if state[i//2] < rule[i] or state[i//2] >= rule[i+1]:
                     break
-            if i == 2 * len(state) - 2:
-                return random.uniform(rule[2 * len(state) - 2], rule[2 * len(state) - 1])
+            if i == 2 * len(state):
+                return random.uniform(rule[2 * len(state)], rule[2 * len(state) + 1])
         select = random.randint(0, len(rules) - 1)
-        return random.uniform(rules[select][2 * len(state) - 2], rules[select][2 * len(state) - 1])
+        return random.uniform(rules[select][2 * len(state)], rules[select][2 * len(state) + 1])

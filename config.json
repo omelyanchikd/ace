@@ -30,7 +30,7 @@
     }
   },
   "algorithms": {
-    "BasicFirm": 6,
+    "RuleFirm": 6,
     "DianaFirm": 2,
     "MosesFirm": 2
   },
