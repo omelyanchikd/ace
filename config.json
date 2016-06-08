@@ -32,7 +32,7 @@
   "algorithms": {
     "RuleFirm": 6,
     "DianaFirm": 2,
-    "MosesFirm": 2
+    "NonconsciousFirm": 2
   },
   "visualise": true
 }
