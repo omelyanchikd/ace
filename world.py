@@ -1,9 +1,14 @@
 from abc import ABCMeta
 
 import algorithms
+
 from history import History
 from worker import Worker
 from stats import Stats
+from firm_action import FirmAction
+from firm_goodmarket_action import FirmGoodMarketAction
+from firm_labormarket_action import FirmLaborMarketAction
+
 
 
 class World:
@@ -42,7 +47,19 @@ class World:
         self.firm_actions = [0] * firm_count
         self.firm_results = [0] * firm_count
 
+        self.firm_labormarket_actions = [0] * firm_count
+        self.firm_goodmarket_actions = [0] * firm_count
+
+        self.firm_labormarket_results = [0] * firm_count
+        self.firm_goodmarket_results = [0] * firm_count
+
     def manage_firm_actions(self, firm_actions):
+        pass
+
+    def manage_sales(self):
+        pass
+
+    def manage_job_offers(self):
         pass
 
     def compute_stats(self):
@@ -50,15 +67,17 @@ class World:
         self.stats.stock = 0
         self.stats.sales = 0
         self.stats.sold = 0
+        self.stats.salary = 0
         employed = 0
         for firm in self.firms:
-            self.stats.price += firm.price
             self.stats.stock += firm.stock
             self.stats.sold += firm.sold
             self.stats.sales += firm.sales
             employed += len(firm.workers)
+            for worker in firm.workers:
+                self.stats.salary += worker.salary
         if self.stats.sold > 0:
-            self.stats.price /= self.stats.sold
+            self.stats.price = self.stats.sales / self.stats.sold
         else:
             self.stats.price = 0
         if employed > 0:
@@ -72,6 +91,8 @@ class World:
         if len(self.workers) > 0:
             self.stats.unemployment_rate = unemployed / len(self.workers)
         self.stats.money = self.money
+        self.stats.expected_sales_growth = self.config['global']['money_growth']/self.money
+        self.stats.expected_sold_growth = 0.05
 
     def go(self):
         print("It's alive!!")
@@ -79,7 +100,6 @@ class World:
         money_growth = self.config['global']['money_growth']
         for step in range(self.steps):
             # print("Step:", step)
-            self.compute_stats()
             for i, firm in enumerate(self.firms):
                 # @todo: enable bankrupt
                 # if firm.money < self.config['global']['bankrupt_rate']:
@@ -90,16 +110,23 @@ class World:
                 # print(firm)
                 firm.work()
                 # print(firm)
-                self.firm_actions[firm.id] = firm.decide(self.stats)
+                self.firm_goodmarket_actions[firm.id] = firm.decide_price(self.stats)
+            self.manage_sales()
+            for firm_id, firm_action in enumerate(self.firm_goodmarket_actions):
+                firm = self.firms[firm_id]
+                firm.apply_goodmarket_result(self.firm_goodmarket_results[firm_id])
+                self.history.add_record(step, firm)
+            self.compute_stats()
+            self.history.add_stats(step, self.stats)  # needs to be rewritten with proper history object in mind
             for j in range(birth_rate):
                 worker = Worker(len(self.workers))
                 self.workers.append(worker)
-            self.manage_firm_actions(self.firm_actions)
-            for firm_id, firm_action in enumerate(self.firm_actions):
+            for i, firm in enumerate(self.firms):
+                self.firm_labormarket_actions[firm.id] = firm.decide_salary(self.stats)
+            self.manage_job_offers()
+            for firm_id, firm_action in enumerate(self.firm_labormarket_actions):
                 firm = self.firms[firm_id]
-                firm.apply_result(self.firm_results[firm_id])
-                self.history.add_record(step, firm)
-            self.history.add_stats(step, self.stats)  # needs to be rewritten with proper history object in mind
+                firm.apply_labormarket_result(self.firm_labormarket_results[firm_id])
             self.money += money_growth
 
         return self.history

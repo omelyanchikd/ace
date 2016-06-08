@@ -17,7 +17,7 @@ class Firm:
         self.efficiency_coefficient = 10
         self.current_salary = 200
         self.sales = 0
-        self.salary = 0
+        self.salary = 200
         self.profit = 0
 
     def work(self):
@@ -46,6 +46,24 @@ class Firm:
             self.salary /= len(self.workers)
         self.money += self.price * result.sold_count
 
+    def apply_labormarket_result(self, result):
+        for worker in result.quit_workers:
+            self.remove_worker(worker)
+        for worker in result.new_workers:
+            self.add_worker(worker, result.salary)
+
+    def apply_goodmarket_result(self, result):
+        total_salary = 0
+        for worker in self.workers:
+            total_salary += worker.salary
+        self.sold = result.sold_count
+        self.stock -= result.sold_count
+        self.sales = self.price * result.sold_count
+        self.profit = self.sales - total_salary
+        if len(self.workers) > 0:
+            self.salary = total_salary / len(self.workers)
+        self.money += self.price * result.sold_count
+
     def add_worker(self, worker, salary):
         worker.employer = self.id
         worker.salary = salary
@@ -66,6 +84,12 @@ class Firm:
 
     @abstractmethod
     def decide(self, stats):
+        pass
+
+    def decide_price(self, stats):
+        pass
+
+    def decide_salary(self, stats):
         pass
 
     def __str__(self):

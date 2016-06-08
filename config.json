@@ -1,7 +1,7 @@
 {
   "global": {
     "seed": 100,
-    "steps": 5,
+    "steps": 20,
     "workers_count": 500,
     "birth_rate": 10,
     "initial_money": 100000,
@@ -30,9 +30,9 @@
     }
   },
   "algorithms": {
-    "StupidFirm": 8,
-    "SuperFirm": 1,
-    "DianaFirm": 1
+    "RuleFirm": 6,
+    "DianaFirm": 2,
+    "MosesFirm": 2
   },
   "visualise": true
 }
