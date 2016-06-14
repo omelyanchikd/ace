@@ -30,9 +30,8 @@
     }
   },
   "algorithms": {
-    "RuleFirm": 6,
-    "DianaFirm": 2,
-    "NonconsciousFirm": 2
+    "RandomFirm": 8,
+    "QlearningFirm": 2
   },
   "visualise": true
 }
