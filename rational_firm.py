@@ -12,19 +12,19 @@ def rls(a, p, x, y):
     K = numpy.dot(p, x.T)/(numpy.dot(numpy.dot(x, p),x.T) + 1)
     a = a - K * (numpy.dot(x, a) - y)
     p = p - numpy.dot(K,numpy.dot(x, p))
-    return a, p
+    return a[0], a[1], p
 
 
 class RationalFirm(Firm):
     def __init__(self, id):
         super().__init__(id)
         self.salary = 200
-        self.a = 100
+        self.a = 10000
         self.b = -100
-        self.p1 = 1000
-        self.p2 = 1000
-        self.c = 100
-        self.d = 100
+        self.p1 = numpy.eye(2) * 1000
+        self.p2 = numpy.eye(2) * 1000
+        self.c = 0
+        self.d = 200
         self.plan = 50 * self.efficiency_coefficient
 
     def decide_price(self, stats):
@@ -37,8 +37,14 @@ class RationalFirm(Firm):
         cd = []
         cd.append(self.c)
         cd.append(self.d)
-        self.a, self.b, self.p1 = rls(numpy.array(ab), self.p1, self.sold, self.price)
-        self.c, self.d, self.p2 = rls(numpy.array(cd), self.p1, self.salary, len(self.workers))
+        soldprice = []
+        soldprice.append(1)
+        soldprice.append(self.sold)
+        salaryworkers = []
+        salaryworkers.append(1)
+        salaryworkers.append(self.salary)
+        self.a, self.b, self.p1 = rls(numpy.array(ab), self.p1, numpy.array(soldprice), self.price)
+        self.c, self.d, self.p2 = rls(numpy.array(cd), self.p2, numpy.array(salaryworkers), len(self.workers))
         self.plan = 0.5 * self.efficiency_coefficient * (self.efficiency_coefficient * self.a * self.d + self.c) / (1 +
                 self.b * self.a * self.efficiency_coefficient * self.efficiency_coefficient)
         self.plan = (self.plan - self.stock) // self.efficiency_coefficient * self.efficiency_coefficient
