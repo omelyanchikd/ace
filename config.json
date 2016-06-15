@@ -31,7 +31,7 @@
   },
   "algorithms": {
     "RandomFirm": 8,
-    "QlearningFirm": 2
+    "RationalFirm": 2
   },
   "visualise": true
 }
