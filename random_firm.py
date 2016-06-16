@@ -8,6 +8,9 @@ import random
 class RandomFirm(Firm):
     def __init__(self, id):
         super().__init__(id)
+        self.salary = 200
+
+
 
     def decide_price(self, stats):
         self.price = random.uniform(10, 30)

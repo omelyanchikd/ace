@@ -63,6 +63,7 @@ class World:
         pass
 
     def compute_stats(self):
+        self.stats.f = len(self.firms)
         self.stats.price = 0
         self.stats.stock = 0
         self.stats.sales = 0

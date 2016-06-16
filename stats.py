@@ -10,3 +10,4 @@ class Stats:
         self.money = 0
         self.expected_sales_growth = 0
         self.expected_sold_growth = 0
+        self.f = 0
