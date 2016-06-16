@@ -31,7 +31,7 @@
   },
   "algorithms": {
     "RandomFirm": 8,
-    "RationalFirm": 2
+    "OligopolyFirm": 2
   },
   "visualise": true
 }
