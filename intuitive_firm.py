@@ -24,7 +24,10 @@ class IntuitiveFirm(Firm):
 
 
     def decide_salary(self, stats):
-        self.plan = self.smoothing_coefficient * self.sold + (1 - self.smoothing_coefficient) * numpy.mean(self.history)
+        if self.sold >= self.plan:
+            self.plan = 1.1 *(self.smoothing_coefficient * self.sold + (1 - self.smoothing_coefficient) * numpy.mean(self.history))
+        else:
+            self.plan = self.smoothing_coefficient * self.sold + (1 - self.smoothing_coefficient) * numpy.mean(self.history)
         self.history.append(self.sold)
         self.history = self.history[1:len(self.history)]
         self.offer_count = math.floor(self.plan / self.efficiency_coefficient) - len(self.workers)
@@ -33,6 +36,8 @@ class IntuitiveFirm(Firm):
             self.offer_count += 1
         if len(self.workers) < self.prev_workers + self.offer_count:
             self.salary *= 1.01
+        else:
+            self.salary *= 0.99
         self.price = 1.05 * self.salary/self.efficiency_coefficient
         self.price = self.price if self.price > 0 else 0
         return FirmLaborMarketAction(self.offer_count, self.salary, [])
