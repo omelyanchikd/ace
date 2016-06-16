@@ -30,8 +30,8 @@
     }
   },
   "algorithms": {
-    "RandomFirm": 8,
-    "OligopolyFirm": 2
+    "BasicFirm": 8,
+    "IntuitiveFirm": 2
   },
   "visualise": true
 }
