@@ -1,8 +1,8 @@
 {
   "global": {
     "seed": 100,
-    "steps": 20,
-    "workers_count": 500,
+    "steps": 5,
+    "workers_count": 50,
     "birth_rate": 10,
     "initial_money": 100000,
     "bankrupt_rate": -1000,

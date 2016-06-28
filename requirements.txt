@@ -1,0 +1,4 @@
+plotly
+flask
+gunicorn
+numpy
