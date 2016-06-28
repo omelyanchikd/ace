@@ -18,7 +18,6 @@ local.properties
 
 # External tool builders
 .externalToolBuilders/
-graphs/*.html
 # Locally stored "Eclipse launch configurations"
 *.launch
 
@@ -217,5 +216,4 @@ pip-log.txt
 
 #idea
 .idea/*
-*.html
 
