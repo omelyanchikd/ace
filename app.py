@@ -7,7 +7,7 @@ import algorithms
 from visualise import Visualiser
 
 app = Flask(__name__)
-app.debug = True
+app.debug = False
 app.secret_key = 'non-production-secret-key'
 
 
