@@ -50,7 +50,7 @@ class AnnFirm(Firm):
                                    stats.sold, stats.employed]
         self.scaler.partial_fit(current_data)
         self.scaled_history = self.scaler.transform(current_data)
-        self.neural_network.partial_fit(self.scaled_history, numpy.array(self.profit_history))
+        self.neural_network.partial_fit(self.scaled_history, [self.profit])
         for i in range(0, 100):
             new_parameters, trial_parameters = self.generate_parameters(stats)
             has_profit = self.neural_network.predict(trial_parameters)
