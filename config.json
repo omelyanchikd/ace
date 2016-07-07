@@ -1,7 +1,7 @@
 {
   "global": {
     "seed": 100,
-    "steps": 20,
+    "steps": 100,
     "workers_count": 500,
     "birth_rate": 10,
     "initial_money": 100000,
@@ -31,7 +31,7 @@
   },
   "algorithms": {
     "BasicFirm": 8,
-    "IntuitiveFirm": 2
+    "AnnFirm": 2
   },
   "visualise": true
 }
