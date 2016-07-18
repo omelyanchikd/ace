@@ -2,3 +2,5 @@ plotly
 flask
 gunicorn
 numpy
+wtforms
+flask-wtf

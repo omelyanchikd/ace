@@ -1,20 +1,17 @@
-from flask import Flask, render_template
-
+from flask import Flask, render_template, flash
+from form import AppForm
 import json
 import plotly
 import random
-
 import algorithms
 from visualise import Visualiser
 
-
 app = Flask(__name__)
-app.debug = True
+app.debug = False
+app.secret_key = 'non-production-secret-key'
 
 
-def get_graphs():
-    with open('config.json', 'r') as f:
-        config = json.load(f)
+def get_graphs(config):
     random.seed(config['global']['seed'])
     algorithm_class = config['global']['world_algorithm']
     world_algorithm = getattr(algorithms, algorithm_class)
@@ -31,23 +28,37 @@ def get_graphs():
     return graphs
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
+    form = AppForm()
 
-    graphs = get_graphs()
+    if form.validate_on_submit():
+        with open('config.json', 'r') as f:
+            config = json.load(f)
+        config['global']['steps'] = int(form.steps.data)
+        try:
+            firms = json.loads(form.firms.data)
+        except ValueError as e:
+            flash('Please enter correct json!', 'error')
+            return render_template('form.html',
+                           title='Run app',
+                           form=form)
 
-    # Add "ids" to each of the graphs to pass up to the client
-    # for templating
-    ids = ['graph-{}'.format(i) for i, _ in enumerate(graphs)]
+        print(firms)
+        config['algorithms'] = firms
+        graphs = get_graphs(config)
+        ids = ["graph-{}".format(i) for i, _ in enumerate(graphs)]
+        titles = [graph['layout']['title'] for _, graph in enumerate(graphs)]
+        graph_json = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
 
-    # Convert the figures to JSON
-    # PlotlyJSONEncoder appropriately converts pandas, datetime, etc
-    # objects to their JSON equivalents
-    graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
+        return render_template('index.html',
+                               ids=ids,
+                               graphJSON=graph_json,
+                               titles=titles)
 
-    return render_template('index.html',
-                           ids=ids,
-                           graphJSON=graphJSON)
+    return render_template('form.html',
+                           title='Run app',
+                           form=form)
 
 
 if __name__ == '__main__':

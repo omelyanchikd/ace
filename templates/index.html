@@ -2,25 +2,44 @@
 <html>
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 </head>
 
 <body>
 
-    {% for id in ids %}
-        <h3>{{id}}</h3>
-        <div id="{{id}}"></div>
-    {% endfor %}
+
+<div class="container">
+    <h2>Result graphs</h2>
+    <p><a href = "/">Reset</a></p>
+    <ul class="nav nav-tabs">
+        {% for title in titles %}
+        <li><a data-toggle="tab" href="#menu{{loop.index0}}">{{title}}</a></li>
+        {% endfor %}
+    </ul>
+
+    <div class="tab-content">
+        {% for title in titles %}
+        <div id="menu{{loop.index0}}" class="tab-pane fade">
+            <h3>{{title}}</h3>
+
+            <div id="graph-{{loop.index0}}"></div>
+        </div>
+
+        {% endfor %}
+    </div>
+</div>
 
 </body>
 
 
 <footer>
     <!-- D3.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
     <!-- Plotly.js -->
-    <script src="https://d14fo0winaifog.cloudfront.net/plotly-basic.js"></script>
+    <script src="//d14fo0winaifog.cloudfront.net/plotly-basic.js"></script>
 
     <script type="text/javascript">
 
@@ -32,6 +51,11 @@
                         graphs[i].data,
                         graphs[i].layout || {});
         }
+
+
+
+
+
 
     </script>
 </footer>
