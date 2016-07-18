@@ -31,7 +31,7 @@
   },
   "algorithms": {
     "BasicFirm": 8,
-    "IntuitiveFirm": 2
+    "AnnFirm": 2
   },
   "visualise": true
 }
