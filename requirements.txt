@@ -5,3 +5,4 @@ numpy
 wtforms
 flask-wtf
 sklearn
+scipy
