@@ -1,7 +1,8 @@
 {
   "global": {
+    "output": "output.csv",
     "seed": 100,
-    "steps": 100,
+    "steps": 10000,
     "workers_count": 500,
     "birth_rate": 10,
     "initial_money": 100000,
@@ -30,8 +31,9 @@
     }
   },
   "algorithms": {
-    "BasicFirm": 8,
-    "AnnFirm": 2
+    "BasicFirm": 10,
+    "DianaFirm": 10,
+    "RandomFirm": 10
   },
-  "visualise": true
+  "visualise": false
 }
