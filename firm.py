@@ -23,6 +23,8 @@ class Firm:
         self.profit = 0
         self.output = output
         self.step = 0
+        self.labor_capacity = 50
+        self.type = 'Unknown'
 
     def work(self):
         for worker in self.workers:
@@ -89,7 +91,8 @@ class Firm:
     def save_history(self):
         with open(self.output, "a", newline = '') as output_file:
             writer = csv.writer(output_file, delimiter = ';')
-            writer.writerow((self.id, self.step, self.salary, len(self.workers),self.sold, self.price, self.stock, self.profit))
+            writer.writerow((self.type, self.id, self.step, self.salary, len(self.workers), self.sold, self.price, self.stock, self.profit,
+                             self.sold + self.stock, self.labor_capacity, self.sales))
             output_file.close()
         self.step += 1
 

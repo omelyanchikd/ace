@@ -9,6 +9,7 @@ class RandomFirm(Firm):
     def __init__(self, id):
         super().__init__(id)
         self.salary = 200
+        self.type = 'RandomFirm'
 
 
 
@@ -18,4 +19,5 @@ class RandomFirm(Firm):
 
     def decide_salary(self, stats):
         self.salary = random.uniform(150, 250)
+        self.labor_capacity = len(self.workers) + 1
         return FirmLaborMarketAction(1, self.salary, [])

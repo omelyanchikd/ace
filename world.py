@@ -57,7 +57,8 @@ class World:
 
         with open(config['global']['output'], "w", newline='') as output_file:
             writer = csv.DictWriter(output_file, delimiter=';',
-                                    fieldnames=["firm_id", "step", "salary", "workers", "sold", "price", "stock", "profit"])
+                                    fieldnames=["firm_type", "firm_id", "step", "salary", "workers", "sold", "price", "stock", "profit",
+                                                "product_supply", "labor_demand", "sales"])
             writer.writeheader()
             output_file.close()
 

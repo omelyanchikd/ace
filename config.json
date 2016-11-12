@@ -2,12 +2,12 @@
   "global": {
     "output": "output.csv",
     "seed": 100,
-    "steps": 10000,
+    "steps": 1000,
     "workers_count": 500,
-    "birth_rate": 10,
+    "birth_rate": 0,
     "initial_money": 100000,
     "bankrupt_rate": -1000,
-    "money_growth": 2000,
+    "money_growth": 0,
     "world_algorithm": "BasicWorld",
     "properties_to_plot": {
       "firm": [
@@ -31,9 +31,7 @@
     }
   },
   "algorithms": {
-    "BasicFirm": 10,
-    "DianaFirm": 10,
-    "RandomFirm": 10
+    "DianaFirm": 10
   },
   "visualise": false
 }

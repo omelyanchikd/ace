@@ -14,6 +14,7 @@ class DianaFirm(Firm):
         self.prev_price = 0
         self.salary = 200
         self.offer_count = 0
+        self.type = 'DianaFirm'
 
     def decide_salary(self, stats):
         if self.sold >= self.plan:
@@ -33,6 +34,7 @@ class DianaFirm(Firm):
             self.fire_worker(random.choice(list(self.workers)))
             self.offer_count += 1
         self.salary = 0.95 * self.price * self.efficiency_coefficient
+        self.labor_capacity = self.offer_count + len(self.workers)
         return FirmLaborMarketAction(self.offer_count, self.salary, [])
 
     def decide_price(self, stats):
