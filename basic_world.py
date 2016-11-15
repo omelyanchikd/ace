@@ -80,16 +80,17 @@ class BasicWorld(World):
             if self.firm_goodmarket_actions[firm.id].production_count > self.firms[firm.id].stock:
                 self.firm_goodmarket_actions[firm.id].production_count = self.firms[firm.id].stock
         production_counts = numpy.array(list(firm_action.production_count for firm_action in self.firm_goodmarket_actions))
-        while sum(prices) > 0 and money > 0:
+        while sum(prices) > 0 and money > 0 and money >= min([price for price in prices if price != 0]):
             seller = numpy.random.choice(self.firms, replace=False, p=inverted_prices / sum(inverted_prices))
             assert isinstance(seller, Firm)
 
             sales[seller.id] += 1
             production_counts[seller.id] -= 1
-            money -= prices[seller.id]
-            if production_counts[seller.id] <= 0:
-                prices[seller.id] = 0
-                inverted_prices[seller.id] = 0
+            if money >- prices[seller.id]:
+                money -= prices[seller.id]
+                if production_counts[seller.id] <= 0:
+                    prices[seller.id] = 0
+                    inverted_prices[seller.id] = 0
         for firm in self.firms:
             self.firm_goodmarket_results[firm.id] = FirmGoodMarketResult(sales[firm.id])
 
