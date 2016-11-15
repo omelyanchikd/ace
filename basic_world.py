@@ -84,9 +84,9 @@ class BasicWorld(World):
             seller = numpy.random.choice(self.firms, replace=False, p=inverted_prices / sum(inverted_prices))
             assert isinstance(seller, Firm)
 
-            sales[seller.id] += 1
-            production_counts[seller.id] -= 1
-            if money >- prices[seller.id]:
+            if money >= prices[seller.id]:
+                sales[seller.id] += 1
+                production_counts[seller.id] -= 1
                 money -= prices[seller.id]
                 if production_counts[seller.id] <= 0:
                     prices[seller.id] = 0

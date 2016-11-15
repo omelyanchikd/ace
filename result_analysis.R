@@ -9,12 +9,14 @@ table[table$inverse.sold == 'Inf' | table$inverse.sold == 'NaN', 'inverse.sold' 
 
 require(ggplot2)
 
-ggplot(table[table$step == 100,], aes(x = price, y = sold)) + geom_point(aes(colour = step))
+table$step <- as.integer(table$step)
+
+ggplot(table[table$step < 100,], aes(x = price, y = sold)) + geom_point(aes(colour = step))
 
 ggplot(table, aes(x = price, y = sold)) + geom_point(aes(colour = step)) + 
   stat_smooth() + theme_bw()
 
-ggplot(table, aes(x = workers, y = salary)) + geom_point(aes(colour = step)) + 
+ggplot(table[table$step < 100,], aes(x = salary, y = workers)) + geom_point(aes(colour = step)) + 
   stat_smooth() + theme_bw()
 
 fit <- lm(price ~ inverse.sold, table)
@@ -29,7 +31,8 @@ table_melt <- melt(table[ c('firm_id', 'step', 'px', 'ax')], id.vars = c('firm_i
 
 table_melt_11 <- table_melt[table$firm_id == '11',]
 
-ggplot(table_melt, aes(x = step, y = value)) + geom_line(aes(color = factor(variable)), stat = 'identity')
+ggplot(table_melt[table_melt$step < 100,], aes(x = step, y = value)) + 
+  geom_line(aes(color = factor(variable)), stat = 'identity')
 
 test <- split(table, table$firm_id)
 
@@ -48,7 +51,7 @@ ggplot(table.with.mx, aes(x = step, y = mx)) + geom_point()
 
 table_melt <- melt(table.with.mx[, c('firm_id', 'step', 'ax', 'mx')], id.vars = c('firm_id', 'step'))
 
-ggplot(table_melt, aes(x = step, y = value, 
+ggplot(table_melt[table_melt$step < 100,], aes(x = step, y = value, 
           group = variable)) + geom_point(aes(colour = variable)) + stat_smooth()
 
 table_melt <- melt(table[, c('firm_id', 'step', 'sold', 'price', 'product_supply')],
@@ -63,7 +66,7 @@ require(plyr)
 totals <- ddply(table, 'step', summarise, total_sold = sum(sold * price), 
                 total_supply = sum(product_supply * price))
 
-totals$demand <- 100000 + as.numeric(totals$step)* 2000
+totals$demand <- 100000
 
 totals_melt <- melt(totals, id.vars = 'step')
 
