@@ -40,4 +40,5 @@ class IntuitiveFirm(Firm):
             self.salary *= 0.99
         self.price = 1.05 * self.salary/self.efficiency_coefficient
         self.price = self.price if self.price > 0 else 0
+        self.labor_capacity = len(self.workers) + self.offer_count
         return FirmLaborMarketAction(self.offer_count, self.salary, [])

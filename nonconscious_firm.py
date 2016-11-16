@@ -58,6 +58,7 @@ class NonconsciousFirm(Firm):
             self.fire_worker(random.choice(list(self.workers)))
             self.offer_count += 1
         self.salary = 0.95 * self.price * self.efficiency_coefficient
+        self.labor_capacity = len(self.workers) + self.offer_count
         return FirmLaborMarketAction(self.offer_count, self.salary, [])
 
     def decide_price(self, stats):

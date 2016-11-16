@@ -31,7 +31,7 @@
     }
   },
   "algorithms": {
-    "DianaFirm": 10
+    "QlearningFirm": 10
   },
   "visualise": true
 }

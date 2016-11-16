@@ -46,4 +46,5 @@ class RationalFirm(Firm):
         self.price = self.price if self.price > 0 else 0
         self.salary = self.plan / (self.d * self.efficiency_coefficient)
         self.salary = self.salary if self.salary > 0 else 0
+        self.labor_capacity = len(self.workers) + self.offer_count
         return FirmLaborMarketAction(self.offer_count, self.salary, [])
