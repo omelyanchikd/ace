@@ -57,6 +57,9 @@ ggplot(table_melt[table_melt$step < 100,], aes(x = step, y = value,
 table_melt <- melt(table[, c('firm_id', 'step', 'sold', 'price', 'product_supply')],
                    id.vars = c('firm_id', 'price', 'step'))
 
+table_melt$price <- as.numeric(table_melt$price)
+table_melt$value <- as.numeric(table_melt$value)
+
 ggplot(table_melt, aes(x = price, y = value, group = variable)) +
          geom_point(aes(colour = variable)) + stat_smooth()
 
