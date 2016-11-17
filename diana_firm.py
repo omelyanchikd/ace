@@ -34,7 +34,7 @@ class DianaFirm(Firm):
             self.fire_worker(random.choice(list(self.workers)))
             self.offer_count += 1
         total_salary = sum([worker.salary for worker in self.workers])
-        self.salary = 0.95 * (self.price * len(self.workers) * self.efficiency_coefficient -
+        self.salary = 0.95 * (self.price * (len(self.workers) + self.offer_count) * self.efficiency_coefficient -
                               total_salary)/self.offer_count if self.offer_count > 0 else self.salary
         self.labor_capacity = self.offer_count + len(self.workers)
         return FirmLaborMarketAction(self.offer_count, self.salary, [])
