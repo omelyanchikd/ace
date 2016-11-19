@@ -101,7 +101,7 @@ class World:
         if len(self.workers) > 0:
             self.stats.unemployment_rate = unemployed / len(self.workers)
         self.stats.money = self.money
-        self.stats.expected_sales_growth = self.config['global']['money_growth']/self.money
+#        self.stats.expected_sales_growth = self.config['global']['money_growth']/self.money
         self.stats.expected_sold_growth = 0.05
 
     def go(self):
