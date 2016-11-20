@@ -95,7 +95,7 @@ class NewFirm(Firm):
 
         total_salary = sum([worker.salary for worker in self.workers])
 
-        max_profit = plan_stable_probability * price_stable_probability * salary_stable_probability * self.profit
+        max_profit = price_stable_probability * self.profit
         max_price = self.price
         max_plan = self.plan
         max_salary = self.salary
@@ -105,25 +105,26 @@ class NewFirm(Firm):
                              (self.plan - self.stock) // self.efficiency_coefficient * self.efficiency_coefficient,
                              (self.plan - self.stock) // self.efficiency_coefficient * self.efficiency_coefficient + self.efficiency_coefficient]:
                 for new_salary in [0.95 * self.salary, self.salary, 1.05 * self.salary]:
-                    new_profit = new_price * new_plan - total_salary - new_salary
                     if new_price > self.price:
-                        new_profit *= price_increase_probability
+                        price_probability = price_increase_probability
                     elif new_price < self.price:
-                        new_profit *= price_decrease_probability
+                        price_probability = price_decrease_probability
                     else:
-                        new_profit *= price_stable_probability
+                        price_probability = price_stable_probability
                     if new_plan > self.plan:
-                        new_profit *= plan_increase_probability
+                        plan_probability = plan_increase_probability
                     elif new_plan < self.plan:
-                        new_profit *= plan_decrease_probability
+                        plan_probability = plan_decrease_probability
                     else:
-                        new_profit *= plan_stable_probability
+                        plan_probability = plan_stable_probability
                     if new_salary > self.salary:
-                        new_profit *= salary_increase_probability
+                        salary_probability = salary_increase_probability
                     elif new_salary < self.salary:
-                        new_profit *= salary_decrease_probability
+                        salary_probability = salary_decrease_probability
                     else:
-                        new_profit *= salary_stable_probability
+                        salary_probability = salary_stable_probability
+                    new_profit = price_probability * (new_price * plan_probability * new_plan - total_salary -
+                                                      salary_probability * new_salary)
                     if new_profit > max_profit:
                         max_price = new_price
                         max_salary = new_salary
