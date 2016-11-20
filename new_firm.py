@@ -25,6 +25,7 @@ class NewFirm(Firm):
         self.prev_price = 20
         self.prev_salary = 200
         self.prev_plan = 50 * self.efficiency_coefficient
+        self.prev_workers = 50
         self.plan = 50 * self.efficiency_coefficient
 
 
@@ -49,32 +50,32 @@ class NewFirm(Firm):
             else:
                 self.price_stable_history.append(0)
         if self.prev_plan < self.plan:
-            if self.profit >= 0:
+            if self.sold >= self.plan:
                 self.plan_increase_history.append(1)
             else:
                 self.plan_increase_history.append(0)
         if self.prev_plan > self.plan:
-            if self.profit >= 0:
+            if self.sold >= self.plan:
                 self.plan_decrease_history.append(1)
             else:
                 self.plan_decrease_history.append(0)
         if self.prev_salary < self.salary:
-            if self.profit >= 0:
+            if len(self.workers) == self.prev_workers + self.offer_count:
                 self.salary_increase_history.append(1)
             else:
                 self.salary_increase_history.append(0)
         if self.prev_salary > self.salary:
-            if self.profit >= 0:
+            if len(self.workers) == self.prev_workers + self.offer_count:
                 self.salary_decrease_history.append(1)
             else:
                 self.salary_decrease_history.append(0)
         if self.prev_plan == self.plan:
-            if self.profit >= 0:
+            if self.sold >= self.plan:
                 self.plan_stable_history.append(1)
             else:
                 self.plan_stable_history.append(0)
         if self.prev_salary == self.salary:
-            if self.profit >= 0:
+            if len(self.workers) == self.prev_workers + self.offer_count:
                 self.salary_stable_history.append(1)
             else:
                 self.salary_stable_history.append(0)
@@ -100,7 +101,9 @@ class NewFirm(Firm):
         max_salary = self.salary
 
         for new_price in [0.95 * self.price, self.price, 1.05 * self.price]:
-            for new_plan in [self.plan - self.efficiency_coefficient, self.plan, self.plan + self.efficiency_coefficient]:
+            for new_plan in [(self.plan - self.stock) // self.efficiency_coefficient * self.efficiency_coefficient - self.efficiency_coefficient,
+                             (self.plan - self.stock) // self.efficiency_coefficient * self.efficiency_coefficient,
+                             (self.plan - self.stock) // self.efficiency_coefficient * self.efficiency_coefficient + self.efficiency_coefficient]:
                 for new_salary in [0.95 * self.salary, self.salary, 1.05 * self.salary]:
                     new_profit = new_price * new_plan - total_salary - new_salary
                     if new_price > self.price:
@@ -129,6 +132,8 @@ class NewFirm(Firm):
         self.price = max_price
         self.salary = max_salary
         self.plan = max_plan
+
+        self.plan = self.plan if self.plan > 0 else self.efficiency_coefficient
 
         self.offer_count = self.plan // self.efficiency_coefficient - len(self.workers)
         while self.offer_count < 0:
