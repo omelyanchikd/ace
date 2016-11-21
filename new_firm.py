@@ -13,15 +13,15 @@ class NewFirm(Firm):
         super().__init__(id)
         self.salary = 200
         self.offer_count = 0
-        self.price_increase_history = [1]
-        self.plan_increase_history = [1]
-        self.salary_increase_history  = [1]
-        self.price_decrease_history = [1]
-        self.plan_decrease_history = [1]
-        self.salary_decrease_history = [1]
-        self.price_stable_history = [1]
-        self.plan_stable_history = [1]
-        self.salary_stable_history = [1]
+        self.price_increase_history = [0, 0, 1]
+        self.plan_increase_history = [0, 0, 1]
+        self.salary_increase_history  = [0, 0, 1]
+        self.price_decrease_history = [0, 0, 1]
+        self.plan_decrease_history = [0, 0, 1]
+        self.salary_decrease_history = [0, 0, 1]
+        self.price_stable_history = [0, 0, 1]
+        self.plan_stable_history = [0, 0, 1]
+        self.salary_stable_history = [0, 0, 1]
         self.prev_price = 20
         self.prev_salary = 200
         self.prev_plan = 50 * self.efficiency_coefficient
@@ -123,8 +123,8 @@ class NewFirm(Firm):
                         salary_probability = salary_decrease_probability
                     else:
                         salary_probability = salary_stable_probability
-                    new_profit = price_probability * (new_price * plan_probability * new_plan - total_salary -
-                                                      salary_probability * new_salary)
+                    new_profit = price_probability * (new_price * plan_probability * salary_probability * new_plan - total_salary -
+                                                      new_salary)
                     if new_profit > max_profit:
                         max_price = new_price
                         max_salary = new_salary
