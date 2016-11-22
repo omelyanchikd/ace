@@ -95,10 +95,14 @@ class NewFirm(Firm):
 
         total_salary = sum([worker.salary for worker in self.workers])
 
-        max_profit = price_stable_probability * self.profit
+        max_profit = price_stable_probability * (self.price * plan_stable_probability * self.plan - total_salary -
+                                          salary_stable_probability * self.salary)
         max_price = self.price
         max_plan = self.plan
         max_salary = self.salary
+
+        expectations = []
+        expected_profits = []
 
         for new_price in [0.95 * self.price, self.price, 1.05 * self.price]:
             for new_plan in [(self.plan - self.stock) // self.efficiency_coefficient * self.efficiency_coefficient - self.efficiency_coefficient,
@@ -125,15 +129,18 @@ class NewFirm(Firm):
                         salary_probability = salary_stable_probability
                     new_profit = price_probability * (new_price * plan_probability * new_plan - total_salary -
                                                       salary_probability * new_salary)
-                    if new_profit > max_profit:
-                        max_price = new_price
-                        max_salary = new_salary
-                        max_plan = new_plan
-                        max_profit = new_profit
-        self.price = max_price
-        self.salary = max_salary
-        self.plan = max_plan
 
+                    expectations.append((new_price, new_salary, new_plan))
+                    expected_profits.append(new_profit)
+                   # if new_profit > max_profit:
+                   #     max_price = new_price
+                   #     max_salary = new_salary
+                   #     max_plan = new_plan
+                   #     max_profit = new_profit
+
+
+        expected_profits = numpy.array(list(expected_profits - min(expected_profits) + 1))
+        self.price, self.salary, self.plan = expectations[numpy.random.choice(len(expectations), replace=False, p=expected_profits / sum(expected_profits))]
         self.plan = self.plan if self.plan > 0 else self.efficiency_coefficient
 
         self.offer_count = self.plan // self.efficiency_coefficient - len(self.workers)
