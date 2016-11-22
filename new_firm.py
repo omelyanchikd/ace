@@ -127,8 +127,8 @@ class NewFirm(Firm):
                         salary_probability = salary_decrease_probability
                     else:
                         salary_probability = salary_stable_probability
-                    new_profit = price_probability * (new_price * plan_probability * new_plan - total_salary -
-                                                      salary_probability * new_salary)
+                    new_profit = price_probability * (new_price * new_salary * plan_probability * new_plan - total_salary -
+                                                      salary_probability)
 
                     expectations.append((new_price, new_salary, new_plan))
                     expected_profits.append(new_profit)
