@@ -1,4 +1,5 @@
 import csv
+import math
 
 from abc import ABCMeta, abstractmethod
 
@@ -30,6 +31,7 @@ class Firm:
         for worker in self.workers:
             self.stock += worker.productivity * self.efficiency_coefficient
             self.money -= worker.salary
+        #self.stock += self.efficiency_coefficient * math.log(len(self.workers) + 2)
 
     def apply_result(self, result):
         """

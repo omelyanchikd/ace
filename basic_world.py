@@ -93,6 +93,11 @@ class BasicWorld(World):
                 if production_counts[seller.id] <= 0:
                     prices[seller.id] = 0
                     inverted_prices[seller.id] = 0
+
+        #if total_sold < 2000:
+           # sales = [0] * len(sales)
+            #for firm in self.firms:
+            #    firm.stock = 0
         for firm in self.firms:
             self.firm_goodmarket_results[firm.id] = FirmGoodMarketResult(sales[firm.id])
         #self.money = 1.5 * total_sold * 20 if total_sold > 0 else 1000

@@ -2,7 +2,7 @@
   "global": {
     "output": "output.csv",
     "seed": 100,
-    "steps": 1000,
+    "steps": 10000,
     "workers_count": 500,
     "birth_rate": 0,
     "initial_money": 100000,
@@ -31,7 +31,8 @@
     }
   },
   "algorithms": {
-    "NewFirm": 10
+    "NewFirm": 10,
+    "BasicFirm": 10
   },
   "visualise": true
 }
