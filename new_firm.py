@@ -13,15 +13,15 @@ class NewFirm(Firm):
         super().__init__(id)
         self.salary = 200
         self.offer_count = 0
-        self.price_increase_history = [1]
-        self.plan_increase_history = [1]
-        self.salary_increase_history  = [1]
-        self.price_decrease_history = [1]
-        self.plan_decrease_history = [1]
-        self.salary_decrease_history = [1]
-        self.price_stable_history = [1]
-        self.plan_stable_history = [1]
-        self.salary_stable_history = [1]
+        self.price_increase_history = [0, 0, 1]
+        self.plan_increase_history = [0, 0, 1]
+        self.salary_increase_history  = [0, 0, 1]
+        self.price_decrease_history = [0, 0, 1]
+        self.plan_decrease_history = [0, 0, 1]
+        self.salary_decrease_history = [0, 0, 1]
+        self.price_stable_history = [0, 0, 1]
+        self.plan_stable_history = [0, 0, 1]
+        self.salary_stable_history = [0, 0, 1]
         self.prev_price = 20
         self.prev_salary = 200
         self.prev_plan = 50 * self.efficiency_coefficient
@@ -83,6 +83,7 @@ class NewFirm(Firm):
         self.prev_price = self.price
         self.prev_plan = self.plan
         self.prev_salary = self.salary
+        self.prev_workers = len(self.workers)
         price_increase_probability = numpy.mean(self.price_increase_history)
         price_decrease_probability = numpy.mean(self.price_decrease_history)
         price_stable_probability = numpy.mean(self.price_stable_history)
@@ -127,8 +128,8 @@ class NewFirm(Firm):
                         salary_probability = salary_decrease_probability
                     else:
                         salary_probability = salary_stable_probability
-                    new_profit = price_probability * (new_price * new_salary * plan_probability * new_plan - total_salary -
-                                                      salary_probability)
+                    new_profit = new_plan * plan_probability * price_probability * (new_price * salary_probability * plan_probability * new_plan - total_salary -
+                                                                                    salary_probability * new_salary)
 
                     expectations.append((new_price, new_salary, new_plan))
                     expected_profits.append(new_profit)
@@ -139,7 +140,7 @@ class NewFirm(Firm):
                    #     max_profit = new_profit
 
 
-        expected_profits = numpy.array(list(expected_profits - min(expected_profits) + 1))
+        expected_profits = numpy.array(list(expected_profits - min(expected_profits)))
         self.price, self.salary, self.plan = expectations[numpy.random.choice(len(expectations), replace=False, p=expected_profits / sum(expected_profits))]
         self.plan = self.plan if self.plan > 0 else self.efficiency_coefficient
 

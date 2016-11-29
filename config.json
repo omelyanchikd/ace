@@ -31,8 +31,7 @@
     }
   },
   "algorithms": {
-    "NewFirm": 10,
-    "BasicFirm": 10
+    "NewFirm": 10
   },
   "visualise": true
 }

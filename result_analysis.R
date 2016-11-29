@@ -19,6 +19,9 @@ ggplot(table, aes(x = price, y = sold)) + geom_point(aes(colour = step)) +
 ggplot(table, aes(x = salary, y = workers)) + geom_point(aes(colour = step)) + 
   stat_smooth() + theme_bw()
 
+ggplot(table[table$firm_type == 'Unknown' & table$salary > 1000,], aes(x = salary, y = workers)) + geom_point(aes(colour = step)) + 
+  stat_smooth() + theme_bw()
+
 fit <- lm(price ~ inverse.sold, table)
 
 table$px <- table$workers * 10
