@@ -53,7 +53,17 @@ class QlearningFirm(Firm):
         while self.offer_count < 0:
             self.fire_worker(random.choice(list(self.workers)))
             self.offer_count += 1
-        self.salary = 0.95 * self.price * self.efficiency_coefficient
+        total_salary = sum([worker.salary for worker in self.workers])
+        while True:
+            if self.offer_count > 0:
+                self.salary = 0.95 * (
+                self.price * (len(self.workers) + self.offer_count) * self.efficiency_coefficient -
+                total_salary) / self.offer_count
+                if self.salary > 0:
+                    break
+                self.price *= 1.05
+            else:
+                break
         self.labor_capacity = len(self.workers) + self.offer_count
         return FirmLaborMarketAction(self.offer_count, self.salary, [])
 
