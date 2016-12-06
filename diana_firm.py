@@ -22,12 +22,14 @@ class DianaFirm(Firm):
         self.prev_price = self.price
         if self.sold >= self.plan:
             self.plan = self.sold + math.floor(self.efficiency_coefficient)
+            self.price *= 1.05
         else:
-            if price_increase:
-                self.price *= 0.95
-                already_decreased = True
-            else:
-                self.plan = self.sold if self.sold > 0 else self.efficiency_coefficient
+            self.price *= 0.95
+            #if price_increase:
+            #    self.price *= 0.95
+            #    already_decreased = True
+            #else:
+            #    self.plan = self.sold if self.sold > 0 else self.efficiency_coefficient
         #self.plan = (self.plan - self.stock) // self.efficiency_coefficient * self.efficiency_coefficient
         self.plan = self.plan // self.efficiency_coefficient * self.efficiency_coefficient
         #self.plan = self.plan if self.plan >= 0 else 0

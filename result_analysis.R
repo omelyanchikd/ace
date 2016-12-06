@@ -1,4 +1,6 @@
-path <- "D:/multiagent projects/python.ace/ace/output.csv"
+#path <- "D:/multiagent projects/python.ace/ace/output.csv"
+
+path <- "C:/Users/d.omelianchyk/PycharmProjects/ace/output.csv"
 
 table <- read.csv(path, stringsAsFactors = FALSE, row.names = NULL, sep = ";", dec = ".")
 
@@ -13,7 +15,7 @@ table$step <- as.integer(table$step)
 
 ggplot(table[table$step < 100,], aes(x = price, y = sold)) + geom_point(aes(colour = step))
 
-ggplot(table, aes(x = price, y = sold)) + geom_point(aes(colour = step)) + 
+ggplot(table, aes(x = price, y = sold)) + geom_point() + 
   stat_smooth() + theme_bw()
 
 ggplot(table, aes(x = salary, y = workers)) + geom_point(aes(colour = step)) + 
