@@ -69,5 +69,5 @@ class AnnFirm(Firm):
         return FirmGoodMarketAction(self.stock, self.price, 0)
 
     def decide_salary(self, stats):
-        self.labor_capacity = len(self.workers) + 1
-        return FirmLaborMarketAction(1, self.current_salary, [])
+        self.labor_capacity = len(self.workers) + self.offer_count
+        return FirmLaborMarketAction(self.offer_count, self.current_salary, [])
