@@ -40,13 +40,14 @@ class DianaFirm(Firm):
         total_salary = sum([worker.salary for worker in self.workers])
         while True:
             if self.offer_count > 0:
-                self.salary = 0.95 * (self.price * (len(self.workers) + self.offer_count) * self.efficiency_coefficient -
+                self.salary = 0.9 * (self.price * (len(self.workers) + self.offer_count) * self.efficiency_coefficient -
                               total_salary)/self.offer_count
                 if self.salary > 0:
                     break
                 self.price *= 1.05
             else:
                 break
+        #print(str(self.salary) + " " + str(self.price * self.plan - total_salary - self.salary * self.offer_count))
         self.labor_capacity = self.offer_count + len(self.workers)
         return FirmLaborMarketAction(self.offer_count, self.salary, [])
 

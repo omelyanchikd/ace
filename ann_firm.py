@@ -35,10 +35,10 @@ class AnnFirm(Firm):
         new_parameters = [self.price, self.salary, self.sold]
         trial_parameters = []
         for parameter in new_parameters:
-            change = random.gauss(0, 0.99)
+            change = random.gauss(0, 0.33)
             parameter *= (1 + change)
             trial_parameters.append(parameter)
-        trial_parameters.append(math.floor(new_parameters[2] / self.efficiency_coefficient) - len(self.workers))
+        trial_parameters.append(math.floor(new_parameters[2] / self.efficiency_coefficient))
         for parameter in [stats.price, stats.salary, stats.sold, stats.unemployment_rate]:
             trial_parameters.append(parameter)
         return new_parameters, trial_parameters
@@ -49,12 +49,14 @@ class AnnFirm(Firm):
         current_data = [self.price, self.salary, self.sold, len(self.workers), stats.price, stats.salary,
                                    stats.sold, stats.employed]
         self.scaler.partial_fit(current_data)
-        self.scaled_history = self.scaler.transform(current_data)
-        self.neural_network.partial_fit(self.scaled_history, [self.profit])
+        self.scaled_history = self.scaler.transform(self.world_history)
+#        self.neural_network.partial_fit(self.scaled_history, [self.profit])
+        self.neural_network.fit(self.scaled_history, self.profit_history)
         for i in range(0, 100):
             new_parameters, trial_parameters = self.generate_parameters(stats)
             has_profit = self.neural_network.predict(trial_parameters)
             if has_profit == 1:
+                new_parameters = (trial_parameters[0], trial_parameters[1], trial_parameters[2])
                 break
         self.price, self.salary, self.plan = new_parameters
         self.plan = self.plan if self.plan > 0 else 0

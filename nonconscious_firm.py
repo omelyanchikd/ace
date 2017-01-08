@@ -9,10 +9,12 @@ import numpy
 
 
 def transform(x):
-    return 2/math.pi * math.atan(x/500)
+    return 2/math.pi * math.atan(x/500000)
 
 def update(probabilities, reward, action):
     new_probabilities = probabilities
+    if reward != 0:
+        print(transform(reward))
     if reward < 0:
         for i in range(0, len(probabilities)):
             if i == action:
@@ -44,7 +46,7 @@ class NonconsciousFirm(Firm):
         return FirmAction(0, 0, 0, 0, 0, 0, [])
 
     def decide_salary(self, stats):
-        self.probabilities = update(self.probabilities, self.profit, self.actions.index(self.action))
+        self.probabilities = update(self.probabilities, self.sold * self.profit/self.price, self.actions.index(self.action))
         distribution = numpy.array(self.probabilities)
         indexes = [i for i in range(0, len(self.probabilities))]
         self.action = self.actions[numpy.random.choice(indexes, replace = False, p = distribution/sum(distribution))]
@@ -57,7 +59,17 @@ class NonconsciousFirm(Firm):
         while self.offer_count < 0:
             self.fire_worker(random.choice(list(self.workers)))
             self.offer_count += 1
-        self.salary = 0.95 * self.price * self.efficiency_coefficient
+        total_salary = sum([worker.salary for worker in self.workers])
+        while True:
+            if self.offer_count > 0:
+                self.salary = 0.95 * (
+                    self.price * (len(self.workers) + self.offer_count) * self.efficiency_coefficient -
+                    total_salary) / self.offer_count
+                if self.salary > 0:
+                    break
+                self.price *= 1.05
+            else:
+                break
         self.labor_capacity = len(self.workers) + self.offer_count
         return FirmLaborMarketAction(self.offer_count, self.salary, [])
 

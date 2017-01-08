@@ -1,6 +1,6 @@
-#path <- "D:/multiagent projects/python.ace/ace/output.csv"
+path <- "D:/multiagent projects/python.ace/ace/output.csv"
 
-path <- "C:/Users/d.omelianchyk/PycharmProjects/ace/output.csv"
+#path <- "C:/Users/d.omelianchyk/PycharmProjects/ace/output.csv"
 
 table <- read.csv(path, stringsAsFactors = FALSE, row.names = NULL, sep = ";", dec = ".")
 

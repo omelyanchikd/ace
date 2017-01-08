@@ -1,7 +1,7 @@
 {
   "global": {
     "output": "output.csv",
-    "seed": 100,
+    "seed": 30,
     "steps": 100,
     "workers_count": 500,
     "birth_rate": 0,
@@ -31,7 +31,8 @@
     }
   },
   "algorithms": {
-    "DianaFirm": 10
+    "QlearningFirm": 10,
+    "AnnFirm": 20
   },
   "visualise": true
 }
