@@ -20,8 +20,8 @@ class AnnFirm(Firm):
                               self.sold * 10, len(self.workers) * 10], [self.price, self.salary, self.sold, len(self.workers), self.price, self.salary,
                               self.sold * 10, len(self.workers) * 10]]
         self.profit_history = [1, 0]
-        self.scaler.partial_fit(self.world_history)
-        self.scaled_history = self.scaler.transform(self.world_history)
+        #self.scaler.fit(self.world_history)
+        self.scaled_history = self.scaler.fit_transform(self.world_history)
         self.neural_network.fit(numpy.array(self.world_history), numpy.array(self.profit_history))
         self.plan = 0
         self.offer_count = 0
@@ -39,12 +39,12 @@ class AnnFirm(Firm):
             parameter *= (1 + change)
             trial_parameters.append(parameter)
         trial_parameters.append(math.floor(new_parameters[2] / self.efficiency_coefficient))
-        for parameter in [stats.price, stats.salary, stats.sold, stats.unemployment_rate]:
+        for parameter in [stats.price, stats.salary, stats.sold, stats.employed]:
             trial_parameters.append(parameter)
         return new_parameters, trial_parameters
 
 
-    def decide_price(self, stats):
+    def decide_salary(self, stats):
         self.update_history(stats)
         current_data = [self.price, self.salary, self.sold, len(self.workers), stats.price, stats.salary,
                                    stats.sold, stats.employed]
@@ -59,15 +59,16 @@ class AnnFirm(Firm):
                 new_parameters = (trial_parameters[0], trial_parameters[1], trial_parameters[2])
                 break
         self.price, self.salary, self.plan = new_parameters
-        self.plan = self.plan if self.plan > 0 else 0
-        self.price = self.price if self.price > 0 else 0
-        self.salary = self.salary if self.salary > 0 else 0
+        self.plan = new_parameters[2] if new_parameters[2] > 0 else self.efficiency_coefficient
+        self.price = new_parameters[0] if new_parameters[0] > 0 else self.price
+        self.salary = new_parameters[1] if new_parameters[1] > 0 else self.salary
         self.offer_count = math.floor(self.plan / self.efficiency_coefficient) - len(self.workers)
         while self.offer_count < 0:
             self.fire_worker(random.choice(list(self.workers)))
             self.offer_count += 1
-        return FirmGoodMarketAction(self.stock, self.price, 0)
-
-    def decide_salary(self, stats):
         self.labor_capacity = len(self.workers) + self.offer_count
         return FirmLaborMarketAction(self.offer_count, self.current_salary, [])
+
+    def decide_price(self, stats):
+        self.labor_capacity = len(self.workers) + self.offer_count
+        return FirmGoodMarketAction(self.stock, self.price, 0)

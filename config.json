@@ -2,7 +2,7 @@
   "global": {
     "output": "output.csv",
     "seed": 30,
-    "steps": 1000,
+    "steps": 100,
     "workers_count": 500,
     "birth_rate": 0,
     "initial_money": 100000,
@@ -31,7 +31,7 @@
     }
   },
   "algorithms": {
-    "QlearningFirm": 10,
+    "BasicFirm": 10,
     "AnnFirm": 20
   },
   "visualise": true
