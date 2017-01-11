@@ -16,10 +16,16 @@ class AnnFirm(Firm):
         self.salary = 200
         self.scaler = StandardScaler()
         self.neural_network = Perceptron()
-        self.world_history = [[self.price + 1, self.salary, self.sold, len(self.workers), self.price, self.salary,
-                              self.sold * 10, len(self.workers) * 10], [self.price, self.salary, self.sold, len(self.workers), self.price, self.salary,
-                              self.sold * 10, len(self.workers) * 10]]
-        self.profit_history = [1, 0]
+        #self.world_history = [[self.price + 1, self.salary, self.sold, len(self.workers), self.price, self.salary,
+        #                      self.sold * 10, len(self.workers) * 10], [self.price, self.salary, self.sold, len(self.workers), self.price, self.salary,
+        #                      self.sold * 10, len(self.workers) * 10]]
+        self.world_history = [[15, 200, 10, 1, 20, 200, 2000, 200],
+                              [25, 200, 10, 1, 20, 200, 1500, 200],
+                              [20, 195, 2000, 200, 21, 190, 3000, 300],
+                              [25, 200, 1000, 200, 15, 150, 3000, 500],
+                              [20, 195, 90, 10, 21, 205, 2000, 300],
+                              [300, 250, 10, 1, 20, 200, 2000, 200]]
+        self.profit_history = [0, 1, 1, 0, 0, 1]
         #self.scaler.fit(self.world_history)
         self.scaled_history = self.scaler.fit_transform(self.world_history)
         self.neural_network.fit(numpy.array(self.world_history), numpy.array(self.profit_history))
@@ -49,9 +55,9 @@ class AnnFirm(Firm):
         current_data = [self.price, self.salary, self.sold, len(self.workers), stats.price, stats.salary,
                                    stats.sold, stats.employed]
         self.scaler.partial_fit(current_data)
-        self.scaled_history = self.scaler.transform(self.world_history)
+#        self.scaled_history = self.scaler.transform(self.world_history)
 #        self.neural_network.partial_fit(self.scaled_history, [self.profit])
-        self.neural_network.fit(self.scaled_history, self.profit_history)
+        self.neural_network.fit(self.world_history, self.profit_history)
         for i in range(0, 100):
             new_parameters, trial_parameters = self.generate_parameters(stats)
             has_profit = self.neural_network.predict(trial_parameters)
