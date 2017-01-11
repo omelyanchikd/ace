@@ -15,16 +15,16 @@ class AnnFirm(Firm):
         super().__init__(id)
         self.salary = 200
         self.scaler = StandardScaler()
-        self.neural_network = Perceptron()
+        self.neural_network = Perceptron(fit_intercept=True)
         #self.world_history = [[self.price + 1, self.salary, self.sold, len(self.workers), self.price, self.salary,
         #                      self.sold * 10, len(self.workers) * 10], [self.price, self.salary, self.sold, len(self.workers), self.price, self.salary,
         #                      self.sold * 10, len(self.workers) * 10]]
-        self.world_history = [[15, 200, 10, 1, 20, 200, 2000, 200],
-                              [25, 200, 10, 1, 20, 200, 1500, 200],
-                              [20, 195, 2000, 200, 21, 190, 3000, 300],
-                              [25, 200, 1000, 200, 15, 150, 3000, 500],
-                              [20, 195, 90, 10, 21, 205, 2000, 300],
-                              [300, 250, 10, 1, 20, 200, 2000, 200]]
+        self.world_history = [[15, 200, 10, 1, 20, 200],
+                              [25, 200, 10, 1, 20, 200],
+                              [20, 195, 2000, 200, 21, 190],
+                              [25, 200, 1000, 200, 15, 150],
+                              [20, 195, 90, 10, 21, 205],
+                              [300, 250, 10, 1, 20, 200]]
         self.profit_history = [0, 1, 1, 0, 0, 1]
         #self.scaler.fit(self.world_history)
         self.scaled_history = self.scaler.fit_transform(self.world_history)
@@ -33,8 +33,7 @@ class AnnFirm(Firm):
         self.offer_count = 0
 
     def update_history(self, stats):
-        self.world_history.append([self.price, self.salary, self.sold, len(self.workers), stats.price, stats.salary,
-                                   stats.sold, stats.employed])
+        self.world_history.append([self.price, self.salary, self.sold, len(self.workers), stats.price, stats.salary])
         self.profit_history.append(1 if self.profit > 0 else 0)
 
     def generate_parameters(self, stats):
@@ -45,15 +44,14 @@ class AnnFirm(Firm):
             parameter *= (1 + change)
             trial_parameters.append(parameter)
         trial_parameters.append(math.floor(new_parameters[2] / self.efficiency_coefficient))
-        for parameter in [stats.price, stats.salary, stats.sold, stats.employed]:
+        for parameter in [stats.price, stats.salary]:
             trial_parameters.append(parameter)
         return new_parameters, trial_parameters
 
 
     def decide_salary(self, stats):
         self.update_history(stats)
-        current_data = [self.price, self.salary, self.sold, len(self.workers), stats.price, stats.salary,
-                                   stats.sold, stats.employed]
+        current_data = [self.price, self.salary, self.sold, len(self.workers), stats.price, stats.salary]
         self.scaler.partial_fit(current_data)
 #        self.scaled_history = self.scaler.transform(self.world_history)
 #        self.neural_network.partial_fit(self.scaled_history, [self.profit])
