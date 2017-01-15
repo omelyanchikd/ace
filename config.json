@@ -2,7 +2,7 @@
   "global": {
     "output": "output.csv",
     "seed": 30,
-    "steps": 50,
+    "steps": 10000,
     "workers_count": 500,
     "birth_rate": 0,
     "initial_money": 100000,

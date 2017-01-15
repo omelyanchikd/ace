@@ -15,7 +15,7 @@ class AnnFirm(Firm):
         super().__init__(id)
         self.salary = 200
         self.scaler = StandardScaler()
-        self.neural_network = Perceptron(fit_intercept=True)
+        self.neural_network = Perceptron(fit_intercept=False)
         #self.world_history = [[self.price + 1, self.salary, self.sold, len(self.workers), self.price, self.salary,
         #                      self.sold * 10, len(self.workers) * 10], [self.price, self.salary, self.sold, len(self.workers), self.price, self.salary,
         #                      self.sold * 10, len(self.workers) * 10]]
@@ -53,7 +53,7 @@ class AnnFirm(Firm):
         self.update_history(stats)
         current_data = [self.price, self.salary, self.sold, len(self.workers), stats.price, stats.salary]
         self.scaler.partial_fit(current_data)
-#        self.scaled_history = self.scaler.transform(self.world_history)
+        self.scaled_history = self.scaler.fit_transform(self.world_history)
 #        self.neural_network.partial_fit(self.scaled_history, [self.profit])
         self.neural_network.fit(self.world_history, self.profit_history)
         for i in range(0, 100):
