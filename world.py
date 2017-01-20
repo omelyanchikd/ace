@@ -58,7 +58,8 @@ class World:
         with open(config['global']['output'], "w", newline='') as output_file:
             writer = csv.DictWriter(output_file, delimiter=';',
                                     fieldnames=["firm_type", "firm_id", "step", "salary", "workers", "sold", "price", "stock", "profit",
-                                                "product_supply", "labor_demand", "sales"])
+                                                "product_supply", "labor_demand", "sales", "world_price", "world_salary", "world_sold",
+                                                "world_sales", "world_money", "world_employed", "world_unemployment_rate"])
             writer.writeheader()
             output_file.close()
 
@@ -125,7 +126,7 @@ class World:
             for firm_id, firm_action in enumerate(self.firm_goodmarket_actions):
                 firm = self.firms[firm_id]
                 firm.apply_goodmarket_result(self.firm_goodmarket_results[firm_id])
-                firm.save_history()
+                firm.save_history(self.stats)
                 self.history.add_record(step, firm)
             self.compute_stats()
             self.history.add_stats(step, self.stats)  # needs to be rewritten with proper history object in mind

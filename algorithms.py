@@ -10,6 +10,7 @@ from oligopoly_firm import OligopolyFirm
 from intuitive_firm import IntuitiveFirm
 from ann_firm import AnnFirm
 from new_firm import NewFirm
+from tree_firm import TreeFirm
 
 from ideal_world import IdealWorld
 from basic_world import BasicWorld

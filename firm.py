@@ -90,11 +90,13 @@ class Firm:
             worker.employer = None
             worker.salary = 0
 
-    def save_history(self):
+    def save_history(self, stats):
         with open(self.output, "a", newline = '') as output_file:
             writer = csv.writer(output_file, delimiter = ';')
             writer.writerow((self.type, self.id, self.step, self.salary, len(self.workers), self.sold, self.price, self.stock, self.profit,
-                             self.sold + self.stock, self.labor_capacity, self.sales))
+                             self.sold + self.stock, self.labor_capacity, self.sales, stats.price, stats.salary,
+                            stats.sold, stats.sales, stats.money, stats.employed, stats.unemployment_rate
+                            ))
             output_file.close()
         self.step += 1
 

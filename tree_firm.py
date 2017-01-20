@@ -3,41 +3,30 @@ from firm_action import FirmAction
 from firm_goodmarket_action import FirmGoodMarketAction
 from firm_labormarket_action import FirmLaborMarketAction
 
-from sklearn.linear_model import Perceptron
-from sklearn.preprocessing import StandardScaler
-
 from sklearn import tree
 
 import numpy
 import random
 import math
+import pandas
 
-class AnnFirm(Firm):
+class TreeFirm(Firm):
     def __init__(self, id):
         super().__init__(id)
         self.salary = 200
-        self.scaler = StandardScaler()
-        self.neural_network = Perceptron(fit_intercept=False)
+        recorded_history = pandas.read_csv("history.csv", sep = ";", decimal = ",")
+        self.world_history = recorded_history.as_matrix(columns = ['price', 'salary', 'sold', 'workers', 'world_price', 'world_salary',
+                                                                   'rest_money'])
+        self.world_history = self.world_history.tolist()
+        self.profit_history = list(recorded_history['has_profit'])
         self.decision_tree = tree.DecisionTreeClassifier()
-        #self.world_history = [[self.price + 1, self.salary, self.sold, len(self.workers), self.price, self.salary,
-        #                      self.sold * 10, len(self.workers) * 10], [self.price, self.salary, self.sold, len(self.workers), self.price, self.salary,
-        #                      self.sold * 10, len(self.workers) * 10]]
-        self.world_history = [[15, 200, 10, 20, 200],
-                              [25, 200, 10, 20, 200],
-                              [20, 195, 2000, 21, 190],
-                              [25, 200, 1000, 15, 150],
-                              [20, 195, 90, 21, 205],
-                              [300, 250, 10, 20, 200]]
-        self.profit_history = [0, 1, 1, 0, 0, 1]
-        #self.scaler.fit(self.world_history)
-        self.scaled_history = self.scaler.fit_transform(self.world_history)
-        self.neural_network.fit(numpy.array(self.world_history), numpy.array(self.profit_history))
         self.decision_tree.fit(self.world_history, self.profit_history)
         self.plan = 0
         self.offer_count = 0
 
     def update_history(self, stats):
-        self.world_history.append([self.price, self.salary, self.sold, stats.price, stats.salary])
+        self.world_history.append([self.price, self.salary, self.sold, len(self.workers), stats.price, stats.salary,
+                                   stats.money - stats.sales])
         self.profit_history.append(1 if self.profit > 0 else 0)
 
     def generate_parameters(self, stats):
@@ -47,19 +36,15 @@ class AnnFirm(Firm):
             change = random.gauss(0, 1)
             parameter *= (1 + change)
             trial_parameters.append(parameter)
-        #trial_parameters.append(math.ceil(new_parameters[2] / self.efficiency_coefficient))
-        for parameter in [stats.price, stats.salary]:
+        trial_parameters.append(math.ceil(new_parameters[2] / self.efficiency_coefficient))
+        for parameter in [stats.price, stats.salary, stats.money - stats.sales]:
             trial_parameters.append(parameter)
         return new_parameters, trial_parameters
 
 
     def decide_salary(self, stats):
         self.update_history(stats)
-        current_data = [self.price, self.salary, self.sold, stats.price, stats.salary]
-        self.scaler.partial_fit(current_data)
-        #self.scaled_history = self.scaler.fit_transform(self.world_history)
-#        self.neural_network.partial_fit(self.scaled_history, [self.profit])
-        #self.neural_network.fit(self.world_history, self.profit_history)
+        current_data = [self.price, self.salary, self.sold, len(self.workers), stats.price, stats.salary, stats.money - stats.sales]
         self.decision_tree.fit(self.world_history, self.profit_history)
         for i in range(0, 100):
             new_parameters, trial_parameters = self.generate_parameters(stats)
