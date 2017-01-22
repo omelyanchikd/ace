@@ -31,8 +31,8 @@
     }
   },
   "algorithms": {
-    "TreeFirm": 9,
-    "BasicFirm": 1
+    "TreeFirm": 10,
+    "BasicFirm": 10
   },
   "visualise": true
 }
