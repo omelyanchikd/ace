@@ -5,6 +5,7 @@ from firm_labormarket_action import FirmLaborMarketAction
 
 from sklearn import tree
 from sklearn.linear_model import Perceptron
+from sklearn.neural_network import MLPClassifier
 
 import numpy
 import random
@@ -21,10 +22,12 @@ class TreeFirm(Firm):
                                                                    'rest_money', 'world_sold'])
         self.world_history = self.world_history.tolist()
         self.profit_history = list(recorded_history['has_profit'])
-        self.decision_tree = tree.DecisionTreeClassifier()
-        self.decision_tree.fit(self.world_history, self.profit_history)
+        #self.decision_tree = tree.DecisionTreeClassifier()
+        #self.decision_tree.fit(self.world_history, self.profit_history)
         #self.neural_network = Perceptron(fit_intercept=False)
         #self.neural_network.fit(self.world_history, self.profit_history)
+        self.neural_network = MLPClassifier(hidden_layer_sizes=(30, ))
+        self.neural_network.fit(self.world_history, self.profit_history)
         self.plan = 500
         self.offer_count = 0
         self.prev_state = [19.9, 199.9, 500, 50, 20, 200, 0, 5000]
@@ -56,8 +59,8 @@ class TreeFirm(Firm):
         trial_parameters.append(trial_parameters[2])
         #for parameter in [stats.price, stats.salary, stats.money - stats.sales, stats.sold]:
         for parameter in self.change[4:]:
-            trial_parameters.append(0)
-        #    trial_parameters.append(parameter)
+        #    trial_parameters.append(0)
+            trial_parameters.append(parameter)
 
         return new_parameters, trial_parameters
 
@@ -65,12 +68,12 @@ class TreeFirm(Firm):
     def decide_salary(self, stats):
         self.update_history(stats)
         #current_data = [self.price, self.salary, self.sold, len(self.workers), stats.price, stats.salary, stats.money - stats.sales]
-        self.decision_tree.fit(self.world_history, self.profit_history)
-        #self.neural_network.fit(self.world_history, self.profit_history)
+        #self.decision_tree.fit(self.world_history, self.profit_history)
+        self.neural_network.fit(self.world_history, self.profit_history)
         for i in range(0, 100):
             new_parameters, trial_parameters = self.generate_parameters(stats)
-            #has_profit = self.neural_network.predict(trial_parameters)
-            has_profit = self.decision_tree.predict(trial_parameters)
+            has_profit = self.neural_network.predict(trial_parameters)
+            #has_profit = self.decision_tree.predict(trial_parameters)
             if has_profit == 1:
                 new_parameters = (trial_parameters[0], trial_parameters[1], trial_parameters[2])
                 break

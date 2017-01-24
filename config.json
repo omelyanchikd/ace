@@ -4,10 +4,10 @@
     "seed": 30,
     "steps": 100,
     "workers_count": 500,
-    "birth_rate": 0,
+    "birth_rate": 100,
     "initial_money": 100000,
     "bankrupt_rate": -1000,
-    "money_growth": 0,
+    "money_growth": 20000,
     "world_algorithm": "BasicWorld",
     "properties_to_plot": {
       "firm": [
@@ -31,8 +31,8 @@
     }
   },
   "algorithms": {
-    "TreeFirm": 10,
-    "BasicFirm": 10
+    "TreeFirm": 1,
+    "BasicFirm": 9
   },
   "visualise": true
 }
