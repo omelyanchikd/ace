@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+
+<head>
+</head>
+
+<body>
+<p><a href="/">Reset</a></p>
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<ul>
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+<form action="" method="post" name="config">
+    {{form.hidden_tag()}}
+    <p>
+        Count of steps:<br>
+        {{form.steps(size=80)}}<br>
+        Configuration for firms:<br>
+        {{form.firms(cols=80)}}<br>
+
+    <p>
+        List of possible firms:<br>
+    <ul>
+        <li>BasicFirm</li>
+        <li>DianaFirm</li>
+        <li>SuperFirm</li>
+        <li>RuleFirm</li>
+        <li>MosesFirm</li>
+        <li>NonconsciousFirm</li>
+        <li>QlearningFirm</li>
+        <li>RandomFirm</li>
+        <li>RationalFirm</li>
+        <li>OligopolyFirm</li>
+        <li>IntuitiveFirm</li>
+        <li>AnnFirm</li>
+    </ul>
+    </p>
+    {% for error in form.errors.openid %}
+    <span style="color: red;">[{{error}}]</span>
+    {% endfor %}<br>
+    </p>
+
+    <p><input type="submit" value="Run!"></p>
+</form>
+
+</body>
+
+</html>

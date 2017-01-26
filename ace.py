@@ -13,9 +13,10 @@ world_algorithm = getattr(algorithms, algorithm_class)
 world = world_algorithm(config)
 history = world.go()
 # print (history_list)
+graphs = []
 if config["visualise"]:
     visualiser = Visualiser()
     entities_to_plot = config['global']['properties_to_plot']
     for entity, properties_to_plot in entities_to_plot.items():
         for prop in properties_to_plot:
-            visualiser.plot(history, prop, entity)
+            graphs.append(visualiser.plot(history, prop, entity, False))
