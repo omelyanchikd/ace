@@ -1,3 +1,5 @@
+import csv
+
 from abc import ABCMeta
 
 import algorithms
@@ -53,6 +55,14 @@ class World:
         self.firm_labormarket_results = [0] * firm_count
         self.firm_goodmarket_results = [0] * firm_count
 
+        with open(config['global']['output'], "w", newline='') as output_file:
+            writer = csv.DictWriter(output_file, delimiter=';',
+                                    fieldnames=["firm_type", "firm_id", "step", "salary", "workers", "sold", "price", "stock", "profit",
+                                                "product_supply", "labor_demand", "sales", "world_price", "world_salary", "world_sold",
+                                                "world_sales", "world_money", "world_employed", "world_unemployment_rate"])
+            writer.writeheader()
+            output_file.close()
+
     def manage_firm_actions(self, firm_actions):
         pass
 
@@ -92,7 +102,7 @@ class World:
         if len(self.workers) > 0:
             self.stats.unemployment_rate = unemployed / len(self.workers)
         self.stats.money = self.money
-        self.stats.expected_sales_growth = self.config['global']['money_growth']/self.money
+#        self.stats.expected_sales_growth = self.config['global']['money_growth']/self.money
         self.stats.expected_sold_growth = 0.05
 
     def go(self):
@@ -116,6 +126,7 @@ class World:
             for firm_id, firm_action in enumerate(self.firm_goodmarket_actions):
                 firm = self.firms[firm_id]
                 firm.apply_goodmarket_result(self.firm_goodmarket_results[firm_id])
+                firm.save_history(self.stats)
                 self.history.add_record(step, firm)
             self.compute_stats()
             self.history.add_stats(step, self.stats)  # needs to be rewritten with proper history object in mind

@@ -79,6 +79,7 @@ class MosesFirm(Firm):
         if self.salary == 0:
             for worker in self.workers:
                 self.fire_worker(worker)
+        self.labor_capacity = len(self.workers) + self.offer_count
         return FirmLaborMarketAction(self.offer_count, self.salary, [])
 
     def decide_price(self, stats):

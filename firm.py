@@ -1,3 +1,6 @@
+import csv
+import math
+
 from abc import ABCMeta, abstractmethod
 
 from firm_result import FirmResult
@@ -7,7 +10,7 @@ from stats import Stats
 class Firm:
     __metaclass__ = ABCMeta
 
-    def __init__(self, id):
+    def __init__(self, id, output = "output.csv"):
         self.workers = set()
         self.id = id
         self.stock = 0
@@ -19,11 +22,16 @@ class Firm:
         self.sales = 0
         self.salary = 200
         self.profit = 0
+        self.output = output
+        self.step = 0
+        self.labor_capacity = 50
+        self.type = 'Unknown'
 
     def work(self):
         for worker in self.workers:
             self.stock += worker.productivity * self.efficiency_coefficient
             self.money -= worker.salary
+        #self.stock += self.efficiency_coefficient * math.log(len(self.workers) + 2)
 
     def apply_result(self, result):
         """
@@ -81,6 +89,16 @@ class Firm:
         for worker in self.workers:
             worker.employer = None
             worker.salary = 0
+
+    def save_history(self, stats):
+        with open(self.output, "a", newline = '') as output_file:
+            writer = csv.writer(output_file, delimiter = ';')
+            writer.writerow((self.type, self.id, self.step, self.salary, len(self.workers), self.sold, self.price, self.stock, self.profit,
+                             self.sold + self.stock, self.labor_capacity, self.sales, stats.price, stats.salary,
+                            stats.sold, stats.sales, stats.money, stats.employed, stats.unemployment_rate
+                            ))
+            output_file.close()
+        self.step += 1
 
     @abstractmethod
     def decide(self, stats):

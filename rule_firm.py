@@ -75,6 +75,7 @@ class RuleFirm(Firm):
         while self.offer_count < 0:
             self.fire_worker(random.choice(list(self.workers)))
             self.offer_count += 1
+        self.labor_capacity = len(self.workers) + self.offer_count
         return FirmLaborMarketAction(self.offer_count, self.salary, [])
 
     def decide_price(self, stats):

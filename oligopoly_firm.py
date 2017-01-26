@@ -34,4 +34,5 @@ class OligopolyFirm(Firm):
             self.offer_count += 1
         self.price = (self.a + stats.f * self.salary/self.efficiency_coefficient)/ (stats.f + 1)
         self.price = self.price if self.price > 0 else 0
+        self.labor_capacity = len(self.workers) + self.offer_count
         return FirmLaborMarketAction(self.offer_count, self.salary, [])

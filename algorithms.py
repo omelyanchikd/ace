@@ -1,6 +1,5 @@
 from basic_firm import BasicFirm
 from diana_firm import DianaFirm
-from super_firm import SuperFirm
 from rule_firm import RuleFirm
 from moses_firm import MosesFirm
 from nonconscious_firm import NonconsciousFirm
@@ -10,6 +9,8 @@ from rational_firm import RationalFirm
 from oligopoly_firm import OligopolyFirm
 from intuitive_firm import IntuitiveFirm
 from ann_firm import AnnFirm
+from new_firm import NewFirm
+from tree_firm import TreeFirm
 
 from ideal_world import IdealWorld
 from basic_world import BasicWorld

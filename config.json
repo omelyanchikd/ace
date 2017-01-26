@@ -1,12 +1,14 @@
 {
   "global": {
-    "seed": 100,
-    "steps": 2,
-    "workers_count": 5,
-    "birth_rate": 10,
+    "output": "output.csv",
+    "seed": 30,
+    "steps": 100,
+    "workers_count": 500,
+    "birth_rate": 100,
+
     "initial_money": 100000,
     "bankrupt_rate": -1000,
-    "money_growth": 2000,
+    "money_growth": 20000,
     "world_algorithm": "BasicWorld",
     "properties_to_plot": {
       "firm": [
@@ -30,8 +32,8 @@
     }
   },
   "algorithms": {
-    "BasicFirm": 8,
-    "AnnFirm": 2
+    "TreeFirm": 1,
+    "BasicFirm": 9
   },
   "visualise": true
 }

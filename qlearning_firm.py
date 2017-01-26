@@ -8,12 +8,15 @@ import random
 import numpy
 
 def argmax(two_dimensional_list, dimension):
-    arg_max = 0
-    max_val = two_dimensional_list[dimension][0]
-    for i in range(0,len(two_dimensional_list[dimension])):
-        if two_dimensional_list[dimension][i] > max_val:
-            max_val = two_dimensional_list[dimension][i]
-            arg_max = i
+    #    arg_max = 0
+    #    max_val = two_dimensional_list[dimension][0]
+    #    for i in range(0,len(two_dimensional_list[dimension])):
+    #        if two_dimensional_list[dimension][i] > max_val:
+    #            max_val = two_dimensional_list[dimension][i]
+    #            arg_max = i
+    qs = numpy.array([q - min(two_dimensional_list[dimension]) for q in two_dimensional_list[dimension]])
+    indexes = [i for i in range(len(two_dimensional_list[dimension]))]
+    arg_max = numpy.random.choice(indexes, replace = False, p = qs/sum(qs))
     return arg_max
 
 class QlearningFirm(Firm):
@@ -53,7 +56,18 @@ class QlearningFirm(Firm):
         while self.offer_count < 0:
             self.fire_worker(random.choice(list(self.workers)))
             self.offer_count += 1
-        self.salary = 0.95 * self.price * self.efficiency_coefficient
+        total_salary = sum([worker.salary for worker in self.workers])
+        while True:
+            if self.offer_count > 0:
+                self.salary = 0.95 * (
+                self.price * (len(self.workers) + self.offer_count) * self.efficiency_coefficient -
+                total_salary) / self.offer_count
+                if self.salary > 0:
+                    break
+                self.price *= 1.05
+            else:
+                break
+        self.labor_capacity = len(self.workers) + self.offer_count
         return FirmLaborMarketAction(self.offer_count, self.salary, [])
 
     def decide_price(self, stats):

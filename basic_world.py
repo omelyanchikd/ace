@@ -75,23 +75,32 @@ class BasicWorld(World):
                                   else 0 for firm_action in self.firm_goodmarket_actions))
         inverted_prices = numpy.array(list(invert(x) for x in prices))
         sales = [0] * len(self.firms)
+        total_sold = 0
         money = self.money
         for firm in self.firms:
             if self.firm_goodmarket_actions[firm.id].production_count > self.firms[firm.id].stock:
                 self.firm_goodmarket_actions[firm.id].production_count = self.firms[firm.id].stock
         production_counts = numpy.array(list(firm_action.production_count for firm_action in self.firm_goodmarket_actions))
-        while sum(prices) > 0 and money > 0:
+        while sum(prices) > 0 and money > 0 and money >= min([price for price in prices if price != 0]):
             seller = numpy.random.choice(self.firms, replace=False, p=inverted_prices / sum(inverted_prices))
             assert isinstance(seller, Firm)
 
-            sales[seller.id] += 1
-            production_counts[seller.id] -= 1
-            money -= prices[seller.id]
-            if production_counts[seller.id] <= 0:
-                prices[seller.id] = 0
-                inverted_prices[seller.id] = 0
+            if money >= prices[seller.id]:
+                sales[seller.id] += 1
+                total_sold += 1
+                production_counts[seller.id] -= 1
+                money -= prices[seller.id]
+                if production_counts[seller.id] <= 0:
+                    prices[seller.id] = 0
+                    inverted_prices[seller.id] = 0
+
+        #if total_sold < 2000:
+           # sales = [0] * len(sales)
+            #for firm in self.firms:
+            #    firm.stock = 0
         for firm in self.firms:
             self.firm_goodmarket_results[firm.id] = FirmGoodMarketResult(sales[firm.id])
+        #self.money = 1.5 * total_sold * 20 if total_sold > 0 else 1000
 
     def fire(self):
         fired_workers = list(firm_action.fire_people for firm_action in self.firm_actions)
