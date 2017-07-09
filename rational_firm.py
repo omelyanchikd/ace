@@ -28,6 +28,7 @@ class RationalFirm(Firm):
 #       self.c = 0
         self.d = 0.25
         self.plan = 50 * self.efficiency_coefficient
+        self.type = "RationalFirm"
 
     def decide_price(self, stats):
         return FirmGoodMarketAction(self.stock, self.price, 0)

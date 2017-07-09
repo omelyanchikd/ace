@@ -22,6 +22,7 @@ class OligopolyFirm(Firm):
         self.a = 10000
         self.b = -50
         self.p1 = numpy.eye(2) * 10000
+        self.type = "OligopolyFirm"
 
     def decide_price(self, stats):
         return FirmGoodMarketAction(self.stock, self.price, 0)

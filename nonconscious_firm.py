@@ -41,6 +41,7 @@ class NonconsciousFirm(Firm):
                         (0, self.efficiency_coefficient), (0, 0), (0, -self.efficiency_coefficient),
                         (-0.01, self.efficiency_coefficient), (-0.01, 0), (-0.01, -self.efficiency_coefficient)]
         self.action = (0,0)
+        self.type = "NonconsciousFirm"
 
     def decide(self, stats):
         return FirmAction(0, 0, 0, 0, 0, 0, [])

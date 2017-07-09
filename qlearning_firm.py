@@ -38,6 +38,7 @@ class QlearningFirm(Firm):
             self.q.append([])
             for action in range(0, 9):
                 self.q[state].append(100)
+        self.type = "QlearningFirm"
 
     def decide(self, stats):
         return FirmAction(0, 0, 0, 0, 0, 0, [])

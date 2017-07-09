@@ -35,6 +35,7 @@ class AnnFirm(Firm):
         self.decision_tree.fit(self.world_history, self.profit_history)
         self.plan = 0
         self.offer_count = 0
+        self.type = "AnnFirm"
 
     def update_history(self, stats):
         self.world_history.append([self.price, self.salary, self.sold, stats.price, stats.salary])

@@ -45,6 +45,8 @@ class RuleFirm(Firm):
 
         self.offer_count = 0
 
+        self.type = "RuleFirm"
+
 
     def decide_salary(self, stats):
         self.profit_change = change(self.profit, self.prev_profit)

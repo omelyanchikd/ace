@@ -27,6 +27,7 @@ class NewFirm(Firm):
         self.prev_plan = 50 * self.efficiency_coefficient
         self.prev_workers = 50
         self.plan = 50 * self.efficiency_coefficient
+        self.type = "NewFirm"
 
 
     def decide_price(self, stats):

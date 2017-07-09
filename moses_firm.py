@@ -41,6 +41,7 @@ class MosesFirm(Firm):
         self.exp_sold = 0.1
 
         self.expected = 0
+        self.type = "MosesFirm"
 
     def decide_salary(self, stats):
         self.sales_change = change(self.sales, self.prev_sales)
