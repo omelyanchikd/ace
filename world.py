@@ -7,6 +7,8 @@ import algorithms
 from history import History
 from worker import Worker
 from stats import Stats
+
+from government import Government
 from firm_action import FirmAction
 from firm_goodmarket_action import FirmGoodMarketAction
 from firm_labormarket_action import FirmLaborMarketAction
@@ -16,17 +18,27 @@ from firm_labormarket_action import FirmLaborMarketAction
 class World:
     __metaclass__ = ABCMeta
 
-    def __init__(self, config):
-        self.firms = []
-        self.workers = []
+    def __init__(self, model_config, run_config):
+
+        if model_config['raw_firm_structure'] is not None:
+            self.raw_firms = []
+
+        if model_config['capital_firm_structure'] is not None:
+            self.capital_firms = []
+
+        self.production_firms = []
+        self.households = []
+
+        if model_config['government'] is not None:
+            self.government = Government(model_config['government'], run_config['government'])
 
         self.stats = Stats()
 
-        self.money = config['global']['initial_money']
-        self.steps = config['global']['steps']
+        self.money = run_config['initial_money']
+        self.steps = run_config['iterations']
 
-        self.firm_algorithms = config['algorithms']
-        workers_count = config['global']['workers_count']
+        #self.firm_algorithms = config['algorithms']
+        household_count = run_config['households_count']
         self.config = config
         firm_counter = 0
         for class_, count in self.firm_algorithms.items():

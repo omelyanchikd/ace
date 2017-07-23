@@ -15,7 +15,7 @@ class RandomFirm(Firm):
     #    self.prev_state = [20, 200, 500, 50, 20, 200, 0, 500, 5000]
     #    self.current_state = [20, 200, 500, 50, 20, 200, 0, 500, 5000]
     #    self.change = [(self.current_state[i] - self.prev_state[i])/self.prev_state[i] if self.prev_state[i] != 0 else self.current_state[i] for i in range(0, len(self.prev_state)) ]
-    self.type = "RandomFirm"
+
 
     def decide_price(self, stats):
         self.price = random.uniform(10, 30)

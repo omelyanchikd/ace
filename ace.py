@@ -4,13 +4,19 @@ import random
 import algorithms
 from visualise import Visualiser
 
-with open('config.json', 'r') as f:
+with open('model_config.json', 'r') as f:
+    model_config = json.load(f)
+
+with open('model_run_config.json', 'r') as f:
     config = json.load(f)
+
+model_config = model_config['fields']
+config = config['fields']
 
 random.seed(config['global']['seed'])
 algorithm_class = config['global']['world_algorithm']
 world_algorithm = getattr(algorithms, algorithm_class)
-world = world_algorithm(config)
+world = world_algorithm(model_config, config)
 history = world.go()
 # print (history_list)
 graphs = []
