@@ -9,6 +9,8 @@ from worker import Worker
 from stats import Stats
 
 from government import Government
+from outside_world import OutsideWorld
+from raw_firm import RawFirm
 from firm_action import FirmAction
 from firm_goodmarket_action import FirmGoodMarketAction
 from firm_labormarket_action import FirmLaborMarketAction
@@ -20,8 +22,16 @@ class World:
 
     def __init__(self, model_config, run_config):
 
+        firm_counter = 0
         if model_config['raw_firm_structure'] is not None:
             self.raw_firms = []
+            for learning_method, count in run_config['raw_firm_config']:
+                for i in range(int(count)):
+                    #firm_class = getattr(algorithms, class_)
+                    #firm = firm_class(firm_counter)
+                    firm = RawFirm(model_config['raw_firm_structure', run_config['raw_firm_config']], learning_method)
+                    self.raw_firms.append(firm)
+                    firm_counter += 1
 
         if model_config['capital_firm_structure'] is not None:
             self.capital_firms = []
@@ -32,6 +42,10 @@ class World:
         if model_config['government'] is not None:
             self.government = Government(model_config['government'], run_config['government'])
 
+        if model_config['outside_world']:
+            self.outside_world = OutsideWorld(run_config['government'])
+
+
         self.stats = Stats()
 
         self.money = run_config['initial_money']
@@ -39,8 +53,10 @@ class World:
 
         #self.firm_algorithms = config['algorithms']
         household_count = run_config['households_count']
-        self.config = config
+        self.model_config = model_config
+        self.run_config = run_config
         firm_counter = 0
+
         for class_, count in self.firm_algorithms.items():
             for i in range(int(count)):
                 firm_class = getattr(algorithms, class_)
@@ -67,7 +83,7 @@ class World:
         self.firm_labormarket_results = [0] * firm_count
         self.firm_goodmarket_results = [0] * firm_count
 
-        with open(config['global']['output'], "w", newline='') as output_file:
+        with open(run_config['global']['output'], "w", newline='') as output_file:
             writer = csv.DictWriter(output_file, delimiter=';',
                                     fieldnames=["firm_type", "firm_id", "step", "salary", "workers", "sold", "price", "stock", "profit",
                                                 "product_supply", "labor_demand", "sales", "world_price", "world_salary", "world_sold",
