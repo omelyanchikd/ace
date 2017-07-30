@@ -27,12 +27,6 @@ class Firm:
         self.labor_capacity = 50
         self.type = 'Unknown'
 
-    def work(self):
-        for worker in self.workers:
-            self.stock += worker.productivity * self.efficiency_coefficient
-            self.money -= worker.salary
-        #self.stock += self.efficiency_coefficient * math.log(len(self.workers) + 2)
-
     def apply_result(self, result):
         """
 
@@ -101,6 +95,9 @@ class Firm:
         self.step += 1
 
     @abstractmethod
+    def produce(self):
+        pass
+
     def decide(self, stats):
         pass
 
