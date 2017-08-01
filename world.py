@@ -11,6 +11,9 @@ from stats import Stats
 from government import Government
 from outside_world import OutsideWorld
 from raw_firm import RawFirm
+from capital_firm import CapitalFirm
+from production_firm import ProductionFirm
+
 from firm_action import FirmAction
 from firm_goodmarket_action import FirmGoodMarketAction
 from firm_labormarket_action import FirmLaborMarketAction
@@ -22,22 +25,32 @@ class World:
 
     def __init__(self, model_config, run_config):
 
-        firm_counter = 0
+        self.firms = []
         if model_config['raw_firm_structure'] is not None:
             self.raw_firms = []
             for learning_method, count in run_config['raw_firm_config']:
                 for i in range(int(count)):
-                    #firm_class = getattr(algorithms, class_)
-                    #firm = firm_class(firm_counter)
                     firm = RawFirm(model_config['raw_firm_structure', run_config['raw_firm_config']], learning_method)
                     self.raw_firms.append(firm)
-                    firm_counter += 1
+                    self.firms.append(firm)
 
         if model_config['capital_firm_structure'] is not None:
             self.capital_firms = []
+            for learning_method, count in run_config['capital_firm_config']:
+                for i in range(int(count)):
+                    firm = CapitalFirm(model_config['capital_firm_structure', run_config['capital_firm_config']], learning_method)
+                    self.capital_firms.append(firm)
+                    self.firms.append(firm)
+
 
         self.production_firms = []
-        self.households = []
+        for learning_method, count in run_config['production_firm_config']:
+            for i in range(int(count)):
+                firm = ProductionFirm(model_config['raw_firm_structure', run_config['raw_firm_config']], learning_method)
+                self.raw_firms.append(firm)
+                self.firms.append(firm)
+
+
 
         if model_config['government'] is not None:
             self.government = Government(model_config['government'], run_config['government'])
@@ -51,21 +64,17 @@ class World:
         self.money = run_config['initial_money']
         self.steps = run_config['iterations']
 
-        #self.firm_algorithms = config['algorithms']
-        household_count = run_config['households_count']
         self.model_config = model_config
         self.run_config = run_config
-        firm_counter = 0
 
-        for class_, count in self.firm_algorithms.items():
-            for i in range(int(count)):
-                firm_class = getattr(algorithms, class_)
-                firm = firm_class(firm_counter)
-                self.firms.append(firm)
-                firm_counter += 1
-        firm_count = firm_counter
+        #self.firm_algorithms = config['algorithms']
+        household_count = run_config['households_count']
+        self.households = []
+
+        firm_count = len(self.firms)
+
         # initial worker distribution
-        for i in range(workers_count):
+        for i in range(household_count):
             worker = Worker(i)
             self.workers.append(worker)
             firm_id = i % firm_count

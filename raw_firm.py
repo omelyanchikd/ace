@@ -1,4 +1,7 @@
+import algorithms
+
 from firm import Firm
+
 
 class RawFirm(Firm):
 
@@ -6,6 +9,10 @@ class RawFirm(Firm):
         for parameter in model_config:
             if parameter:
                 setattr(self, parameter, run_config[parameter])
+        decision_maker = getattr(algorithms, learning_method)
+        self.decision_maker = decision_maker()
+
+
 
     def produce(self):
         for worker in self.workers:

@@ -1,3 +1,4 @@
+from decision_maker import DecisionMaker
 from firm import Firm
 from firm_action import FirmAction
 from firm_goodmarket_action import FirmGoodMarketAction
@@ -12,7 +13,7 @@ import random
 import math
 import pandas
 
-class TreeFirm(Firm):
+class TreeFirm(DecisionMaker):
     def __init__(self, id):
         super().__init__(id)
         self.type = 'TreeFirm'

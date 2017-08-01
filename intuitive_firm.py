@@ -1,3 +1,4 @@
+from decision_maker import DecisionMaker
 from firm import Firm
 from firm_action import FirmAction
 from firm_goodmarket_action import FirmGoodMarketAction
@@ -8,7 +9,7 @@ import math
 import numpy
 
 
-class IntuitiveFirm(Firm):
+class IntuitiveFirm(DecisionMaker):
     def __init__(self, id):
         super().__init__(id)
         self.salary = 200

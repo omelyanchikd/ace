@@ -1,3 +1,4 @@
+from decision_maker import DecisionMaker
 from firm import Firm
 from firm_action import FirmAction
 from firm_goodmarket_action import FirmGoodMarketAction
@@ -15,7 +16,7 @@ def rls(a, p, x, y):
     return a[0], a[1], p
 
 
-class OligopolyFirm(Firm):
+class OligopolyFirm(DecisionMaker):
     def __init__(self, id):
         super().__init__(id)
         self.salary = 200

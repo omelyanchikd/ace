@@ -1,0 +1,55 @@
+[
+{
+  "model": "models.modelconfig",
+  "pk": 5,
+  "fields": {
+    "created_at": "2017-07-21T19:52:53.385Z",
+    "title": null,
+    "production_firm_structure": {
+      "salary": false,
+      "workers_count": false,
+      "salary_budget": false,
+      "plan": false,
+      "raw_need": false,
+      "capital_need": false,
+      "price": false,
+      "capital_budget": false,
+      "raw_budget": false
+    },
+    "raw_firm_structure": {
+      "salary": false,
+      "workers_count": false,
+      "salary_budget": false,
+      "plan": false,
+      "raw_need": false,
+      "capital_need": false,
+      "price": false,
+      "capital_budget": false,
+      "raw_budget": false
+    },
+    "capital_firm_structure": {
+      "salary": false,
+      "workers_count": false,
+      "salary_budget": false,
+      "plan": false,
+      "raw_need": false,
+      "capital_need": false,
+      "price": false,
+      "capital_budget": false,
+      "raw_budget": false
+    },
+    "household_structure": {
+      "consumption_budget": false,
+      "consumption_need": false
+    },
+    "government_structure": {
+      "import_tax": false,
+      "minimal_tax": false,
+      "coefficient_help": false,
+      "income_tax": false,
+      "profit_tax": false
+    },
+    "outside_world": false
+  }
+}
+]

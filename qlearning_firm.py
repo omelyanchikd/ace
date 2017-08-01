@@ -1,3 +1,4 @@
+from decision_maker import DecisionMaker
 from firm import Firm
 from firm_action import FirmAction
 from firm_labormarket_action import FirmLaborMarketAction
@@ -19,7 +20,7 @@ def argmax(two_dimensional_list, dimension):
     arg_max = numpy.random.choice(indexes, replace = False, p = qs/sum(qs))
     return arg_max
 
-class QlearningFirm(Firm):
+class QlearningFirm(DecisionMaker):
     def __init__(self, id):
         super().__init__(id)
         self.plan = 50 * self.efficiency_coefficient

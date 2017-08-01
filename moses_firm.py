@@ -1,3 +1,4 @@
+from decision_maker import DecisionMaker
 from firm import Firm
 from firm_action import FirmAction
 from firm_labormarket_action import FirmLaborMarketAction
@@ -15,7 +16,7 @@ def check_margin(salary, workers, expected):
     return 1 - salary * workers / expected > 0.05 if expected > 0 else 0
 
 
-class MosesFirm(Firm):
+class MosesFirm(DecisionMaker):
     def __init__(self, id):
         super().__init__(id)
         self.salary = 200

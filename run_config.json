@@ -1,0 +1,109 @@
+[
+{
+  "model": "models.modelrunconfiguration",
+  "pk": 3,
+  "fields": {
+    "title": null,
+    "created_at": "2017-07-22T17:29:21.723Z",
+    "iterations": null,
+    "initial_money": null,
+    "household_birth": null,
+    "firm_birth": null,
+    "money_growth": null,
+    "raw_firm_config": {
+      "raw_productivity": null,
+      "demand_elasticity": 25.0,
+      "capital_productivity": -1.0,
+      "labor_productivity": 1.0,
+      "learnings": [
+        {
+          "method": "qlearning",
+          "count": 11
+        },
+        {
+          "method": "rational",
+          "count": 12
+        },
+        {
+          "method": "lcs",
+          "count": 4
+        },
+        {
+          "method": "lcs",
+          "count": 3
+        }
+      ],
+      "capital_amortization": null
+    },
+    "capital_firm_config": {
+      "raw_productivity": null,
+      "demand_elasticity": 25.0,
+      "capital_productivity": -1.0,
+      "labor_productivity": 1.0,
+      "learnings": [
+        {
+          "method": "qlearning",
+          "count": 11
+        },
+        {
+          "method": "rational",
+          "count": 12
+        },
+        {
+          "method": "lcs",
+          "count": 4
+        },
+        {
+          "method": "lcs",
+          "count": 3
+        }
+      ],
+      "capital_amortization": null
+    },
+    "production_firm_config": {
+      "raw_productivity": null,
+      "demand_elasticity": 25.0,
+      "capital_productivity": -1.0,
+      "labor_productivity": 1.0,
+      "learnings": [
+        {
+          "method": "qlearning",
+          "count": 11
+        },
+        {
+          "method": "rational",
+          "count": 12
+        },
+        {
+          "method": "lcs",
+          "count": 4
+        },
+        {
+          "method": "lcs",
+          "count": 3
+        }
+      ],
+      "capital_amortization": null
+    },
+    "household_config": {
+      "consumption_need": null,
+      "condumption_budget": null,
+      "count": null
+    },
+    "government_config": {
+      "import_tax": 1.0,
+      "coefficient_help": -1.0,
+      "income_tax": 1.0,
+      "minimal_help": 1.0,
+      "profit_tax": 1.0
+    },
+    "outside_world_config": {
+      "exchange_rate": null,
+      "raw_price": null,
+      "sell_probability": null,
+      "capital_price": null,
+      "good_price": null
+    }
+  }
+}
+]

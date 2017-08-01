@@ -1,3 +1,4 @@
+from decision_maker import DecisionMaker
 from firm import Firm
 from firm_action import FirmAction
 from firm_labormarket_action import FirmLaborMarketAction
@@ -12,7 +13,7 @@ def isinrange(value, left, right):
 def change(new_value, old_value):
     return (new_value - old_value)/old_value if old_value > 0 else 0
 
-class RuleFirm(Firm):
+class RuleFirm(DecisionMaker):
     def __init__(self, id):
         super().__init__(id)
         self.salary = 200

@@ -1,3 +1,4 @@
+from decision_maker import DecisionMaker
 from firm import Firm
 from firm_action import FirmAction
 from firm_labormarket_action import FirmLaborMarketAction
@@ -7,7 +8,7 @@ import math
 import random
 
 
-class DianaFirm(Firm):
+class DianaFirm(DecisionMaker):
     def __init__(self, id):
         super().__init__(id)
         self.plan = 50 * self.efficiency_coefficient
