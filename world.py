@@ -26,37 +26,41 @@ class World:
     def __init__(self, model_config, run_config):
 
         self.firms = []
+        firm_count = 0
         if model_config['raw_firm_structure'] is not None:
             self.raw_firms = []
-            for learning_method, count in run_config['raw_firm_config']:
-                for i in range(int(count)):
-                    firm = RawFirm(model_config['raw_firm_structure', run_config['raw_firm_config']], learning_method)
+            for learning_item in run_config['raw_firm_config']['learnings']:
+                for i in range(int(learning_item['count'])):
+                    firm = RawFirm(firm_count, model_config['raw_firm_structure'], run_config['raw_firm_config'], learning_item['method'])
                     self.raw_firms.append(firm)
                     self.firms.append(firm)
+                    firm_count += 1
 
         if model_config['capital_firm_structure'] is not None:
             self.capital_firms = []
-            for learning_method, count in run_config['capital_firm_config']:
-                for i in range(int(count)):
-                    firm = CapitalFirm(model_config['capital_firm_structure', run_config['capital_firm_config']], learning_method)
+            for learning_item in run_config['capital_firm_config']['learnings']:
+                for i in range(int(learning_item['count'])):
+                    firm = CapitalFirm(firm_count, model_config['capital_firm_structure'], run_config['capital_firm_config'], learning_item['method'])
                     self.capital_firms.append(firm)
                     self.firms.append(firm)
+                    firm_count += 1
 
 
         self.production_firms = []
-        for learning_method, count in run_config['production_firm_config']:
-            for i in range(int(count)):
-                firm = ProductionFirm(model_config['raw_firm_structure', run_config['raw_firm_config']], learning_method)
+        for learning_item in run_config['production_firm_config']['learnings']:
+            for i in range(int(learning_item['count'])):
+                firm = ProductionFirm(firm_count, model_config['production_firm_structure'], run_config['production_firm_config'], learning_item['method'])
                 self.raw_firms.append(firm)
                 self.firms.append(firm)
+                firm_count += 1
 
 
 
-        if model_config['government'] is not None:
-            self.government = Government(model_config['government'], run_config['government'])
+        if model_config['government_structure'] is not None:
+            self.government = Government(model_config['government_structure'], run_config['government_config'])
 
         if model_config['outside_world']:
-            self.outside_world = OutsideWorld(run_config['government'])
+            self.outside_world = OutsideWorld(run_config['outside_world_config'])
 
 
         self.stats = Stats()
@@ -64,11 +68,14 @@ class World:
         self.money = run_config['initial_money']
         self.steps = run_config['iterations']
 
+        self.birth_rate = run_config['household_birth']
+        self.money_growth = run_config['money_growth']
+
         self.model_config = model_config
         self.run_config = run_config
 
         #self.firm_algorithms = config['algorithms']
-        household_count = run_config['households_count']
+        household_count = run_config['household_config']['count']
         self.households = []
 
         firm_count = len(self.firms)
@@ -76,10 +83,10 @@ class World:
         # initial worker distribution
         for i in range(household_count):
             worker = Worker(i)
-            self.workers.append(worker)
+            self.households.append(worker)
             firm_id = i % firm_count
             firm = self.firms[firm_id]
-            firm.add_worker(worker, firm.current_salary)
+            firm.add_worker(worker, firm.salary)
 
         self.history = History(self.steps, self.firms)
 
@@ -92,7 +99,7 @@ class World:
         self.firm_labormarket_results = [0] * firm_count
         self.firm_goodmarket_results = [0] * firm_count
 
-        with open(run_config['global']['output'], "w", newline='') as output_file:
+        with open("output.csv", "w", newline='') as output_file:
             writer = csv.DictWriter(output_file, delimiter=';',
                                     fieldnames=["firm_type", "firm_id", "step", "salary", "workers", "sold", "price", "stock", "profit",
                                                 "product_supply", "labor_demand", "sales", "world_price", "world_salary", "world_sold",
@@ -133,19 +140,17 @@ class World:
         else:
             self.stats.salary = 0
         unemployed = 0
-        for worker in self.workers:
+        for worker in self.households:
             if worker.employer is None:
                 unemployed += 1
-        if len(self.workers) > 0:
-            self.stats.unemployment_rate = unemployed / len(self.workers)
+        if len(self.households) > 0:
+            self.stats.unemployment_rate = unemployed / len(self.households)
         self.stats.money = self.money
 #        self.stats.expected_sales_growth = self.config['global']['money_growth']/self.money
         self.stats.expected_sold_growth = 0.05
 
     def go(self):
         print("It's alive!!")
-        birth_rate = self.config['global']['birth_rate']
-        money_growth = self.config['global']['money_growth']
         for step in range(self.steps):
             # print("Step:", step)
             for i, firm in enumerate(self.firms):
@@ -156,9 +161,9 @@ class World:
                 #     del self.firm_actions[i]
                 #     continue
                 # print(firm)
-                firm.work()
+                firm.produce()
                 # print(firm)
-                self.firm_goodmarket_actions[firm.id] = firm.decide_price(self.stats)
+                self.firm_goodmarket_actions[firm.id] = firm.decision_maker.decide_price(self.stats, firm)
             self.manage_sales()
             for firm_id, firm_action in enumerate(self.firm_goodmarket_actions):
                 firm = self.firms[firm_id]
@@ -167,15 +172,15 @@ class World:
                 self.history.add_record(step, firm)
             self.compute_stats()
             self.history.add_stats(step, self.stats)  # needs to be rewritten with proper history object in mind
-            for j in range(birth_rate):
-                worker = Worker(len(self.workers))
-                self.workers.append(worker)
+            for j in range(self.birth_rate):
+                worker = Worker(len(self.households))
+                self.households.append(worker)
             for i, firm in enumerate(self.firms):
-                self.firm_labormarket_actions[firm.id] = firm.decide_salary(self.stats)
+                self.firm_labormarket_actions[firm.id] = firm.decision_maker.decide_salary(self.stats, firm)
             self.manage_job_offers()
             for firm_id, firm_action in enumerate(self.firm_labormarket_actions):
                 firm = self.firms[firm_id]
                 firm.apply_labormarket_result(self.firm_labormarket_results[firm_id])
-            self.money += money_growth
+            self.money += self.money_growth
 
         return self.history

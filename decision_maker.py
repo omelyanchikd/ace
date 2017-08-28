@@ -3,16 +3,16 @@ from abc import ABCMeta, abstractmethod
 class DecisionMaker:
     __metaclass__ = ABCMeta
 
-    def __init__(self, id):
+    def __init__(self, id, firm):
         self.id = id
 
     @abstractmethod
-    def decide(self, stats):
+    def decide(self, stats, firm):
         pass
 
-    def decide_price(self, stats):
+    def decide_price(self, stats, firm):
         pass
 
-    def decide_salary(self, stats):
+    def decide_salary(self, stats, firm):
         pass
 

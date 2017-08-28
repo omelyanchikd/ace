@@ -4,6 +4,7 @@ import math
 from abc import ABCMeta, abstractmethod
 
 from firm_result import FirmResult
+from decision_maker import DecisionMaker
 from stats import Stats
 
 
@@ -18,6 +19,7 @@ class Firm:
         self.price = 20
         self.money = 100000
         self.efficiency_coefficient = 10
+        self.plan = 50
         self.current_salary = 200
         self.sales = 0
         self.salary = 200
@@ -26,6 +28,8 @@ class Firm:
         self.step = 0
         self.labor_capacity = 50
         self.type = 'Unknown'
+        self.decision_maker = DecisionMaker(id, self)
+
 
     def apply_result(self, result):
         """
@@ -108,8 +112,9 @@ class Firm:
         pass
 
     def __str__(self):
-        return u"Firm id: {0:d}. Stock: {1:d} Price: {2:d} Money: {3:d} Workers: {4:d}" \
-            .format(self.id, self.stock, self.price, self.money, len(self.workers))
+        return str(self.id) + ' ' + self.type
+        #return u"Firm id: {0:d}. Stock: {1:d} Price: {2:d} Money: {3:d} Workers: {4:d}" \
+        #    .format(self.id, self.stock, self.price, self.money, len(self.workers))
 
     def __repr__(self):
         return self.__str__()

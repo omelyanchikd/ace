@@ -47,7 +47,7 @@ class BasicWorld(World):
         new_workers = [[] for i in range(len(self.firms))]
 
         potential_candidates = []
-        for worker in self.workers:
+        for worker in self.households:
             if worker.employer is None or worker.salary < max_salary:
                 potential_candidates.append(worker)
 

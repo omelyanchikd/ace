@@ -21,15 +21,15 @@ def argmax(two_dimensional_list, dimension):
     return arg_max
 
 class QlearningFirm(DecisionMaker):
-    def __init__(self, id):
-        super().__init__(id)
-        self.plan = 50 * self.efficiency_coefficient
-        self.salary = 200
-        self.offer_count = 0
+    def __init__(self, id, firm):
+        super().__init__(id, firm)
+        #self.plan = 50 * self.labor_productivity
+        #self.salary = 200
+        #self.offer_count = 0
         self.prev_workers = 50
-        self.actions = [(0.01, self.efficiency_coefficient), (0.01, 0), (0.01, -self.efficiency_coefficient),
-                        (0, self.efficiency_coefficient), (0, 0), (0, -self.efficiency_coefficient),
-                        (-0.01, self.efficiency_coefficient), (-0.01, 0), (-0.01, -self.efficiency_coefficient)]
+        self.actions = [(0.01, firm.labor_productivity), (0.01, 0), (0.01, -firm.labor_productivity),
+                        (0, firm.labor_productivity), (0, 0), (0, -firm.labor_productivity),
+                        (-0.01, firm.labor_productivity), (-0.01, 0), (-0.01, -firm.labor_productivity)]
         self.action = (0,0)
         self.state = 0
         self.alpha = 0.5
@@ -40,57 +40,61 @@ class QlearningFirm(DecisionMaker):
             for action in range(0, 9):
                 self.q[state].append(100)
         self.type = "QlearningFirm"
+        self.price = firm.price
+        self.salary = firm.salary
+        self.workers = len(firm.workers)
+        self.offer_count = 0
 
-    def decide(self, stats):
+    def decide(self, stats, firm):
         return FirmAction(0, 0, 0, 0, 0, 0, [])
 
-    def decide_salary(self, stats):
-        self.update_state()
-        self.prev_workers = len(self.workers)
-        self.update()
+    def decide_salary(self, stats, firm):
+        self.update_state(firm)
+        self.prev_workers = len(firm.workers)
+        self.update(firm)
         self.action = self.actions[argmax(self.q, self.state)]
-        self.price *= (1 + self.action[0])
+        self.price = firm.price * (1 + self.action[0])
         self.price = self.price if self.price > 0 else 0
-        self.plan += self.action[1]
-        self.plan = (self.plan - self.stock) // self.efficiency_coefficient * self.efficiency_coefficient
+        self.plan = firm.plan + self.action[1]
+        self.plan = (self.plan - firm.stock) // firm.labor_productivity * firm.labor_productivity
         self.plan = self.plan if self.plan >= 0 else 0
-        self.offer_count = math.floor(self.plan / self.efficiency_coefficient) - len(self.workers)
+        self.offer_count = math.floor(self.plan / firm.labor_productivity) - len(firm.workers)
         while self.offer_count < 0:
-            self.fire_worker(random.choice(list(self.workers)))
+            firm.fire_worker(random.choice(list(firm.workers)))
             self.offer_count += 1
-        total_salary = sum([worker.salary for worker in self.workers])
+        total_salary = sum([worker.salary for worker in firm.workers])
         while True:
             if self.offer_count > 0:
                 self.salary = 0.95 * (
-                self.price * (len(self.workers) + self.offer_count) * self.efficiency_coefficient -
+                self.price * (len(firm.workers) + self.offer_count) * firm.labor_productivity -
                 total_salary) / self.offer_count
                 if self.salary > 0:
                     break
                 self.price *= 1.05
             else:
                 break
-        self.labor_capacity = len(self.workers) + self.offer_count
+        firm.labor_capacity = len(firm.workers) + self.offer_count
         return FirmLaborMarketAction(self.offer_count, self.salary, [])
 
-    def decide_price(self, stats):
-        return FirmGoodMarketAction(self.stock, self.price, 0)
+    def decide_price(self, stats, firm):
+        return FirmGoodMarketAction(firm.stock, self.price, 0)
 
-    def update_state(self):
-        if len(self.workers) == 0:
+    def update_state(self, firm):
+        if len(firm.workers) == 0:
             self.state = 5
-        elif self.sold == 0:
+        elif firm.sold == 0:
             self.state = 4
-        elif self.sold >= self.plan and len(self.workers) == self.prev_workers + self.offer_count:
+        elif firm.sold >= firm.plan and len(firm.workers) == self.prev_workers + self.offer_count:
             self.state = 0
-        elif self.sold < self.plan and len(self.workers) == self.prev_workers + self.offer_count:
+        elif firm.sold < firm.plan and len(firm.workers) == self.prev_workers + self.offer_count:
             self.state = 1
-        elif self.sold == self.plan and len(self.workers) < self.prev_workers + self.offer_count:
+        elif firm.sold == firm.plan and len(firm.workers) < self.prev_workers + self.offer_count:
             self.state = 2
         else:
             self.state = 3
 
-    def update(self):
+    def update(self, firm):
         current_action = self.actions.index(self.action)
-        self.q[self.state][current_action] = self.q[self.state][current_action] + self.alpha * (self.profit + self.gamma * max(self.q[self.state]) - self.q[self.state][current_action])
+        self.q[self.state][current_action] = self.q[self.state][current_action] + self.alpha * (firm.profit + self.gamma * max(self.q[self.state]) - self.q[self.state][current_action])
 
 
