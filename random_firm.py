@@ -19,12 +19,12 @@ class RandomFirm(DecisionMaker):
 
 
     def decide_price(self, stats, firm):
-        self.price = random.uniform(10, 30)
-        return FirmGoodMarketAction(firm.stock, self.price, 0)
+        firm.price = random.uniform(10, 30)
+        return FirmGoodMarketAction(firm.stock, firm.price, 0)
 
     def decide_salary(self, stats, firm):
-        self.salary = random.uniform(150, 250)
+        firm.salary = random.uniform(150, 250)
      #   self.current_state = [self.price, self.salary, self.sold, len(self.workers), stats.price, stats.salary, stats.money - ]
 
-        self.labor_capacity = len(firm.workers) + 1
-        return FirmLaborMarketAction(1, self.salary, [])
+        firm.labor_capacity = len(firm.workers) + 1
+        return FirmLaborMarketAction(1, firm.salary, [])

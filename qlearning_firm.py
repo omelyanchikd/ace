@@ -50,34 +50,34 @@ class QlearningFirm(DecisionMaker):
 
     def decide_salary(self, stats, firm):
         self.update_state(firm)
-        self.prev_workers = len(firm.workers)
         self.update(firm)
         self.action = self.actions[argmax(self.q, self.state)]
-        self.price = firm.price * (1 + self.action[0])
-        self.price = self.price if self.price > 0 else 0
-        self.plan = firm.plan + self.action[1]
-        self.plan = (self.plan - firm.stock) // firm.labor_productivity * firm.labor_productivity
-        self.plan = self.plan if self.plan >= 0 else 0
-        self.offer_count = math.floor(self.plan / firm.labor_productivity) - len(firm.workers)
+        firm.price = firm.price * (1 + self.action[0])
+        firm.price = firm.price if firm.price > 0 else 0
+        firm.plan = firm.plan + self.action[1]
+        firm.plan = (firm.plan - firm.stock) // firm.labor_productivity * firm.labor_productivity
+        firm.plan = firm.plan if firm.plan >= 0 else 0
+        self.offer_count = math.floor(firm.plan / firm.labor_productivity) - len(firm.workers)
         while self.offer_count < 0:
             firm.fire_worker(random.choice(list(firm.workers)))
             self.offer_count += 1
         total_salary = sum([worker.salary for worker in firm.workers])
         while True:
             if self.offer_count > 0:
-                self.salary = 0.95 * (
-                self.price * (len(firm.workers) + self.offer_count) * firm.labor_productivity -
+                firm.salary = 0.95 * (
+                firm.price * (len(firm.workers) + self.offer_count) * firm.labor_productivity -
                 total_salary) / self.offer_count
-                if self.salary > 0:
+                if firm.salary > 0:
                     break
-                self.price *= 1.05
+                firm.price *= 1.05
             else:
                 break
         firm.labor_capacity = len(firm.workers) + self.offer_count
-        return FirmLaborMarketAction(self.offer_count, self.salary, [])
+        self.prev_workers = len(firm.workers)
+        return FirmLaborMarketAction(self.offer_count, firm.salary, [])
 
     def decide_price(self, stats, firm):
-        return FirmGoodMarketAction(firm.stock, self.price, 0)
+        return FirmGoodMarketAction(firm.stock, firm.price, 0)
 
     def update_state(self, firm):
         if len(firm.workers) == 0:

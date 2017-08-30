@@ -19,19 +19,19 @@
       "learnings": [
         {
           "method": "qlearning",
-          "count": 11
+          "count": 1
         },
         {
           "method": "rational",
-          "count": 12
+          "count": 1
         },
         {
           "method": "lcs",
-          "count": 4
+          "count": 1
         },
         {
           "method": "lcs",
-          "count": 3
+          "count": 1
         }
       ],
       "capital_amortization": null
@@ -45,19 +45,19 @@
       "learnings": [
         {
           "method": "qlearning",
-          "count": 11
+          "count": 1
         },
         {
           "method": "rational",
-          "count": 12
+          "count": 1
         },
         {
           "method": "lcs",
-          "count": 4
+          "count": 1
         },
         {
           "method": "lcs",
-          "count": 3
+          "count": 1
         }
       ],
       "capital_amortization": null
@@ -71,19 +71,19 @@
       "learnings": [
         {
           "method": "qlearning",
-          "count": 11
+          "count": 1
         },
         {
           "method": "rational",
-          "count": 12
+          "count": 1
         },
         {
           "method": "lcs",
-          "count": 4
+          "count": 1
         },
         {
           "method": "lcs",
-          "count": 3
+          "count": 1
         }
       ],
       "capital_amortization": null
