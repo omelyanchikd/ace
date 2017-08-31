@@ -19,14 +19,17 @@ class ProductionFirm(Firm):
 
     def produce(self):
         if hasattr(self, 'raw') and hasattr(self, 'capital'):
-            self.stock += min(len(self.workers) * self.labor_efficiency, self.capital * self.capital_efficiency, self.raw * self.raw_efficiency)
-            self.raw -= min(len(self.workers) * self.labor_efficiency, self.capital * self.capital_efficiency, self.raw * self.raw_efficiency)/self.raw_efficiency
+            self.stock += min(len(self.workers) * self.labor_productivity, self.capital * self.capital_productivity, self.raw * self.raw_productivity)
+            self.raw -= min(len(self.workers) * self.labor_productivity, self.capital * self.capital_productivity, self.raw * self.raw_productivity)/self.raw_productivity
             self.capital *= (1 - self.amortisation)
         elif hasattr(self, 'raw'):
-            self.stock += min(len(self.workers) * self.labor_efficiency, self.raw * self.raw_efficiency)
-            self.raw -= min(len(self.workers) * self.labor_efficiency, self.raw * self.raw_efficiency) / self.raw_efficiency
+            self.stock += min(len(self.workers) * self.labor_productivity, self.raw * self.raw_productivity)
+            self.raw -= min(len(self.workers) * self.labor_productivity, self.raw * self.raw_productivity) / self.raw_productivity
         elif hasattr(self, 'capital'):
-            self.stock += min(len(self.workers) * self.labor_efficiency, self.capital * self.capital_efficiency)
+            self.stock += min(len(self.workers) * self.labor_productivity, self.capital * self.capital_productivity)
             self.capital *= (1 - self.amortisation)
+        else:
+            self.stock += len(self.workers) * self.labor_productivity
+
         for worker in self.workers:
             self.money -= worker.salary

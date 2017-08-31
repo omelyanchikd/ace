@@ -17,11 +17,10 @@ class CapitalFirm(Firm):
 
     def produce(self):
         if hasattr(self, 'raw'):
-            self.stock += min(len(self.workers) * self.labor_efficiency, self.raw * self.raw_efficiency)
-            self.raw -= min(len(self.workers) * self.labor_efficiency, self.raw * self.raw_efficiency) / self.raw_efficiency
-        elif hasattr(self, 'capital'):
-            self.stock += min(len(self.workers) * self.labor_efficiency, self.capital * self.capital_efficiency)
-            self.capital *= (1 - self.amortisation)
+            self.stock += min(len(self.workers) * self.labor_productivity, self.raw * self.raw_productivity)
+            self.raw -= min(len(self.workers) * self.labor_productivity, self.raw * self.raw_productivity) / self.raw_productivity
+        else:
+            self.stock += len(self.workers) * self.labor_productivity
         for worker in self.workers:
             self.money -= worker.salary
 

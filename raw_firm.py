@@ -22,5 +22,5 @@ class RawFirm(Firm):
 
     def produce(self):
         for worker in self.workers:
-            self.stock += worker.productivity * self.efficiency_coefficient
+            self.stock += len(self.workers) * self.labor_productivity
             self.money -= worker.salary
