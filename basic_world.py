@@ -18,7 +18,7 @@ def invert(x):
 
 
 class BasicWorld(World):
-    def manage_firm_actions(self, firm_actions):
+    def manage_firm_actions(self, firm_actions, firm_type):
         """
         Basic World! Contains basic algorithms for labor market and good market.
         :param firm_actions:
@@ -28,21 +28,32 @@ class BasicWorld(World):
 
         self.fire()
 
-        new_workers, quited = self.manage_job_offers()
+        new_workers, quited = self.manage_job_offers(firm_type)
 
-        sales = self.manage_sales()
+        sales = self.manage_sales(firm_type)
         # Aggregate firm results
         #  for firm in self.firms:
         #     self.firm_results[firm.id] = FirmResult(new_workers[firm.id], quited[firm.id], salaries[firm.id],
         #                                            sales[firm.id])
 
-    def manage_job_offers(self):
-        initial_salaries = numpy.array(list(firm_action.salary if firm_action.salary >= 0 and firm_action.offer_count > 0
-                                            else 0 for firm_action in self.firm_labormarket_actions))
-        salaries = numpy.array(list(firm_action.salary if firm_action.salary > 0 and firm_action.offer_count > 0 else 0
-                                    for firm_action in self.firm_labormarket_actions))
+    def manage_job_offers(self, firm_type):
+        if firm_type == 'RawFirm':
+            firms = self.raw_firms
+        elif firm_type == 'CapitalFirm':
+            firms = self.capital_firms
+        else:
+            firms = self.production_firms
+        salaries = []
+        for firm_action in self.firm_labormarket_actions:
+            if firm_action == 0:
+                salaries.append(0)
+            elif firm_action.salary >= 0 and firm_action.offer_count > 0:
+                salaries.append(firm_action.salary)
+            else:
+                salaries.append(0)
+        salaries = numpy.array(list(salaries))
+        selected_salaries = salaries[[firm.id for firm in firms]]
         max_salary = max(salaries)
-
         quited = [[] for i in range(len(self.firms))]
         new_workers = [[] for i in range(len(self.firms))]
 
@@ -53,7 +64,7 @@ class BasicWorld(World):
 
         while len(potential_candidates) > 0 and sum(salaries) > 0:
             worker = random.choice(potential_candidates)
-            employer = numpy.random.choice(self.firms, replace=False, p=salaries / sum(salaries))
+            employer = numpy.random.choice(firms, replace=False, p=selected_salaries / sum(selected_salaries))
             assert isinstance(employer, Firm)
 
             potential_candidates.remove(worker)
@@ -63,26 +74,47 @@ class BasicWorld(World):
                     quited[worker.employer].append(worker)
             if self.firm_labormarket_actions[employer.id].offer_count == len(new_workers[employer.id]):
                 salaries[employer.id] = 0
+                selected_salaries = salaries[[firm.id for firm in firms]]
 
-        for firm in self.firms:
-            self.firm_labormarket_results[firm.id] = FirmLaborMarketResult(new_workers[firm.id], quited[firm.id], initial_salaries[firm.id])
+        for firm in firms:
+            self.firm_labormarket_results[firm.id] = FirmLaborMarketResult(new_workers[firm.id], quited[firm.id], salaries[firm.id])
 
 
 
-    def manage_sales(self):
+    def manage_sales(self, firm_type):
         # Basic selection algorithm for good market
-        prices = numpy.array(list(firm_action.price if firm_action.price >= 0 and firm_action.production_count > 0
-                                  else 0 for firm_action in self.firm_goodmarket_actions))
+        if firm_type == 'RawFirm':
+            firms = self.raw_firms
+        elif firm_type == 'CapitalFirm':
+            firms = self.capital_firms
+        else:
+            firms = self.production_firms
+        prices = []
+        for firm_action in self.firm_goodmarket_actions:
+            if firm_action == 0:
+                prices.append(0)
+            elif firm_action.price >= 0 and firm_action.production_count > 0:
+                prices.append(firm_action.price)
+            else:
+                prices.append(0)
+        prices = numpy.array(list(prices))
         inverted_prices = numpy.array(list(invert(x) for x in prices))
+        selected_inverted_prices = inverted_prices[[firm.id for firm in firms]]
         sales = [0] * len(self.firms)
         total_sold = 0
         money = self.money
-        for firm in self.firms:
+        for firm in firms:
             if self.firm_goodmarket_actions[firm.id].production_count > self.firms[firm.id].stock:
                 self.firm_goodmarket_actions[firm.id].production_count = self.firms[firm.id].stock
-        production_counts = numpy.array(list(firm_action.production_count for firm_action in self.firm_goodmarket_actions))
+        production_counts = []
+        for firm_action in self.firm_goodmarket_actions:
+            if firm_action == 0:
+                production_counts.append(0)
+            else:
+                production_counts.append(firm_action.production_count)
+        production_counts = numpy.array(list(production_counts))
         while sum(prices) > 0 and money > 0 and money >= min([price for price in prices if price != 0]):
-            seller = numpy.random.choice(self.firms, replace=False, p=inverted_prices / sum(inverted_prices))
+            seller = numpy.random.choice(firms, replace=False, p=selected_inverted_prices / sum(selected_inverted_prices))
             assert isinstance(seller, Firm)
 
             if money >= prices[seller.id]:
@@ -93,12 +125,13 @@ class BasicWorld(World):
                 if production_counts[seller.id] <= 0:
                     prices[seller.id] = 0
                     inverted_prices[seller.id] = 0
+                    selected_inverted_prices = inverted_prices[[firm.id for firm in firms]]
 
         #if total_sold < 2000:
            # sales = [0] * len(sales)
             #for firm in self.firms:
             #    firm.stock = 0
-        for firm in self.firms:
+        for firm in firms:
             self.firm_goodmarket_results[firm.id] = FirmGoodMarketResult(sales[firm.id])
         #self.money = 1.5 * total_sold * 20 if total_sold > 0 else 1000
 

@@ -50,7 +50,7 @@ class World:
         for learning_item in run_config['production_firm_config']['learnings']:
             for i in range(int(learning_item['count'])):
                 firm = ProductionFirm(firm_count, model_config['production_firm_structure'], run_config['production_firm_config'], learning_item['method'])
-                self.raw_firms.append(firm)
+                self.production_firms.append(firm)
                 self.firms.append(firm)
                 firm_count += 1
 
@@ -107,13 +107,13 @@ class World:
             writer.writeheader()
             output_file.close()
 
-    def manage_firm_actions(self, firm_actions):
+    def manage_firm_actions(self, firm_actions, firm_type):
         pass
 
-    def manage_sales(self):
+    def manage_sales(self, firm_type):
         pass
 
-    def manage_job_offers(self):
+    def manage_job_offers(self, firm_type):
         pass
 
     def compute_stats(self):
@@ -153,7 +153,7 @@ class World:
         print("It's alive!!")
         for step in range(self.steps):
             # print("Step:", step)
-            for i, firm in enumerate(self.firms):
+            for i, firm in enumerate(self.production_firms):
                 # @todo: enable bankrupt
                 # if firm.money < self.config['global']['bankrupt_rate']:
                 #     firm.bankrupt()
@@ -164,7 +164,7 @@ class World:
                 firm.produce()
                 # print(firm)
                 self.firm_goodmarket_actions[firm.id] = firm.decision_maker.decide_price(self.stats, firm)
-            self.manage_sales()
+            self.manage_sales('ProductionFirm')
             for firm_id, firm_action in enumerate(self.firm_goodmarket_actions):
                 firm = self.firms[firm_id]
                 firm.apply_goodmarket_result(self.firm_goodmarket_results[firm_id])
@@ -175,9 +175,9 @@ class World:
             for j in range(self.birth_rate):
                 worker = Worker(len(self.households))
                 self.households.append(worker)
-            for i, firm in enumerate(self.firms):
+            for i, firm in enumerate(self.production_firms):
                 self.firm_labormarket_actions[firm.id] = firm.decision_maker.decide_salary(self.stats, firm)
-            self.manage_job_offers()
+            self.manage_job_offers('ProductionFirm')
             for firm_id, firm_action in enumerate(self.firm_labormarket_actions):
                 firm = self.firms[firm_id]
                 firm.apply_labormarket_result(self.firm_labormarket_results[firm_id])

@@ -53,22 +53,24 @@ class Firm:
         self.money += self.price * result.sold_count
 
     def apply_labormarket_result(self, result):
-        for worker in result.quit_workers:
-            self.remove_worker(worker)
-        for worker in result.new_workers:
-            self.add_worker(worker, result.salary)
+        if result != 0:
+            for worker in result.quit_workers:
+                self.remove_worker(worker)
+            for worker in result.new_workers:
+                self.add_worker(worker, result.salary)
 
     def apply_goodmarket_result(self, result):
         total_salary = 0
         for worker in self.workers:
             total_salary += worker.salary
-        self.sold = result.sold_count
-        self.stock -= result.sold_count
-        self.sales = self.price * result.sold_count
-        self.profit = self.sales - total_salary
+        if result != 0:
+            self.sold = result.sold_count
+            self.stock -= result.sold_count
+            self.sales = self.price * result.sold_count
+            self.profit = self.sales - total_salary
+            self.money += self.price * result.sold_count
         if len(self.workers) > 0:
             self.salary = total_salary / len(self.workers)
-        self.money += self.price * result.sold_count
 
     def add_worker(self, worker, salary):
         worker.employer = self.id
