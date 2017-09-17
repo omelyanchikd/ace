@@ -10,33 +10,27 @@
       "workers_count": false,
       "salary_budget": false,
       "plan": false,
-      "raw_need": false,
-      "capital_need": false,
+      "raw_need": true,
+      "capital_need": true,
       "price": false,
-      "capital_budget": false,
-      "raw_budget": false
+      "capital_budget": true,
+      "raw_budget": true
     },
     "raw_firm_structure": {
       "salary": true,
       "workers_count": false,
       "salary_budget": false,
       "plan": false,
-      "raw_need": false,
-      "capital_need": false,
-      "price": false,
-      "capital_budget": false,
-      "raw_budget": false
+      "price": false
     },
     "capital_firm_structure": {
       "salary": true,
       "workers_count": false,
       "salary_budget": false,
       "plan": false,
-      "raw_need": false,
-      "capital_need": false,
+      "raw_need": true,
       "price": false,
-      "capital_budget": false,
-      "raw_budget": false
+      "raw_budget": true
     },
     "household_structure": {
       "consumption_budget": false,

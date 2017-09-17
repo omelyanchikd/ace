@@ -1,4 +1,5 @@
 import random
+import math
 
 import numpy
 
@@ -36,13 +37,15 @@ class BasicWorld(World):
         #     self.firm_results[firm.id] = FirmResult(new_workers[firm.id], quited[firm.id], salaries[firm.id],
         #                                            sales[firm.id])
 
-    def manage_job_offers(self, firm_type):
+    def manage_job_offers(self, firm_type = None):
         if firm_type == 'RawFirm':
             firms = self.raw_firms
         elif firm_type == 'CapitalFirm':
             firms = self.capital_firms
-        else:
+        elif firm_type == 'ProductionFirm':
             firms = self.production_firms
+        else:
+            firms = self.firms
         salaries = []
         for firm_action in self.firm_labormarket_actions:
             if firm_action == 0:
@@ -84,11 +87,15 @@ class BasicWorld(World):
     def manage_sales(self, firm_type):
         # Basic selection algorithm for good market
         if firm_type == 'RawFirm':
-            firms = self.raw_firms
+            self.manage_b2b_sales_raw()
         elif firm_type == 'CapitalFirm':
-            firms = self.capital_firms
+            self.manage_b2b_sales_capital()
         else:
-            firms = self.production_firms
+            self.manage_b2c_sales()
+
+
+    def manage_b2c_sales(self):
+        firms = self.production_firms
         prices = []
         for firm_action in self.firm_goodmarket_actions:
             if firm_action == 0:
@@ -113,7 +120,7 @@ class BasicWorld(World):
             else:
                 production_counts.append(firm_action.production_count)
         production_counts = numpy.array(list(production_counts))
-        while sum(prices) > 0 and money > 0 and money >= min([price for price in prices if price != 0]):
+        while sum(selected_inverted_prices) > 0 and money > 0 and money >= min([price for price in prices if price != 0]):
             seller = numpy.random.choice(firms, replace=False, p=selected_inverted_prices / sum(selected_inverted_prices))
             assert isinstance(seller, Firm)
 
@@ -134,6 +141,150 @@ class BasicWorld(World):
         for firm in firms:
             self.firm_goodmarket_results[firm.id] = FirmGoodMarketResult(sales[firm.id])
         #self.money = 1.5 * total_sold * 20 if total_sold > 0 else 1000
+
+    def manage_b2b_sales_raw(self):
+        # Basic selection algorithm for good market
+        firms = self.raw_firms
+        buyers = [firm for firm in self.capital_firms or self.production_firms]
+        prices = []
+        for firm_action in self.firm_goodmarket_actions:
+            if firm_action == 0:
+                prices.append(0)
+            elif firm_action.price >= 0 and firm_action.production_count > 0:
+                prices.append(firm_action.price)
+            else:
+                prices.append(0)
+        prices = numpy.array(list(prices))
+        inverted_prices = numpy.array(list(invert(x) for x in prices))
+        selected_inverted_prices = inverted_prices[[firm.id for firm in firms]]
+        sales = [0] * len(self.firms)
+        total_sold = 0
+        for firm in firms:
+            if self.firm_goodmarket_actions[firm.id].production_count > self.firms[firm.id].stock:
+                self.firm_goodmarket_actions[firm.id].production_count = self.firms[firm.id].stock
+        production_counts = []
+        for firm_action in self.firm_goodmarket_actions:
+            if firm_action == 0:
+                production_counts.append(0)
+            else:
+                production_counts.append(firm_action.production_count)
+        production_counts = numpy.array(list(production_counts))
+        while sum(selected_inverted_prices) > 0 and len(buyers) > 0 and sum([firm.raw_need for firm in buyers]) > 0 and min([price for price in prices if price != 0]) <= max([firm.raw_budget for firm in buyers]):
+            seller = numpy.random.choice(firms, replace=False, p=selected_inverted_prices / sum(selected_inverted_prices))
+            buyer = random.choice(buyers)
+            assert isinstance(seller, Firm)
+
+
+            if buyer.raw_need <= production_counts[seller.id] and buyer.raw_budget >= prices[seller.id]:
+                if buyer.raw_budget >= prices[seller.id] * buyer.raw_need:
+                    buyer.raw_budget -= prices[seller.id] * buyer.raw_need
+                    production_counts[seller.id] -= buyer.raw_need
+                    total_sold += buyer.raw_need
+                    buyer.raw_need = 0
+                else:
+                    sold = int(math.floor(buyer.raw_budget / prices[seller.id]))
+                    buyer.raw_budget -= prices[seller.id] * sold
+                    production_counts[seller.id] -= sold
+                    total_sold += sold
+                    buyer.raw_need -= sold
+            else:
+                if buyer.raw_budget >= prices[seller.id] * production_counts[seller.id]:
+                    buyer.raw_budget -= prices[seller.id] * production_counts[seller.id]
+                    total_sold += production_counts[seller.id]
+                    buyer.raw_need -= production_counts[seller.id]
+                    production_counts[seller.id] = 0
+                else:
+                    sold = int(math.floor(buyer.raw_budget / prices[seller.id]))
+                    buyer.raw_budget -= prices[seller.id] * sold
+                    production_counts[seller.id] -= sold
+                    total_sold += sold
+                    buyer.raw_need -= sold
+            if production_counts[seller.id] <= 0:
+                prices[seller.id] = 0
+                inverted_prices[seller.id] = 0
+                selected_inverted_prices = inverted_prices[[firm.id for firm in firms]]
+            if buyer.raw_need <= 0 or buyer.raw_budget <= 0:
+                buyers.remove(buyer)
+
+        #if total_sold < 2000:
+           # sales = [0] * len(sales)
+            #for firm in self.firms:
+            #    firm.stock = 0
+        for firm in firms:
+            self.firm_goodmarket_results[firm.id] = FirmGoodMarketResult(sales[firm.id])
+        #self.money = 1.5 * total_sold * 20 if total_sold > 0 else 1000
+            
+    def manage_b2b_sales_capital(self):
+        # Basic selection algorithm for good market
+        firms = self.capital_firms
+        buyers = self.production_firms
+        prices = []
+        for firm_action in self.firm_goodmarket_actions:
+            if firm_action == 0:
+                prices.append(0)
+            elif firm_action.price >= 0 and firm_action.production_count > 0:
+                prices.append(firm_action.price)
+            else:
+                prices.append(0)
+        prices = numpy.array(list(prices))
+        inverted_prices = numpy.array(list(invert(x) for x in prices))
+        selected_inverted_prices = inverted_prices[[firm.id for firm in firms]]
+        sales = [0] * len(self.firms)
+        total_sold = 0
+        for firm in firms:
+            if self.firm_goodmarket_actions[firm.id].production_count > self.firms[firm.id].stock:
+                self.firm_goodmarket_actions[firm.id].production_count = self.firms[firm.id].stock
+        production_counts = []
+        for firm_action in self.firm_goodmarket_actions:
+            if firm_action == 0:
+                production_counts.append(0)
+            else:
+                production_counts.append(firm_action.production_count)
+        production_counts = numpy.array(list(production_counts))
+        while sum(selected_inverted_prices) > 0 and len(buyers) > 0 and sum([firm.capital_need for firm in buyers]) > 0 and min([price for price in prices if price != 0]) <= max([firm.raw_budget for firm in buyers]):
+            seller = numpy.random.choice(firms, replace=False, p=selected_inverted_prices / sum(selected_inverted_prices))
+            buyer = random.choice(buyers)
+            assert isinstance(seller, Firm)
+
+            if buyer.capital_need <= production_counts[seller.id]:
+                if buyer.capital_budget >= prices[seller.id] * buyer.capital_need:
+                    buyer.capital_budget -= prices[seller.id] * buyer.capital_need
+                    production_counts[seller.id] -= buyer.capital_need
+                    total_sold += buyer.capital_need
+                    buyer.capital_need = 0
+                else:
+                    sold = int(math.floor(buyer.capital_budget / prices[seller.id]))
+                    buyer.capital_budget -= prices[seller.id] * sold
+                    production_counts[seller.id] -= sold
+                    total_sold += sold
+                    buyer.capital_need -= sold
+            else:
+                if buyer.capital_budget >= prices[seller.id] * production_counts[seller.id]:
+                    buyer.capital_budget -= prices[seller.id] * production_counts[seller.id]
+                    total_sold += production_counts[seller.id]
+                    buyer.capital_need -= production_counts[seller.id]
+                    production_counts[seller.id] = 0
+                else:
+                    sold = int(math.floor(buyer.capital_budget / prices[seller.id]))
+                    buyer.capital_budget -= prices[seller.id] * sold
+                    production_counts[seller.id] -= sold
+                    total_sold += sold
+                    buyer.capital_need -= sold
+            if production_counts[seller.id] <= 0:
+                prices[seller.id] = 0
+                inverted_prices[seller.id] = 0
+                selected_inverted_prices = inverted_prices[[firm.id for firm in firms]]
+            if buyer.capital_need <= 0 or buyer.capital_budget <= 0:
+                buyers.remove(buyer)
+
+        #if total_sold < 2000:
+           # sales = [0] * len(sales)
+            #for firm in self.firms:
+            #    firm.stock = 0
+        for firm in firms:
+            self.firm_goodmarket_results[firm.id] = FirmGoodMarketResult(sales[firm.id])
+        #self.money = 1.5 * total_sold * 20 if total_sold > 0 else 1000
+
 
     def fire(self):
         fired_workers = list(firm_action.fire_people for firm_action in self.firm_actions)

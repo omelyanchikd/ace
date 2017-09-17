@@ -42,6 +42,8 @@
       "demand_elasticity": 25.0,
       "capital_productivity": -1.0,
       "labor_productivity": 1.0,
+      "raw_need": 10,
+      "raw_budget": 20,
       "learnings": [
         {
           "method": "qlearning",
@@ -68,6 +70,10 @@
       "demand_elasticity": 25.0,
       "capital_productivity": -1.0,
       "labor_productivity": 1.0,
+      "raw_need": 10,
+      "raw_budget": 20,
+      "capital_need": 5,
+      "capital_budget": 200,
       "learnings": [
         {
           "method": "qlearning",
@@ -86,7 +92,7 @@
           "count": 1
         }
       ],
-      "capital_amortization": null
+      "capital_amortization": 0.01
     },
     "household_config": {
       "consumption_need": null,

@@ -153,6 +153,14 @@ class World:
         print("It's alive!!")
         for step in range(self.steps):
             # print("Step:", step)
+            for i, firm in enumerate(self.raw_firms):
+                firm.produce()
+                self.firm_goodmarket_actions[firm.id] = firm.decision_maker.decide_price(self.stats, firm)
+            self.manage_sales('RawFirm')
+            for i, firm in enumerate(self.capital_firms):
+                firm.produce()
+                self.firm_goodmarket_actions[firm.id] = firm.decision_maker.decide_price(self.stats, firm)
+            self.manage_sales('CapitalFirm')
             for i, firm in enumerate(self.production_firms):
                 # @todo: enable bankrupt
                 # if firm.money < self.config['global']['bankrupt_rate']:
@@ -175,9 +183,9 @@ class World:
             for j in range(self.birth_rate):
                 worker = Worker(len(self.households))
                 self.households.append(worker)
-            for i, firm in enumerate(self.production_firms):
+            for i, firm in enumerate(self.firms):
                 self.firm_labormarket_actions[firm.id] = firm.decision_maker.decide_salary(self.stats, firm)
-            self.manage_job_offers('ProductionFirm')
+            self.manage_job_offers()
             for firm_id, firm_action in enumerate(self.firm_labormarket_actions):
                 firm = self.firms[firm_id]
                 firm.apply_labormarket_result(self.firm_labormarket_results[firm_id])
