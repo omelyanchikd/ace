@@ -19,6 +19,7 @@ class IntuitiveFirm(DecisionMaker):
         self.history = [1000, 1000, 1000]
         self.plan = firm.plan
         self.smoothing_coefficient = 0.5
+        self.type = 'Extrapolation'
 
     def decide_price(self, stats, firm):
         return FirmGoodMarketAction(firm.stock, firm.price, 0)

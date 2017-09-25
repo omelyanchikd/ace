@@ -101,7 +101,7 @@ class World:
 
         with open("output.csv", "w", newline='') as output_file:
             writer = csv.DictWriter(output_file, delimiter=';',
-                                    fieldnames=["firm_type", "firm_id", "step", "salary", "workers", "sold", "price", "stock", "profit",
+                                    fieldnames=["firm_type", "learning_type", "firm_id", "step", "salary", "workers", "sold", "price", "stock", "profit",
                                                 "product_supply", "labor_demand", "sales", "world_price", "world_salary", "world_sold",
                                                 "world_sales", "world_money", "world_employed", "world_unemployment_rate"])
             writer.writeheader()
