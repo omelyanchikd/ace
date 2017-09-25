@@ -5,4 +5,6 @@ def match(method):
         return 'DianaFirm'
     if method == 'extrapolation':
         return 'IntuitiveFirm'
+    if method == 'moses':
+        return 'MosesFirm'
     return "RandomFirm"
