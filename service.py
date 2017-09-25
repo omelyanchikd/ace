@@ -11,4 +11,8 @@ def match(method):
         return 'NonconsciousFirm'
     if method == 'rational':
         return 'RationalFirm'
+    if method == 'hierarchical':
+        return 'RuleFirm'
+    if method == 'classification_decision_tree':
+        return 'TreeFirm'
     return "RandomFirm"

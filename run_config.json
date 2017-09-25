@@ -54,7 +54,7 @@
           "count": 1
         },
         {
-          "method": "lcs",
+          "method": "classification_decision_tree",
           "count": 1
         },
         {
