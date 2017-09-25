@@ -32,48 +32,48 @@ def update(probabilities, reward, action):
 
 
 class NonconsciousFirm(DecisionMaker):
-    def __init__(self, id):
-        super().__init__(id)
-        self.plan = 50 * self.efficiency_coefficient
-        self.salary = 200
+    def __init__(self, id, firm):
+        super().__init__(id, firm)
+        self.plan = firm.plan
+        self.salary = firm.salary
         self.offer_count = 0
         self.probabilities = [1/9] * 9
-        self.actions = [(0.01, self.efficiency_coefficient), (0.01, 0), (0.01, -self.efficiency_coefficient),
-                        (0, self.efficiency_coefficient), (0, 0), (0, -self.efficiency_coefficient),
-                        (-0.01, self.efficiency_coefficient), (-0.01, 0), (-0.01, -self.efficiency_coefficient)]
+        self.actions = [(0.01, firm.labor_productivity), (0.01, 0), (0.01, -firm.labor_productivity),
+                        (0, firm.labor_productivity), (0, 0), (0, -firm.labor_productivity),
+                        (-0.01, firm.labor_productivity), (-0.01, 0), (-0.01, -firm.labor_productivity)]
         self.action = (0,0)
         self.type = "NonconsciousFirm"
 
-    def decide(self, stats):
+    def decide(self, stats, firm):
         return FirmAction(0, 0, 0, 0, 0, 0, [])
 
-    def decide_salary(self, stats):
-        self.probabilities = update(self.probabilities, self.sold * self.profit/self.price, self.actions.index(self.action))
+    def decide_salary(self, stats, firm):
+        self.probabilities = update(self.probabilities, firm.sold * firm.profit/firm.price, self.actions.index(self.action))
         distribution = numpy.array(self.probabilities)
         indexes = [i for i in range(0, len(self.probabilities))]
         self.action = self.actions[numpy.random.choice(indexes, replace = False, p = distribution/sum(distribution))]
-        self.price *= (1 + self.action[0])
-        self.price = self.price if self.price > 0 else 0
-        self.plan += self.action[1]
-        self.plan = (self.plan - self.stock) // self.efficiency_coefficient * self.efficiency_coefficient
-        self.plan = self.plan if self.plan >= 0 else 0
-        self.offer_count = math.floor(self.plan / self.efficiency_coefficient) - len(self.workers)
+        firm.price *= (1 + self.action[0])
+        firm.price = firm.price if firm.price > 0 else 0
+        firm.plan += self.action[1]
+        firm.plan = (firm.plan - firm.stock) // firm.labor_productivity * firm.labor_productivity
+        firm.plan = firm.plan if firm.plan >= 0 else 0
+        self.offer_count = math.floor(firm.plan / firm.labor_productivity) - len(firm.workers)
         while self.offer_count < 0:
-            self.fire_worker(random.choice(list(self.workers)))
+            firm.fire_worker(random.choice(list(firm.workers)))
             self.offer_count += 1
-        total_salary = sum([worker.salary for worker in self.workers])
+        total_salary = sum([worker.salary for worker in firm.workers])
         while True:
             if self.offer_count > 0:
-                self.salary = 0.95 * (
-                    self.price * (len(self.workers) + self.offer_count) * self.efficiency_coefficient -
+                firm.salary = 0.95 * (
+                    firm.price * (len(firm.workers) + self.offer_count) * firm.labor_productivity -
                     total_salary) / self.offer_count
-                if self.salary > 0:
+                if firm.salary > 0:
                     break
-                self.price *= 1.05
+                firm.price *= 1.05
             else:
                 break
-        self.labor_capacity = len(self.workers) + self.offer_count
-        return FirmLaborMarketAction(self.offer_count, self.salary, [])
+        firm.labor_capacity = len(firm.workers) + self.offer_count
+        return FirmLaborMarketAction(self.offer_count, firm.salary, [])
 
-    def decide_price(self, stats):
-        return FirmGoodMarketAction(self.stock, self.price, 0)
+    def decide_price(self, stats, firm):
+        return FirmGoodMarketAction(firm.stock, firm.price, 0)
