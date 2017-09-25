@@ -16,6 +16,8 @@ def argmax(two_dimensional_list, dimension):
     #            max_val = two_dimensional_list[dimension][i]
     #            arg_max = i
     qs = numpy.array([q - min(two_dimensional_list[dimension]) for q in two_dimensional_list[dimension]])
+    if sum(qs) == 0:
+        qs = numpy.array([1 for q in two_dimensional_list[dimension]])
     indexes = [i for i in range(len(two_dimensional_list[dimension]))]
     arg_max = numpy.random.choice(indexes, replace = False, p = qs/sum(qs))
     return arg_max
