@@ -17,24 +17,24 @@ def rls(a, p, x, y):
 
 
 class OligopolyFirm(DecisionMaker):
-    def __init__(self, id):
-        super().__init__(id)
-        self.salary = 200
+    def __init__(self, id, firm):
+        super().__init__(id, firm)
+        self.salary = firm.price
         self.a = 10000
         self.b = -50
         self.p1 = numpy.eye(2) * 10000
         self.type = "OligopolyFirm"
 
-    def decide_price(self, stats):
-        return FirmGoodMarketAction(self.stock, self.price, 0)
+    def decide_price(self, stats, firm):
+        return FirmGoodMarketAction(firm.stock, firm.price, 0)
 
-    def decide_salary(self, stats):
-        self.a, self.b, self.p1 = rls(numpy.array([self.a, self.b]), self.p1, numpy.array([1, self.sold]), self.price)
-        self.offer_count = math.floor(stats.f * (self.a - self.salary / self.efficiency_coefficient/((stats.f + 1) * (-self.b * self.efficiency_coefficient))))- len(self.workers)
+    def decide_salary(self, stats, firm):
+        self.a, self.b, self.p1 = rls(numpy.array([self.a, self.b]), self.p1, numpy.array([1, firm.sold]), firm.price)
+        self.offer_count = math.floor(stats.f * (self.a - firm.salary / firm.labor_productivity/((stats.f + 1) * (-self.b * firm.labor_productivity))))- len(firm.workers)
         while self.offer_count < 0:
-            self.fire_worker(random.choice(list(self.workers)))
+            firm.fire_worker(random.choice(list(firm.workers)))
             self.offer_count += 1
-        self.price = (self.a + stats.f * self.salary/self.efficiency_coefficient)/ (stats.f + 1)
-        self.price = self.price if self.price > 0 else 0
-        self.labor_capacity = len(self.workers) + self.offer_count
-        return FirmLaborMarketAction(self.offer_count, self.salary, [])
+        firm.price = (self.a + stats.f * firm.salary/firm.labor_productivity)/ (stats.f + 1)
+        firm.price = firm.price if firm.price > 0 else 0
+        firm.labor_capacity = len(firm.workers) + self.offer_count
+        return FirmLaborMarketAction(self.offer_count, firm.salary, [])
