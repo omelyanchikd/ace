@@ -9,4 +9,6 @@ def match(method):
         return 'MosesFirm'
     if method == 'nonconscious':
         return 'NonconsciousFirm'
+    if method == 'rational':
+        return 'RationalFirm'
     return "RandomFirm"

@@ -30,7 +30,7 @@
           "count": 1
         },
         {
-          "method": "lcs",
+          "method": "rational",
           "count": 1
         }
       ],

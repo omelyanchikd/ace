@@ -19,34 +19,34 @@ def rls(a, p, x, y):
 
 
 class RationalFirm(DecisionMaker):
-    def __init__(self, id):
-        super().__init__(id)
-        self.salary = 200
+    def __init__(self, id, firm):
+        super().__init__(id, firm)
+        self.salary = firm.salary
         self.a = 10000
         self.b = -50
         self.p1 = numpy.eye(2) * 10000
         self.p2 = [10000]
 #       self.c = 0
         self.d = 0.25
-        self.plan = 50 * self.efficiency_coefficient
+        self.plan = 50 * firm.labor_productivity
         self.type = "RationalFirm"
 
-    def decide_price(self, stats):
-        return FirmGoodMarketAction(self.stock, self.price, 0)
+    def decide_price(self, stats, firm):
+        return FirmGoodMarketAction(firm.stock, firm.price, 0)
 
-    def decide_salary(self, stats):
-        self.a, self.b, self.p1 = rls(numpy.array([self.a, self.b]), self.p1, numpy.array([1, self.sold]), self.price)
-        self.d, self.p2 = rls(numpy.array([self.d]), self.p2, numpy.array([self.salary]), len(self.workers))
-        self.plan = 0.5 * self.a / (-self.b + 1/ (self.efficiency_coefficient * self.efficiency_coefficient* self.d))
-        self.plan = (self.plan - self.stock) // self.efficiency_coefficient * self.efficiency_coefficient
-        self.plan = self.plan if self.plan >= 0 else 0
-        self.offer_count = math.floor(self.plan / self.efficiency_coefficient) - len(self.workers)
+    def decide_salary(self, stats, firm):
+        self.a, self.b, self.p1 = rls(numpy.array([self.a, self.b]), self.p1, numpy.array([1, firm.sold]), firm.price)
+        self.d, self.p2 = rls(numpy.array([self.d]), self.p2, numpy.array([firm.salary]), len(firm.workers))
+        firm.plan = 0.5 * self.a / (-self.b + 1/ (firm.labor_productivity * firm.labor_productivity* self.d))
+        firm.plan = (firm.plan - firm.stock) // firm.labor_productivity * firm.labor_productivity
+        firm.plan = firm.plan if firm.plan >= 0 else 0
+        self.offer_count = math.floor(firm.plan / firm.labor_productivity) - len(firm.workers)
         while self.offer_count < 0:
-            self.fire_worker(random.choice(list(self.workers)))
+            firm.fire_worker(random.choice(list(firm.workers)))
             self.offer_count += 1
-        self.price = self.a + self.b * self.plan
-        self.price = self.price if self.price > 0 else 0
-        self.salary = self.plan / (self.d * self.efficiency_coefficient)
-        self.salary = self.salary if self.salary > 0 else 0
-        self.labor_capacity = len(self.workers) + self.offer_count
-        return FirmLaborMarketAction(self.offer_count, self.salary, [])
+        firm.price = self.a + self.b * firm.plan
+        firm.price = firm.price if firm.price > 0 else 0
+        firm.salary = firm.plan / (self.d * firm.labor_productivity)
+        firm.salary = firm.salary if firm.salary > 0 else 0
+        firm.labor_capacity = len(firm.workers) + self.offer_count
+        return FirmLaborMarketAction(self.offer_count, firm.salary, [])
