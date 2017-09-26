@@ -13,20 +13,12 @@ class Firm:
 
     def __init__(self, id, output = "output.csv"):
         self.workers = set()
-        self.id = id
         self.stock = 0
         self.sold = 0
-        self.price = 20
-        self.money = 100000
-        self.efficiency_coefficient = 10
-        self.plan = 50
-        self.current_salary = 200
         self.sales = 0
-        self.salary = 200
         self.profit = 0
         self.output = output
         self.step = 0
-        self.labor_capacity = 50
         self.type = 'Unknown'
         self.decision_maker = DecisionMaker(id, self)
 

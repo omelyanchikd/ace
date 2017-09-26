@@ -7,7 +7,7 @@
     "title": null,
     "production_firm_structure": {
       "salary": true,
-      "workers_count": false,
+      "labor_capacity": false,
       "salary_budget": false,
       "plan": false,
       "raw_need": true,
@@ -18,14 +18,14 @@
     },
     "raw_firm_structure": {
       "salary": true,
-      "workers_count": false,
+      "labor_capacity": false,
       "salary_budget": false,
       "plan": false,
-      "price": false
+      "price": true
     },
     "capital_firm_structure": {
       "salary": true,
-      "workers_count": false,
+      "labor_capacity": false,
       "salary_budget": false,
       "plan": false,
       "raw_need": true,

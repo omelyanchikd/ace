@@ -11,9 +11,11 @@
     "firm_birth": null,
     "money_growth": 1000,
     "raw_firm_config": {
+      "money": 1000,
       "salary": 20,
       "labor_capacity": 10,
       "price": 5,
+      "plan": null,
       "salary_budget": null,
       "demand_elasticity": 5,
       "labor_productivity": 100,
