@@ -1,4 +1,5 @@
 import csv
+import random
 
 from abc import ABCMeta
 
@@ -84,9 +85,12 @@ class World:
         for i in range(household_count):
             worker = Worker(i)
             self.households.append(worker)
-            firm_id = i % firm_count
-            firm = self.firms[firm_id]
-            firm.add_worker(worker, firm.salary)
+            if sum([len(firm.workers) - firm.labor_capacity for firm in self.firms]):
+                while True:
+                    employer = random.choice(self.firms)
+                    if employer.labor_capacity > len(employer.workers):
+                        firm.add_worker(self.households[i], firm.salary)
+                        break
 
         self.history = History(self.steps, self.firms)
 

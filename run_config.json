@@ -12,10 +12,11 @@
     "money_growth": 1000,
     "raw_firm_config": {
       "salary": 20,
-      "raw_productivity": null,
-      "demand_elasticity": 25.0,
-      "capital_productivity": -1.0,
-      "labor_productivity": 1.0,
+      "labor_capacity": 10,
+      "price": 5,
+      "salary_budget": null,
+      "demand_elasticity": 5,
+      "labor_productivity": 100,
       "learnings": [
         {
           "method": "qlearning",
@@ -33,14 +34,12 @@
           "method": "rational",
           "count": 1
         }
-      ],
-      "capital_amortization": null
+      ]
     },
     "capital_firm_config": {
       "salary": 20,
       "raw_productivity": null,
       "demand_elasticity": 25.0,
-      "capital_productivity": -1.0,
       "labor_productivity": 1.0,
       "raw_need": 10,
       "raw_budget": 20,
@@ -61,8 +60,7 @@
           "method": "perceptron",
           "count": 1
         }
-      ],
-      "capital_amortization": null
+      ]
     },
     "production_firm_config": {
       "salary": 20,
