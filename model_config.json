@@ -10,7 +10,7 @@
       "labor_capacity": false,
       "salary_budget": false,
       "plan": false,
-      "raw_need": true,
+      "raw_need": null,
       "capital_need": true,
       "price": false,
       "capital_budget": true,
@@ -28,9 +28,9 @@
       "labor_capacity": false,
       "salary_budget": false,
       "plan": false,
-      "raw_need": true,
-      "price": false,
-      "raw_budget": true
+      "price": true,
+      "raw_need": null,
+      "raw_budget": null
     },
     "household_structure": {
       "consumption_budget": false,

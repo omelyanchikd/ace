@@ -39,12 +39,16 @@
       ]
     },
     "capital_firm_config": {
+      "money": 1000,
       "salary": 20,
-      "raw_productivity": null,
+      "labor_capacity": 10,
+      "price": 5,
+      "plan": null,
+      "salary_budget": null,
       "demand_elasticity": -25.0,
       "labor_productivity": 1.0,
-      "raw_need": 10,
-      "raw_budget": 20,
+      "raw_need": null,
+      "raw_budget": null,
       "learnings": [
         {
           "method": "qlearning",
