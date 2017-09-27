@@ -17,7 +17,7 @@
       "price": 5,
       "plan": null,
       "salary_budget": null,
-      "demand_elasticity": 5,
+      "demand_elasticity": -5,
       "labor_productivity": 100,
       "learnings": [
         {
@@ -41,7 +41,7 @@
     "capital_firm_config": {
       "salary": 20,
       "raw_productivity": null,
-      "demand_elasticity": 25.0,
+      "demand_elasticity": -25.0,
       "labor_productivity": 1.0,
       "raw_need": 10,
       "raw_budget": 20,
@@ -67,8 +67,8 @@
     "production_firm_config": {
       "salary": 20,
       "raw_productivity": null,
-      "demand_elasticity": 25.0,
-      "capital_productivity": -1.0,
+      "demand_elasticity": -25.0,
+      "capital_productivity": 1.0,
       "labor_productivity": 1.0,
       "raw_need": 10,
       "raw_budget": 20,
