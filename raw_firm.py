@@ -36,17 +36,7 @@ class RawFirm(Firm):
 
 
     def derive(self, parameter, control_parameters):
-        if parameter == 'salary':
-            return self.derive_salary(control_parameters)
-        if parameter == 'price':
-            return self.derive_price(control_parameters)
-        if parameter == 'plan':
-            return self.derive_plan(control_parameters)
-        if parameter == 'labor_capacity':
-            return self.derive_labor_capacity(control_parameters)
-        if parameter == 'salary_budget':
-            return self.derive_salary_budget(control_parameters)
-        return 0
+        return getattr(self, 'derive_' + parameter)(control_parameters)
 
 
     def derive_salary(self, control_parameters):
