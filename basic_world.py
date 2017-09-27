@@ -145,7 +145,7 @@ class BasicWorld(World):
     def manage_b2b_sales_raw(self):
         # Basic selection algorithm for good market
         firms = self.raw_firms
-        buyers = [firm for firm in self.capital_firms or self.production_firms]
+        buyers = [firm for firm in self.capital_firms or self.production_firms if hasattr(firm, 'raw_need')]
         prices = []
         for firm_action in self.firm_goodmarket_actions:
             if firm_action == 0:
@@ -173,7 +173,6 @@ class BasicWorld(World):
             seller = numpy.random.choice(firms, replace=False, p=selected_inverted_prices / sum(selected_inverted_prices))
             buyer = random.choice(buyers)
             assert isinstance(seller, Firm)
-
 
             if buyer.raw_need <= production_counts[seller.id] and buyer.raw_budget >= prices[seller.id]:
                 if buyer.raw_budget >= prices[seller.id] * buyer.raw_need:
@@ -217,7 +216,7 @@ class BasicWorld(World):
     def manage_b2b_sales_capital(self):
         # Basic selection algorithm for good market
         firms = self.capital_firms
-        buyers = self.production_firms
+        buyers = [firm for firm in self.production_firms if hasattr(firm, 'capital_need')]
         prices = []
         for firm_action in self.firm_goodmarket_actions:
             if firm_action == 0:
@@ -241,7 +240,7 @@ class BasicWorld(World):
             else:
                 production_counts.append(firm_action.production_count)
         production_counts = numpy.array(list(production_counts))
-        while sum(selected_inverted_prices) > 0 and len(buyers) > 0 and sum([firm.capital_need for firm in buyers]) > 0 and min([price for price in prices if price != 0]) <= max([firm.raw_budget for firm in buyers]):
+        while sum(selected_inverted_prices) > 0 and len(buyers) > 0 and sum([firm.capital_need for firm in buyers]) > 0 and min([price for price in prices if price != 0]) <= max([firm.capital_budget for firm in buyers]):
             seller = numpy.random.choice(firms, replace=False, p=selected_inverted_prices / sum(selected_inverted_prices))
             buyer = random.choice(buyers)
             assert isinstance(seller, Firm)
