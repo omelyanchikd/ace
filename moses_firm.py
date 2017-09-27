@@ -66,7 +66,7 @@ class MosesFirm(DecisionMaker):
         firm.salary = 0.95 * firm.price * firm.labor_productivity
 
         while not (
-        check_margin(firm.salary, firm.plan // firm.efficiency_coefficient, self.expected)) and self.expected != 0:
+        check_margin(firm.salary, firm.plan // firm.labor_productivity, self.expected)) and self.expected != 0:
             if firm.profit >= 0:
                 firm.salary *= 0.95
             else:
