@@ -87,7 +87,7 @@ class TreeFirm(DecisionMaker):
             firm.fire_worker(random.choice(list(firm.workers)))
             self.offer_count += 1
         firm.labor_capacity = len(firm.workers) + self.offer_count
-        return FirmLaborMarketAction(self.offer_count, firm.current_salary, [])
+        return FirmLaborMarketAction(self.offer_count, firm.salary, [])
 
     def decide_price(self, stats, firm):
         return FirmGoodMarketAction(firm.stock, firm.price, 0)
