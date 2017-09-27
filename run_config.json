@@ -69,13 +69,17 @@
       ]
     },
     "production_firm_config": {
+      "money": 1000,
       "salary": 20,
-      "raw_productivity": null,
+      "price": 5,
+      "labor_capacity": 10,
+      "plan": null,
+      "salary_budget": null,
       "demand_elasticity": -25.0,
-      "capital_productivity": 1.0,
       "labor_productivity": 1.0,
-      "raw_need": 10,
-      "raw_budget": 20,
+      "capital": 1,
+      "capital_productivity": 1.0,
+      "capital_amortization": 0.01,
       "capital_need": 5,
       "capital_budget": 200,
       "learnings": [
@@ -95,8 +99,7 @@
           "method": "moses",
           "count": 1
         }
-      ],
-      "capital_amortization": 0.01
+      ]
     },
     "household_config": {
       "consumption_need": null,
