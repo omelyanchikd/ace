@@ -240,40 +240,40 @@ class BasicWorld(World):
             else:
                 production_counts.append(firm_action.production_count)
         production_counts = numpy.array(list(production_counts))
-        while sum(selected_inverted_prices) > 0 and len(buyers) > 0 and sum([firm.capital_need for firm in buyers]) > 0 and min([price for price in prices if price != 0]) <= max([firm.capital_budget for firm in buyers]):
+        while sum(selected_inverted_prices) > 0 and len(buyers) > 0 and sum([firm.capital_need - firm.capital for firm in buyers]) > 0 and min([price for price in prices if price != 0]) <= max([firm.capital_budget for firm in buyers]):
             seller = numpy.random.choice(firms, replace=False, p=selected_inverted_prices / sum(selected_inverted_prices))
             buyer = random.choice(buyers)
             assert isinstance(seller, Firm)
 
-            if buyer.capital_need <= production_counts[seller.id]:
-                if buyer.capital_budget >= prices[seller.id] * buyer.capital_need:
-                    buyer.capital_budget -= prices[seller.id] * buyer.capital_need
-                    production_counts[seller.id] -= buyer.capital_need
-                    total_sold += buyer.capital_need
-                    buyer.capital_need = 0
+            if buyer.capital_need - buyer.capital <= production_counts[seller.id]:
+                if buyer.capital_budget >= prices[seller.id] * (buyer.capital_need - buyer.capital):
+                    buyer.capital_budget -= prices[seller.id] * (buyer.capital_need - buyer.capital)
+                    production_counts[seller.id] -= (buyer.capital_need - buyer.capital)
+                    total_sold += (buyer.capital_need - buyer.capital)
+                    buyer.capital += (buyer.capital_need - buyer.capital)
                 else:
                     sold = int(math.floor(buyer.capital_budget / prices[seller.id]))
                     buyer.capital_budget -= prices[seller.id] * sold
                     production_counts[seller.id] -= sold
                     total_sold += sold
-                    buyer.capital_need -= sold
+                    buyer.capital += sold
             else:
                 if buyer.capital_budget >= prices[seller.id] * production_counts[seller.id]:
                     buyer.capital_budget -= prices[seller.id] * production_counts[seller.id]
                     total_sold += production_counts[seller.id]
-                    buyer.capital_need -= production_counts[seller.id]
+                    buyer.capital += production_counts[seller.id]
                     production_counts[seller.id] = 0
                 else:
                     sold = int(math.floor(buyer.capital_budget / prices[seller.id]))
                     buyer.capital_budget -= prices[seller.id] * sold
                     production_counts[seller.id] -= sold
                     total_sold += sold
-                    buyer.capital_need -= sold
+                    buyer.capital += sold
             if production_counts[seller.id] <= 0:
                 prices[seller.id] = 0
                 inverted_prices[seller.id] = 0
                 selected_inverted_prices = inverted_prices[[firm.id for firm in firms]]
-            if buyer.capital_need <= 0 or buyer.capital_budget <= 0:
+            if buyer.capital_need - buyer.capital <= 0 or buyer.capital_budget <= 0:
                 buyers.remove(buyer)
 
         #if total_sold < 2000:
