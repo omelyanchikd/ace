@@ -14,7 +14,13 @@ class ProductionFirm(Firm):
         self.id = id
         self.type = "ProductionFirm"
         self.control_parameters = [parameter for parameter in model_config if model_config[parameter]]
-        if len(self.control_parameters) < 2:
+        if ('raw_budget' in self.control_parameters or 'raw_need' in self.control_parameters) and \
+           ('capital_budget' in self.control_parameters or 'capital_need' in self.control_parameters) and len(self.control_parameters) < 4:
+            raise AssertionError("Agent needs at least four defined control parameters to make decisions, when both raw and capital are part of the model.")
+        if (('raw_budget' in self.control_parameters or 'raw_need' in self.control_parameters) or \
+           ('capital_budget' in self.control_parameters or 'capital_need' in self.control_parameters)) and len(self.control_parameters) < 3:
+            raise AssertionError("Agent needs at least three defined control parameters to make decisions, when either raw or capital are part of the model.")
+        elif len(self.control_parameters) < 2:
             raise AssertionError("Agent needs at least two defined control parameters to make decisions.")
         self.derived_parameters = [parameter for parameter in model_config if
                                    model_config[parameter] is not None and not model_config[parameter]]
