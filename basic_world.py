@@ -248,24 +248,28 @@ class BasicWorld(World):
             if buyer.capital_need - buyer.capital <= production_counts[seller.id]:
                 if buyer.capital_budget >= prices[seller.id] * (buyer.capital_need - buyer.capital):
                     buyer.capital_budget -= prices[seller.id] * (buyer.capital_need - buyer.capital)
+                    buyer.capital_expenses += prices[seller.id] * (buyer.capital_need - buyer.capital)
                     production_counts[seller.id] -= (buyer.capital_need - buyer.capital)
                     total_sold += (buyer.capital_need - buyer.capital)
                     buyer.capital += (buyer.capital_need - buyer.capital)
                 else:
                     sold = int(math.floor(buyer.capital_budget / prices[seller.id]))
                     buyer.capital_budget -= prices[seller.id] * sold
+                    buyer.capital_expenses += prices[seller.id] * sold
                     production_counts[seller.id] -= sold
                     total_sold += sold
                     buyer.capital += sold
             else:
                 if buyer.capital_budget >= prices[seller.id] * production_counts[seller.id]:
                     buyer.capital_budget -= prices[seller.id] * production_counts[seller.id]
+                    buyer.capital_expenses += prices[seller.id] * production_counts[seller.id]
                     total_sold += production_counts[seller.id]
                     buyer.capital += production_counts[seller.id]
                     production_counts[seller.id] = 0
                 else:
                     sold = int(math.floor(buyer.capital_budget / prices[seller.id]))
                     buyer.capital_budget -= prices[seller.id] * sold
+                    buyer.capital_expenses += prices[seller.id] * sold
                     production_counts[seller.id] -= sold
                     total_sold += sold
                     buyer.capital += sold
