@@ -38,10 +38,6 @@ class CapitalFirm(Firm):
             self.money -= worker.salary
 
 
-    def derive(self, parameter, control_parameters):
-        return getattr(self, 'derive_' + parameter)(control_parameters)
-
-
     def derive_salary(self, control_parameters):
         total_salary = [worker.salary for worker in self.workers]
         if hasattr(self, 'raw'):
