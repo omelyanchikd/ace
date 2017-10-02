@@ -109,7 +109,7 @@ class CapitalFirm(Firm):
                 needed_workers = math.floor((self.salary_budget - total_salary) / self.salary)
                 if needed_workers > 0 or len(self.workers) + needed_workers > 0:
                     return 1 / (1 + 1 / self.demand_elasticity) * (self.salary_budget + self.raw_budget) / \
-                           (len(self.workers) + needed_workers)
+                           ((len(self.workers) + needed_workers) * self.labor_productivity)
                 return 0
         return super().derive_price(control_parameters)
 
