@@ -157,7 +157,7 @@ class CapitalFirm(Firm):
                 return 0
             if needed_workers > 0 or len(self.workers) + needed_workers > 0:
                 return math.floor(len(self.workers) + needed_workers)
-        return super().derive_labor_capacoty(control_parameters)
+        return super().derive_labor_capacity(control_parameters)
 
 
     def derive_raw_need(self, control_parameters):

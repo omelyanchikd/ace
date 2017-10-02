@@ -78,6 +78,7 @@
       "demand_elasticity": -25.0,
       "labor_productivity": 1.0,
       "capital": 1,
+      "capital_expenses": 50,
       "capital_productivity": 1.0,
       "capital_amortization": 0.01,
       "capital_need": 5,
