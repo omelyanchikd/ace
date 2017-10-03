@@ -9,6 +9,22 @@ import random
 import numpy
 
 
+
+def toStr(n, base):
+   convertString = "0123456789ABCDEF"
+   if n < base:
+      return convertString[n]
+   else:
+      return toStr(n//base,base) + convertString[n % base]
+
+
+def get_action_list(action):
+    action_list = []
+    action_dict = {'0': 0, '1': 1, '2': -1}
+    for c in action:
+        action_list.append(action_dict[c])
+    return action_list
+
 def transform(x):
     return 2/math.pi * math.atan(x/500000)
 
@@ -34,14 +50,25 @@ def update(probabilities, reward, action):
 class NonconsciousFirm(DecisionMaker):
     def __init__(self, id, firm):
         super().__init__(id, firm)
-        self.plan = firm.plan
-        self.salary = firm.salary
         self.offer_count = 0
-        self.probabilities = [1/9] * 9
-        self.actions = [(0.01, firm.labor_productivity), (0.01, 0), (0.01, -firm.labor_productivity),
-                        (0, firm.labor_productivity), (0, 0), (0, -firm.labor_productivity),
-                        (-0.01, firm.labor_productivity), (-0.01, 0), (-0.01, -firm.labor_productivity)]
-        self.action = (0,0)
+        self.probabilities = [1/math.pow(3, len(firm.control_parameters))] * math.floor(math.pow(3, len(firm.control_parameters)))
+        self.actions = []
+        for i in range(len(self.probabilities)):
+            action_list = get_action_list('{:0>3}'.format(toStr(i, 3)))
+            action = ()
+            for a, parameter in enumerate(firm.control_parameters):
+                increment = 1
+                if parameter in ['salary', 'price', 'salary_budget', 'raw_budget', 'capital_budget']:
+                    increment = 0.01
+                elif parameter == 'plan':
+                    increment = firm.labor_productivity
+                elif parameter == 'raw_need':
+                    increment = firm.raw_productivity
+                elif parameter == 'capital_need':
+                    increment = firm.capital_productivity
+                action = action + (action_list[a] * increment,)
+            self.actions.append(action)
+        self.action = self.actions[0]
         self.type = "NonconsciousFirm"
 
     def decide(self, stats, firm):
@@ -52,28 +79,16 @@ class NonconsciousFirm(DecisionMaker):
         distribution = numpy.array(self.probabilities)
         indexes = [i for i in range(0, len(self.probabilities))]
         self.action = self.actions[numpy.random.choice(indexes, replace = False, p = distribution/sum(distribution))]
-        firm.price *= (1 + self.action[0])
-        firm.price = firm.price if firm.price > 0 else 0
-        firm.plan += self.action[1]
-        firm.plan = (firm.plan - firm.stock) // firm.labor_productivity * firm.labor_productivity
-        firm.plan = firm.plan if firm.plan >= 0 else 0
-        self.offer_count = math.floor(firm.plan / firm.labor_productivity) - len(firm.workers)
-        while self.offer_count < 0:
-            firm.fire_worker(random.choice(list(firm.workers)))
-            self.offer_count += 1
-        total_salary = sum([worker.salary for worker in firm.workers])
-        while True:
-            if self.offer_count > 0:
-                firm.salary = 0.95 * (
-                    firm.price * (len(firm.workers) + self.offer_count) * firm.labor_productivity -
-                    total_salary) / self.offer_count
-                if firm.salary > 0:
-                    break
-                firm.price *= 1.05
+        for i, parameter in enumerate(firm.control_parameters):
+            if parameter in ['salary', 'price', 'salary_budget', 'raw_budget', 'capital_budget']:
+                firm.__setattr__(parameter, firm.__getattribute__(parameter) * (1 + self.action[i]))
             else:
-                break
-        firm.labor_capacity = len(firm.workers) + self.offer_count
-        return FirmLaborMarketAction(self.offer_count, firm.salary, [])
+                firm.__setattr__(parameter, firm.__getattribute__(parameter) + self.action[i])
+        for parameter in firm.derived_parameters:
+            firm.__setattr__(parameter, firm.derive(parameter, firm.control_parameters))
+        while firm.labor_capacity - len(firm.workers) < 0:
+            firm.fire_worker(random.choice(list(firm.workers)))
+        return FirmLaborMarketAction(firm.labor_capacity - len(firm.workers), firm.salary, [])
 
     def decide_price(self, stats, firm):
         return FirmGoodMarketAction(firm.stock, firm.price, 0)
