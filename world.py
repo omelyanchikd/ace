@@ -188,7 +188,7 @@ class World:
                 worker = Worker(len(self.households))
                 self.households.append(worker)
             for i, firm in enumerate(self.firms):
-                self.firm_labormarket_actions[firm.id] = firm.decision_maker.decide_salary(self.stats, firm)
+                self.firm_labormarket_actions[firm.id] = firm.decide_salary(self.stats)
             self.manage_job_offers()
             for firm_id, firm_action in enumerate(self.firm_labormarket_actions):
                 firm = self.firms[firm_id]

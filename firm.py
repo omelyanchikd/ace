@@ -1,11 +1,14 @@
 import csv
 import math
+import random
 
 from abc import ABCMeta, abstractmethod
 
 from firm_result import FirmResult
 from decision_maker import DecisionMaker
 from stats import Stats
+
+from firm_labormarket_action import FirmLaborMarketAction
 
 
 class Firm:
@@ -103,7 +106,10 @@ class Firm:
         pass
 
     def decide_salary(self, stats):
-        pass
+        self.decision_maker.decide_salary(stats, self)
+        while self.labor_capacity - len(self.workers) < 0:
+            self.fire_worker(random.choice(list(self.workers)))
+        return FirmLaborMarketAction(self.labor_capacity - len(self.workers), self.salary, [])
 
     def __str__(self):
         return str(self.id) + ' ' + self.type
