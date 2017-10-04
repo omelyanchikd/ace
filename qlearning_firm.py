@@ -7,14 +7,9 @@ from firm_goodmarket_action import FirmGoodMarketAction
 import math
 import random
 import numpy
+from service import toStr, get_action_list
 
 def argmax(two_dimensional_list, dimension):
-    #    arg_max = 0
-    #    max_val = two_dimensional_list[dimension][0]
-    #    for i in range(0,len(two_dimensional_list[dimension])):
-    #        if two_dimensional_list[dimension][i] > max_val:
-    #            max_val = two_dimensional_list[dimension][i]
-    #            arg_max = i
     qs = numpy.array([q - min(two_dimensional_list[dimension]) for q in two_dimensional_list[dimension]])
     if sum(qs) == 0:
         qs = numpy.array([1 for q in two_dimensional_list[dimension]])
@@ -25,27 +20,32 @@ def argmax(two_dimensional_list, dimension):
 class QlearningFirm(DecisionMaker):
     def __init__(self, id, firm):
         super().__init__(id, firm)
-        #self.plan = 50 * self.labor_productivity
-        #self.salary = 200
-        #self.offer_count = 0
-        self.prev_workers = 50
-        self.actions = [(0.01, firm.labor_productivity), (0.01, 0), (0.01, -firm.labor_productivity),
-                        (0, firm.labor_productivity), (0, 0), (0, -firm.labor_productivity),
-                        (-0.01, firm.labor_productivity), (-0.01, 0), (-0.01, -firm.labor_productivity)]
-        self.action = (0,0)
+        self.actions = []
+        for i in range(math.floor(math.pow(2, len(firm.control_parameters)))):
+            action_list = get_action_list('{:0>3}'.format(toStr(i, 3)))
+            action = ()
+            for a, parameter in enumerate(firm.control_parameters):
+                increment = 1
+                if parameter in ['salary', 'price', 'salary_budget', 'raw_budget', 'capital_budget']:
+                    increment = 0.01
+                elif parameter == 'plan':
+                    increment = firm.labor_productivity
+                elif parameter == 'raw_need':
+                    increment = firm.raw_productivity
+                elif parameter == 'capital_need':
+                    increment = firm.capital_productivity
+                action = action + (action_list[a] * increment,)
+            self.actions.append(action)
+        self.action = self.actions[0]
         self.state = 0
         self.alpha = 0.5
         self.gamma = 0.5
         self.q = []
-        for state in range(0, 6):
+        for state in range(0, math.floor(math.pow(2, 2 + hasattr(firm, 'raw') + hasattr(firm, 'capital')))):
             self.q.append([])
-            for action in range(0, 9):
+            for action in self.actions:
                 self.q[state].append(100)
         self.type = "QlearningFirm"
-        self.price = firm.price
-        self.salary = firm.salary
-        self.workers = len(firm.workers)
-        self.offer_count = 0
 
     def decide(self, stats, firm):
         return FirmAction(0, 0, 0, 0, 0, 0, [])
@@ -54,46 +54,27 @@ class QlearningFirm(DecisionMaker):
         self.update_state(firm)
         self.update(firm)
         self.action = self.actions[argmax(self.q, self.state)]
-        firm.price = firm.price * (1 + self.action[0])
-        firm.price = firm.price if firm.price > 0 else 0
-        firm.plan = firm.plan + self.action[1]
-        firm.plan = (firm.plan - firm.stock) // firm.labor_productivity * firm.labor_productivity
-        firm.plan = firm.plan if firm.plan >= 0 else 0
-        self.offer_count = math.floor(firm.plan / firm.labor_productivity) - len(firm.workers)
-        while self.offer_count < 0:
-            firm.fire_worker(random.choice(list(firm.workers)))
-            self.offer_count += 1
-        total_salary = sum([worker.salary for worker in firm.workers])
-        while True:
-            if self.offer_count > 0:
-                firm.salary = 0.95 * (
-                firm.price * (len(firm.workers) + self.offer_count) * firm.labor_productivity -
-                total_salary) / self.offer_count
-                if firm.salary > 0:
-                    break
-                firm.price *= 1.05
+        for i, parameter in enumerate(firm.control_parameters):
+            if parameter in ['salary', 'price', 'salary_budget', 'raw_budget', 'capital_budget']:
+                firm.__setattr__(parameter, firm.__getattribute__(parameter) * (1 + self.action[i]))
             else:
-                break
-        firm.labor_capacity = len(firm.workers) + self.offer_count
+                firm.__setattr__(parameter, firm.__getattribute__(parameter) + self.action[i])
+        for parameter in firm.derived_parameters:
+            firm.__setattr__(parameter, firm.derive(parameter, firm.control_parameters))
         self.prev_workers = len(firm.workers)
-        return FirmLaborMarketAction(self.offer_count, firm.salary, [])
+
 
     def decide_price(self, stats, firm):
         return FirmGoodMarketAction(firm.stock, firm.price, 0)
 
     def update_state(self, firm):
-        if len(firm.workers) == 0:
-            self.state = 5
-        elif firm.sold == 0:
-            self.state = 4
-        elif firm.sold >= firm.plan and len(firm.workers) == self.prev_workers + self.offer_count:
-            self.state = 0
-        elif firm.sold < firm.plan and len(firm.workers) == self.prev_workers + self.offer_count:
-            self.state = 1
-        elif firm.sold == firm.plan and len(firm.workers) < self.prev_workers + self.offer_count:
-            self.state = 2
-        else:
-            self.state = 3
+        state = str(int(firm.sold < firm.plan)) + str(int(len(firm.workers) < firm.labor_capacity))
+        if hasattr(firm, 'raw'):
+            state += str(int(firm.raw < firm.raw_need))
+        if hasattr(firm, 'capital'):
+            state += str(int(firm.capital < firm.capital_need))
+        self.state = int(state, base = 2)
+
 
     def update(self, firm):
         current_action = self.actions.index(self.action)
