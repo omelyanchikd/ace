@@ -14,3 +14,10 @@ from tree_firm import TreeFirm
 
 from ideal_world import IdealWorld
 from basic_world import BasicWorld
+
+from government import Government
+from outside_world import OutsideWorld
+from raw_firm import RawFirm
+from capital_firm import CapitalFirm
+from production_firm import ProductionFirm
+
