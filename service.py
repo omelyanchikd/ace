@@ -18,3 +18,19 @@ def match(method):
     if method == 'perceptron':
         return 'AnnFirm'
     return "RandomFirm"
+
+
+def toStr(n, base):
+   convertString = "0123456789ABCDEF"
+   if n < base:
+      return convertString[n]
+   else:
+      return toStr(n//base,base) + convertString[n % base]
+
+
+def get_action_list(action):
+    action_list = []
+    action_dict = {'0': 0, '1': 1, '2': -1}
+    for c in action:
+        action_list.append(action_dict[c])
+    return action_list
