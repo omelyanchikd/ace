@@ -59,9 +59,6 @@ class QlearningFirm(DecisionMaker):
                 firm.__setattr__(parameter, firm.__getattribute__(parameter) * (1 + self.action[i]))
             else:
                 firm.__setattr__(parameter, firm.__getattribute__(parameter) + self.action[i])
-        for parameter in firm.derived_parameters:
-            firm.__setattr__(parameter, firm.derive(parameter, firm.control_parameters))
-        self.prev_workers = len(firm.workers)
 
 
     def decide_price(self, stats, firm):

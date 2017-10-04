@@ -72,8 +72,6 @@ class NonconsciousFirm(DecisionMaker):
                 firm.__setattr__(parameter, firm.__getattribute__(parameter) * (1 + self.action[i]))
             else:
                 firm.__setattr__(parameter, firm.__getattribute__(parameter) + self.action[i])
-        for parameter in firm.derived_parameters:
-            firm.__setattr__(parameter, firm.derive(parameter, firm.control_parameters))
         return FirmLaborMarketAction(firm.labor_capacity - len(firm.workers), firm.salary, [])
 
     def decide_price(self, stats, firm):

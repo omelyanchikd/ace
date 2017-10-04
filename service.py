@@ -17,7 +17,11 @@ def match(method):
         return 'TreeFirm'
     if method == 'perceptron':
         return 'AnnFirm'
-    return "RandomFirm"
+    if method == 'random':
+        return "RandomFirm"
+    if method == 'oligopoly':
+        return "OligopolyFirm"
+    return "ERROR"
 
 
 def toStr(n, base):

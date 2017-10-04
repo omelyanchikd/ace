@@ -107,6 +107,8 @@ class Firm:
 
     def decide_salary(self, stats):
         self.decision_maker.decide_salary(stats, self)
+        for parameter in self.derived_parameters:
+            self.__setattr__(parameter, self.derive(parameter, self.control_parameters))
         while self.labor_capacity - len(self.workers) < 0:
             self.fire_worker(random.choice(list(self.workers)))
         return FirmLaborMarketAction(self.labor_capacity - len(self.workers), self.salary, [])
