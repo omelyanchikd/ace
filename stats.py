@@ -11,14 +11,20 @@ class Stats:
                 setattr(self, type + variable, 0)
         self.expected_sales_growth = 0
         self.expected_sold_growth = 0
-        self.f = 0
+        self.firms = 0
+        self.raw_firms = 0
+        self.capital_firms = 0
+        self.production_firms = 0
         self.h = 0
 
 
     def get_stats(self, world):
         self.__init__()
-        self.f = len(world.firms)
-        self.h = len(world.households)
+        self.firms = len(world.firms)
+        self.raw_firms = len(world.raw_firms)
+        self.capital_firms = len(world.capital_firms)
+        self.production_firms = len(world.production_firms)
+        self.households = len(world.households)
         unemployed = 0
         for worker in world.households:
             if worker.employer is None:
