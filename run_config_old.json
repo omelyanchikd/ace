@@ -15,8 +15,8 @@
       "salary": 20,
       "labor_capacity": 10,
       "price": 5,
-      "plan": 1000,
-      "salary_budget": 200,
+      "plan": null,
+      "salary_budget": null,
       "demand_elasticity": -5,
       "labor_productivity": 100,
       "learnings": [
@@ -43,17 +43,19 @@
       "salary": 20,
       "labor_capacity": 10,
       "price": 5,
-      "plan": 10,
-      "salary_budget": 200,
+      "plan": null,
+      "salary_budget": null,
       "demand_elasticity": -25.0,
       "labor_productivity": 1.0,
+      "raw_need": null,
+      "raw_budget": null,
       "learnings": [
         {
           "method": "qlearning",
           "count": 1
         },
         {
-          "method": "random",
+          "method": "rational",
           "count": 1
         },
         {
@@ -71,10 +73,16 @@
       "salary": 20,
       "price": 5,
       "labor_capacity": 10,
-      "plan": 10,
-      "salary_budget": 200,
+      "plan": null,
+      "salary_budget": null,
       "demand_elasticity": -25.0,
       "labor_productivity": 1.0,
+      "capital": 1,
+      "capital_expenses": 50,
+      "capital_productivity": 1.0,
+      "capital_amortization": 0.01,
+      "capital_need": 5,
+      "capital_budget": 200,
       "learnings": [
         {
           "method": "qlearning",

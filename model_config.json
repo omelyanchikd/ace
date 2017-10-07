@@ -11,9 +11,9 @@
       "salary_budget": false,
       "plan": false,
       "raw_need": null,
-      "capital_need": false,
+      "capital_need": null,
       "price": true,
-      "capital_budget": false,
+      "capital_budget": null,
       "raw_budget": null
     },
     "raw_firm_structure": {
