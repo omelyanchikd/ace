@@ -6,24 +6,20 @@ class Stats:
             for variable in ['price', 'salary', 'sold', 'stock', 'sales', 'money', 'employed', 'salary_budget']:
                 setattr(self, type + variable, 0)
         self.unemployment_rate = 0
-        for type in ['raw', 'capital', 'production']:
+        for type in ['raw', 'capital']:
             for variable in ['', '_need', '_budget']:
                 setattr(self, type + variable, 0)
-        self.expected_sales_growth = 0
-        self.expected_sold_growth = 0
-        self.firms = 0
-        self.raw_firms = 0
-        self.capital_firms = 0
-        self.production_firms = 0
-        self.h = 0
+        #self.expected_sales_growth = 0
+        #self.expected_sold_growth = 0
+        for type in ['raw_', 'capital_', 'production_', '']:
+            setattr(self, type + 'firms', 0)
+        self.households = 0
 
 
     def get_stats(self, world):
         self.__init__()
-        self.firms = len(world.firms)
-        self.raw_firms = len(world.raw_firms)
-        self.capital_firms = len(world.capital_firms)
-        self.production_firms = len(world.production_firms)
+        for type in ['raw_', 'capital_', 'production_', '']:
+            setattr(self, type + 'firms', len(getattr(world, type + 'firms')))
         self.households = len(world.households)
         unemployed = 0
         for worker in world.households:
@@ -42,7 +38,7 @@ class Stats:
         else:
             self.salary = 0
         #  self.expected_sales_growth = self.config['global']['money_growth']/self.money
-        self.expected_sold_growth = 0.05
+        #self.expected_sold_growth = 0.05
 
 
     def get_firm_stats(self, world, type):
