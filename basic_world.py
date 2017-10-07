@@ -37,25 +37,15 @@ class BasicWorld(World):
         #     self.firm_results[firm.id] = FirmResult(new_workers[firm.id], quited[firm.id], salaries[firm.id],
         #                                            sales[firm.id])
 
-    def manage_job_offers(self, firm_type = None):
-        if firm_type == 'RawFirm':
-            firms = self.raw_firms
-        elif firm_type == 'CapitalFirm':
-            firms = self.capital_firms
-        elif firm_type == 'ProductionFirm':
-            firms = self.production_firms
-        else:
-            firms = self.firms
+    def manage_job_offers(self):
+        firms = self.firms
         salaries = []
         for firm_action in self.firm_labormarket_actions:
-            if firm_action == 0:
-                salaries.append(0)
-            elif firm_action.salary >= 0 and firm_action.offer_count > 0:
+            if firm_action.salary >= 0 and firm_action.offer_count > 0:
                 salaries.append(firm_action.salary)
             else:
                 salaries.append(0)
         salaries = numpy.array(list(salaries))
-        selected_salaries = salaries[[firm.id for firm in firms]]
         max_salary = max(salaries)
         quited = [[] for i in range(len(self.firms))]
         new_workers = [[] for i in range(len(self.firms))]
@@ -67,7 +57,7 @@ class BasicWorld(World):
 
         while len(potential_candidates) > 0 and sum(salaries) > 0:
             worker = random.choice(potential_candidates)
-            employer = numpy.random.choice(firms, replace=False, p=selected_salaries / sum(selected_salaries))
+            employer = numpy.random.choice(firms, replace=False, p=salaries / sum(salaries))
             assert isinstance(employer, Firm)
 
             potential_candidates.remove(worker)
@@ -77,10 +67,9 @@ class BasicWorld(World):
                     quited[worker.employer].append(worker)
             if self.firm_labormarket_actions[employer.id].offer_count == len(new_workers[employer.id]):
                 salaries[employer.id] = 0
-                selected_salaries = salaries[[firm.id for firm in firms]]
 
         for firm in firms:
-            self.firm_labormarket_results[firm.id] = FirmLaborMarketResult(new_workers[firm.id], quited[firm.id], salaries[firm.id])
+            self.firm_labormarket_results[firm.id] = FirmLaborMarketResult(new_workers[firm.id], quited[firm.id], firms[firm.id].salary)
 
 
 
@@ -125,6 +114,8 @@ class BasicWorld(World):
             assert isinstance(seller, Firm)
 
             if money >= prices[seller.id]:
+                self.good_market_history.add_record({'step': self.step, 'seller_id': seller.id, 'buyer_id': 'World',
+                                                     'quantity': 1, 'money': prices[seller.id]})
                 sales[seller.id] += 1
                 total_sold += 1
                 production_counts[seller.id] -= 1
@@ -176,24 +167,33 @@ class BasicWorld(World):
 
             if buyer.raw_need - buyer.raw <= production_counts[seller.id] and buyer.raw_budget >= prices[seller.id]:
                 if buyer.raw_budget >= prices[seller.id] * (buyer.raw_need - buyer.raw):
+                    self.good_market_history.add_record({'step': self.step, 'seller_id': seller.id, 'buyer_id': buyer.id,
+                    'quantity': (buyer.raw_need - buyer.raw), 'money':  prices[seller.id] * (buyer.raw_need - buyer.raw)})
                     buyer.raw_budget -= prices[seller.id] * (buyer.raw_need - buyer.raw)
                     production_counts[seller.id] -= (buyer.raw_need - buyer.raw)
                     total_sold += (buyer.raw_need - buyer.raw)
                     buyer.raw += (buyer.raw_need - buyer.raw)
                 else:
                     sold = int(math.floor(buyer.raw_budget / prices[seller.id]))
+                    self.good_market_history.add_record({'step': self.step, 'seller_id': seller.id, 'buyer_id': buyer.id,
+                    'quantity': sold, 'money': prices[seller.id] * sold})
                     buyer.raw_budget -= prices[seller.id] * sold
                     production_counts[seller.id] -= sold
                     total_sold += sold
                     buyer.raw += sold
             else:
                 if buyer.raw_budget >= prices[seller.id] * production_counts[seller.id]:
+                    self.good_market_history.add_record({'step': self.step, 'seller_id': seller.id, 'buyer_id': 'World',
+                    'quantity': production_counts[seller.id], 'money': prices[seller.id] * production_counts[seller.id]})
+
                     buyer.raw_budget -= prices[seller.id] * production_counts[seller.id]
                     total_sold += production_counts[seller.id]
                     buyer.raw += production_counts[seller.id]
                     production_counts[seller.id] = 0
                 else:
                     sold = int(math.floor(buyer.raw_budget / prices[seller.id]))
+                    self.good_market_history.add_record({'step': self.step, 'seller_id': seller.id, 'buyer_id': buyer.id,
+                    'quantity': sold, 'money': prices[seller.id]} * sold)
                     buyer.raw_budget -= prices[seller.id] * sold
                     production_counts[seller.id] -= sold
                     total_sold += sold

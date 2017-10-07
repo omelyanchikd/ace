@@ -6,7 +6,9 @@ from abc import ABCMeta
 import algorithms
 import stats
 
-from history import History
+from world_history import WorldHistory
+from good_market_history import GoodMarketHistory
+
 from worker import Worker
 
 
@@ -17,7 +19,7 @@ class World:
     __metaclass__ = ABCMeta
 
     def __init__(self, model_config, run_config):
-
+        self.step = 0
         self.firms = []
         firm_count = 0
         #if model_config['raw_firm_structure'] is not None:
@@ -48,7 +50,6 @@ class World:
                 firm_count += 1
 
 
-
         if model_config['government_structure'] is not None:
             self.government = algorithms.Government(model_config['government_structure'], run_config['government_config'])
 
@@ -77,14 +78,15 @@ class World:
         for i in range(household_count):
             worker = Worker(i)
             self.households.append(worker)
-            if sum([len(firm.workers) - firm.labor_capacity for firm in self.firms]):
+            if sum([firm.labor_capacity - len(firm.workers) for firm in self.firms]):
                 while True:
                     employer = random.choice(self.firms)
                     if employer.labor_capacity > len(employer.workers):
-                        firm.add_worker(self.households[i], firm.salary)
+                        employer.add_worker(self.households[i], employer.salary)
                         break
 
-        self.history = History(self.steps, self.firms)
+        self.history = WorldHistory()
+        self.good_market_history = GoodMarketHistory()
 
         self.firm_actions = [0] * firm_count
         self.firm_results = [0] * firm_count
@@ -95,13 +97,6 @@ class World:
         self.firm_labormarket_results = [0] * firm_count
         self.firm_goodmarket_results = [0] * firm_count
 
-        with open("output.csv", "w", newline='') as output_file:
-            writer = csv.DictWriter(output_file, delimiter=';',
-                                    fieldnames=["firm_type", "learning_type", "firm_id", "step", "salary", "workers", "sold", "price", "stock", "profit",
-                                                "product_supply", "labor_demand", "sales", "world_price", "world_salary", "world_sold",
-                                                "world_sales", "world_money", "world_employed", "world_unemployment_rate"])
-            writer.writeheader()
-            output_file.close()
 
     def manage_firm_actions(self, firm_actions, firm_type):
         pass
@@ -115,7 +110,7 @@ class World:
     def go(self):
         print("It's alive!!")
         for step in range(self.steps):
-            # print("Step:", step)
+            print("Step:", step)
             for i, firm in enumerate(self.raw_firms):
                 firm.produce()
                 self.firm_goodmarket_actions[firm.id] = firm.decision_maker.decide_price(self.stats, firm)
@@ -139,10 +134,9 @@ class World:
             for firm_id, firm_action in enumerate(self.firm_goodmarket_actions):
                 firm = self.firms[firm_id]
                 firm.apply_goodmarket_result(self.firm_goodmarket_results[firm_id])
-                firm.save_history(self.stats)
-                self.history.add_record(step, firm)
+                firm.history.add_record(firm)
             self.stats.get_stats(self)
-            self.history.add_stats(step, self.stats)  # needs to be rewritten with proper history object in mind
+            self.history.add_record(self.stats)  # needs to be rewritten with proper history object in mind
             for j in range(self.birth_rate):
                 worker = Worker(len(self.households))
                 self.households.append(worker)
@@ -152,6 +146,12 @@ class World:
             for firm_id, firm_action in enumerate(self.firm_labormarket_actions):
                 firm = self.firms[firm_id]
                 firm.apply_labormarket_result(self.firm_labormarket_results[firm_id])
+            for firm in self.firms:
+                firm.step += 1
             self.money += self.money_growth
+            self.step += 1
 
-        return self.history
+        return {"world_history": self.history,
+        "firm_history": [firm.history for firm in self.firms],
+        "labor_market_history": [firm.labor_market_history for firm in self.firms],
+        "good_market_history": self.good_market_history}

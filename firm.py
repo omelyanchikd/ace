@@ -8,22 +8,28 @@ from firm_result import FirmResult
 from decision_maker import DecisionMaker
 from stats import Stats
 
+from firm_history import FirmHistory
+from labor_market_history import LaborMarketHistory
+
 from firm_labormarket_action import FirmLaborMarketAction
+
 
 
 class Firm:
     __metaclass__ = ABCMeta
 
-    def __init__(self, id, output = "output.csv"):
+    def __init__(self, id):
+        self.id = id
         self.workers = set()
         self.stock = 0
         self.sold = 0
         self.sales = 0
         self.profit = 0
-        self.output = output
         self.step = 0
         self.type = 'Unknown'
         self.decision_maker = DecisionMaker(id, self)
+        self.history = FirmHistory(self)
+        self.labor_market_history = LaborMarketHistory()
 
 
     def apply_result(self, result):
@@ -68,11 +74,15 @@ class Firm:
             self.salary = total_salary / len(self.workers)
 
     def add_worker(self, worker, salary):
+        self.labor_market_history.add_record({'step': self.step, 'worker_id': worker.id,
+                            'employer_id': self.id, 'action': 'hire', 'salary': salary})
         worker.employer = self.id
         worker.salary = salary
         self.workers.add(worker)
 
     def fire_worker(self, worker):
+        self.labor_market_history.add_record({'step': self.step, 'worker_id': worker.id,
+                            'employer_id': self.id, 'action': 'fire', 'salary': worker.salary})
         worker.employer = None
         worker.salary = 0
         self.workers.remove(worker)
@@ -85,15 +95,6 @@ class Firm:
             worker.employer = None
             worker.salary = 0
 
-    def save_history(self, stats):
-        with open(self.output, "a", newline = '') as output_file:
-            writer = csv.writer(output_file, delimiter = ';')
-            writer.writerow((self.type, self.decision_maker.type, self.id, self.step, self.salary, len(self.workers), self.sold, self.price, self.stock, self.profit,
-                             self.sold + self.stock, self.labor_capacity, self.sales, stats.price, stats.salary,
-                            stats.sold, stats.sales, stats.money, stats.employed, stats.unemployment_rate
-                            ))
-            output_file.close()
-        self.step += 1
 
     @abstractmethod
     def produce(self):
@@ -484,10 +485,13 @@ class Firm:
             if set(['labor_capacity']).issubset(control_parameters):
                 return math.floor(self.labor_capacity * self.labor_productivity)
             if set(['salary', 'price']).issubset(control_parameters):
-                needed_workers = math.floor(
+                try:
+                    needed_workers = math.floor(
                     (1 / (1 + 1 / self.demand_elasticity) * total_salary - self.labor_productivity * self.price *
                      len(self.workers)) / (
                     self.labor_productivity * self.price - 1 / (1 + 1 / self.demand_elasticity) * self.salary))
+                except:
+                    needed_workers = 0
             elif set(['salary', 'salary_budget']).issubset(control_parameters):
                 needed_workers = math.floor((self.salary_budget - total_salary) / self.salary)
             elif set(['price', 'salary_budget']).issubset(control_parameters):
@@ -567,10 +571,13 @@ class Firm:
             if set(['plan']).issubset(control_parameters):
                 return math.floor(self.plan / self.labor_productivity)
             if set(['salary', 'price']).issubset(control_parameters):
-                needed_workers = math.floor(
+                try:
+                    needed_workers = math.floor(
                     (1 / (1 + 1 / self.demand_elasticity) * total_salary - self.labor_productivity * self.price *
                      len(self.workers)) / (
                     self.labor_productivity * self.price - 1 / (1 + 1 / self.demand_elasticity) * self.salary))
+                except:
+                    needed_workers = 0
             elif set(['salary', 'salary_budget']).issubset(control_parameters):
                 needed_workers = math.floor((self.salary_budget - total_salary) / self.salary)
             elif set(['price', 'salary_budget']).issubset(control_parameters):
@@ -776,9 +783,12 @@ class Firm:
             elif set(['salary', 'labor_capacity']).issubset(control_parameters):
                 needed_workers = math.floor(self.labor_capacity - len(self.workers))
             elif set(['salary', 'price']).issubset(control_parameters):
-                needed_workers = math.floor(
+                try:
+                    needed_workers = math.floor(
                     (1 / (1 + 1 / self.demand_elasticity) * total_salary - self.labor_productivity * self.price *
                      len(self.workers)) / (self.price * self.labor_productivity))
+                except:
+                    needed_workers = 0
             if needed_workers > 0 or len(self.workers) + needed_workers > 0:
                 return total_salary + self.salary * needed_workers
         return 0
