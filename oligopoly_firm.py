@@ -30,11 +30,11 @@ class OligopolyFirm(DecisionMaker):
 
     def decide_salary(self, stats, firm):
         self.a, self.b, self.p1 = rls(numpy.array([self.a, self.b]), self.p1, numpy.array([1, firm.sold]), firm.price)
-        self.offer_count = math.floor(stats.f * (self.a - firm.salary / firm.labor_productivity/((stats.f + 1) * (-self.b * firm.labor_productivity))))- len(firm.workers)
+        self.offer_count = math.floor(stats.firms * (self.a - firm.salary / firm.labor_productivity/((stats.firms + 1) * (-self.b * firm.labor_productivity))))- len(firm.workers)
         while self.offer_count < 0:
             firm.fire_worker(random.choice(list(firm.workers)))
             self.offer_count += 1
-        firm.price = (self.a + stats.f * firm.salary/firm.labor_productivity)/ (stats.f + 1)
+        firm.price = (self.a + stats.firms * firm.salary/firm.labor_productivity)/ (stats.firms + 1)
         firm.price = firm.price if firm.price > 0 else 0
         firm.labor_capacity = len(firm.workers) + self.offer_count
         return FirmLaborMarketAction(self.offer_count, firm.salary, [])

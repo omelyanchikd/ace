@@ -51,8 +51,11 @@ class MosesFirm(DecisionMaker):
         self.prev_sold = firm.sold
         self.prev_sales = firm.sales
 
-        self.exp_sales = 0.5 * self.sales_change + 0.5 * stats.expected_sales_growth
-        self.exp_sold = 0.5 * self.sold_change + 0.5 * stats.expected_sold_growth
+        expected_sales_growth = 0.05 # Get correct value for expected_sales_growth from stats
+        expected_sold_growth = 0.05  # Get correct value for expected_sold_growth from stats
+
+        self.exp_sales = 0.5 * self.sales_change + 0.5 * expected_sales_growth
+        self.exp_sold = 0.5 * self.sold_change + 0.5 * expected_sold_growth
 
         self.expected = (1 + self.exp_sales) * firm.sales
         self.plan = (1 + self.exp_sold) * firm.sold
@@ -79,7 +82,8 @@ class MosesFirm(DecisionMaker):
             firm.fire_worker(random.choice(list(firm.workers)))
             self.offer_count += 1
         if firm.salary == 0:
-            for worker in firm.workers:
+            while (len(firm.workers) > 0):
+                worker = list(firm.workers)[0]
                 firm.fire_worker(worker)
         firm.labor_capacity = len(firm.workers) + self.offer_count
         return FirmLaborMarketAction(self.offer_count, firm.salary, [])
