@@ -1,21 +1,40 @@
-class FirmHistory:
-    def __init__(self, name, step_count):
-        self.title = name
-        self.salaries = [0] * step_count
-        self.prices = [0] * step_count
-        self.workers_counts = [0] * step_count
-        self.sales = [0] * step_count
-        self.storage = [0] * step_count
-        self.profits = [0] * step_count
-        self.money = [0] * step_count
-        self.sold = [0] * step_count
+import csv
 
-    def add_record(self, step, firm):
-        self.salaries[step] = firm.salary
-        self.prices[step] = firm.price
-        self.workers_counts[step] = len(firm.workers)
-        self.sales[step] = firm.sales
-        self.storage[step] = firm.stock
-        self.profits[step] = firm.profit
-        self.money[step] = firm.money
-        self.sold[step] = firm.sold
+class FirmHistory:
+    def __init__(self, firm, output = "firm_output.csv"):
+        self.output = output
+        for variable in ['money', 'price', 'salary', 'sold', 'sales', 'stock', 'workers', 'profit', 'plan', 'labor_capacity',
+            'salary_budget', 'raw', 'raw_budget', 'raw_need', 'capital', 'capital_budget', 'capital_need', 'capital_expenses']:
+            setattr(self, variable, [])
+        try:
+            open(self.output, "r")
+        except:
+            output_file = open(self.output, "w", newline='')
+            writer = csv.DictWriter(output_file, dialect = 'excel',
+                                    fieldnames=['firm_id', 'id', 'firm_type', 'decision_maker_type', 'firm_step',
+                                                'money', 'price', 'salary', 'sold', 'sales', 'stock', 'profit', 'plan',
+                                                'labor_capacity', 'salary_budget', 'raw', 'raw_budget', 'raw_need',
+                                                'capital', 'capital_budget', 'capital_need', 'capital_expenses', 'workers'])
+            writer.writeheader()
+            output_file.close()
+
+
+
+    def add_record(self, firm):
+        row = [firm.__class__.__name__ + str(firm.id), firm.id, firm.type, firm.decision_maker.type, firm.step]
+        for variable in ['money', 'price', 'salary', 'sold', 'sales', 'stock', 'profit', 'plan', 'labor_capacity',
+            'salary_budget', 'raw', 'raw_budget', 'raw_need', 'capital', 'capital_budget', 'capital_need', 'capital_expenses']:
+            try:
+                value = getattr(firm, variable)
+            except:
+                value = None
+            getattr(self, variable).append(value)
+            row.append(value)
+        self.workers.append(len(firm.workers))
+        row.append(len(firm.workers))
+        with open(self.output, "a", newline='') as output_file:
+            writer = csv.writer(output_file, dialect='excel')
+            writer.writerow(row)
+
+
+
