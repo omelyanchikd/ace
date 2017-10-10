@@ -2,24 +2,32 @@ import json
 import random
 
 import algorithms
-from visualise import Visualiser
 
-with open('model_config.json', 'r') as f:
-    model_config = json.load(f)
 
-with open('run_config.json', 'r') as f:
-    run_config = json.load(f)
+#with open('model_config.json', 'r') as f:
+#    model_config = json.load(f)
 
-model_config = model_config[0]['fields']
-run_config = run_config[0]['fields']
+#with open('run_config.json', 'r') as f:
+#    run_config = json.load(f)
+
+
+def run(model_config_json, run_config_json):
+    model_config = json.loads(model_config_json)
+    run_config = json.loads(run_config_json)
+
+    model_config = model_config[0]['fields']
+    run_config = run_config[0]['fields']
+
+    world = algorithms.BasicWorld(model_config, run_config)
+    history = world.go()
+    return history
 
 #random.seed(config['global']['seed'])
 #algorithm_class = config['global']['world_algorithm']
 #world_algorithm = getattr(algorithms, algorithm_class)
 #world = world_algorithm(model_config, config)
 
-world = algorithms.BasicWorld(model_config, run_config)
-history = world.go()
+
 # print (history_list)
 #graphs = []
 #if config["visualise"]:
