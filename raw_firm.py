@@ -10,7 +10,6 @@ class RawFirm(Firm):
 
     def __init__(self, id, model_config, run_config, learning_method):
         super().__init__(id)
-        self.id = id
         self.type = "RawFirm"
         self.control_parameters = [parameter for parameter in model_config if model_config[parameter]]
         if len(self.control_parameters) < 2:
