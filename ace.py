@@ -3,17 +3,15 @@ import random
 
 import algorithms
 
-
 #with open('model_config.json', 'r') as f:
 #    model_config = json.load(f)
 
 #with open('run_config.json', 'r') as f:
 #    run_config = json.load(f)
 
-
-def run(model_config_json, run_config_json):
+def run(model_config_json, run_model_config_json):
     model_config = json.loads(model_config_json)
-    run_config = json.loads(run_config_json)
+    run_config = json.loads(run_model_config_json)
 
     model_config = model_config[0]['fields']
     run_config = run_config[0]['fields']
@@ -22,11 +20,11 @@ def run(model_config_json, run_config_json):
     history = world.go()
     return history
 
+
 #random.seed(config['global']['seed'])
 #algorithm_class = config['global']['world_algorithm']
 #world_algorithm = getattr(algorithms, algorithm_class)
 #world = world_algorithm(model_config, config)
-
 
 # print (history_list)
 #graphs = []
