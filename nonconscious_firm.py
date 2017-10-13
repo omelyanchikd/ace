@@ -1,14 +1,14 @@
-from decision_maker import DecisionMaker
-from firm import Firm
-from firm_action import FirmAction
-from firm_labormarket_action import FirmLaborMarketAction
-from firm_goodmarket_action import FirmGoodMarketAction
+from .decision_maker import DecisionMaker
+from .firm import Firm
+from .firm_action import FirmAction
+from .firm_labormarket_action import FirmLaborMarketAction
+from .firm_goodmarket_action import FirmGoodMarketAction
 
 import math
 import random
 import numpy
 
-from service import get_action_list, toStr
+from .service import get_action_list, toStr
 
 
 

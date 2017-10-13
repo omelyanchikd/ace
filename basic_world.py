@@ -3,12 +3,12 @@ import math
 
 import numpy
 
-from firm import Firm
+from .firm import Firm
 #from firm_result import FirmResult
-from firm_labormarket_result import FirmLaborMarketResult
-from firm_goodmarket_result import FirmGoodMarketResult
-from worker import Worker
-from world import World
+from .firm_labormarket_result import FirmLaborMarketResult
+from .firm_goodmarket_result import FirmGoodMarketResult
+from .worker import Worker
+from .world import World
 
 
 def invert(x):

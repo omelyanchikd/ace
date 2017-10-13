@@ -1,4 +1,4 @@
-import world
+import ace.world
 
 class Stats:
     def __init__(self):

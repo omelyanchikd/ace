@@ -1,9 +1,9 @@
 import math
 
-import algorithms
+import ace.algorithms
 
-from firm import Firm
-from service import match
+from .firm import Firm
+from .service import match
 
 
 class RawFirm(Firm):
@@ -25,7 +25,7 @@ class RawFirm(Firm):
                 setattr(self, parameter, run_config[parameter])
         for parameter in self.derived_parameters:
             setattr(self, parameter, self.derive(parameter, self.control_parameters))
-        decision_maker = getattr(algorithms, match(learning_method))
+        decision_maker = getattr(ace.algorithms, match(learning_method))
         self.decision_maker = decision_maker(id, self)
 
     def produce(self):

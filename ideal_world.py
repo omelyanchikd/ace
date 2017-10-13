@@ -1,6 +1,6 @@
-from firm_action import FirmAction
-from firm_result import FirmResult
-from world import World
+from .firm_action import FirmAction
+from .firm_result import FirmResult
+from .world import World
 
 
 class IdealWorld(World):

@@ -3,13 +3,13 @@ import random
 
 from abc import ABCMeta
 
-import algorithms
-import stats
+import ace.algorithms
+import ace.stats
 
-from world_history import WorldHistory
-from good_market_history import GoodMarketHistory
+from .world_history import WorldHistory
+from .good_market_history import GoodMarketHistory
 
-from worker import Worker
+from .worker import Worker
 
 
 
@@ -26,7 +26,7 @@ class World:
         self.raw_firms = []
         for learning_item in run_config['raw_firm_config']['learnings']:
             for i in range(int(learning_item['count'])):
-                firm = algorithms.RawFirm(firm_count, model_config['raw_firm_structure'], run_config['raw_firm_config'], learning_item['method'])
+                firm = ace.algorithms.RawFirm(firm_count, model_config['raw_firm_structure'], run_config['raw_firm_config'], learning_item['method'])
                 self.raw_firms.append(firm)
                 self.firms.append(firm)
                 firm_count += 1
@@ -35,7 +35,7 @@ class World:
             self.capital_firms = []
             for learning_item in run_config['capital_firm_config']['learnings']:
                 for i in range(int(learning_item['count'])):
-                    firm = algorithms.CapitalFirm(firm_count, model_config['capital_firm_structure'], run_config['capital_firm_config'], learning_item['method'])
+                    firm = ace.algorithms.CapitalFirm(firm_count, model_config['capital_firm_structure'], run_config['capital_firm_config'], learning_item['method'])
                     self.capital_firms.append(firm)
                     self.firms.append(firm)
                     firm_count += 1
@@ -44,20 +44,20 @@ class World:
         self.production_firms = []
         for learning_item in run_config['production_firm_config']['learnings']:
             for i in range(int(learning_item['count'])):
-                firm = algorithms.ProductionFirm(firm_count, model_config['production_firm_structure'], run_config['production_firm_config'], learning_item['method'])
+                firm = ace.algorithms.ProductionFirm(firm_count, model_config['production_firm_structure'], run_config['production_firm_config'], learning_item['method'])
                 self.production_firms.append(firm)
                 self.firms.append(firm)
                 firm_count += 1
 
 
         if model_config['government_structure'] is not None:
-            self.government = algorithms.Government(model_config['government_structure'], run_config['government_config'])
+            self.government = ace.algorithms.Government(model_config['government_structure'], run_config['government_config'])
 
         if model_config['outside_world']:
-            self.outside_world = algorithms.OutsideWorld(run_config['outside_world_config'])
+            self.outside_world = ace.algorithms.OutsideWorld(run_config['outside_world_config'])
 
 
-        self.stats = stats.Stats()
+        self.stats = ace.stats.Stats()
 
         self.money = run_config['initial_money']
         self.steps = run_config['iterations']

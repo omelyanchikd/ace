@@ -1,13 +1,13 @@
-from decision_maker import DecisionMaker
-from firm import Firm
-from firm_action import FirmAction
-from firm_labormarket_action import FirmLaborMarketAction
-from firm_goodmarket_action import FirmGoodMarketAction
+from .decision_maker import DecisionMaker
+from .firm import Firm
+from .firm_action import FirmAction
+from .firm_labormarket_action import FirmLaborMarketAction
+from .firm_goodmarket_action import FirmGoodMarketAction
 
 import math
 import random
 import numpy
-from service import toStr, get_action_list
+from .service import toStr, get_action_list
 
 def argmax(two_dimensional_list, dimension):
     qs = numpy.array([q - min(two_dimensional_list[dimension]) for q in two_dimensional_list[dimension]])

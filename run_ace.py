@@ -1,7 +1,7 @@
 import json
 import random
 
-import algorithms
+import ace.algorithms
 
 #with open('model_config.json', 'r') as f:
 #    model_config = json.load(f)
@@ -9,14 +9,14 @@ import algorithms
 #with open('run_config.json', 'r') as f:
 #    run_config = json.load(f)
 
-def run(model_config_json, run_model_config_json):
+def run_ace(model_config_json, run_model_config_json):
     model_config = json.loads(model_config_json)
     run_config = json.loads(run_model_config_json)
 
     model_config = model_config[0]['fields']
     run_config = run_config[0]['fields']
 
-    world = algorithms.BasicWorld(model_config, run_config)
+    world = ace.algorithms.BasicWorld(model_config, run_config)
     history = world.go()
     return history
 

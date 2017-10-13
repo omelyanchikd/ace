@@ -4,14 +4,14 @@ import random
 
 from abc import ABCMeta, abstractmethod
 
-from firm_result import FirmResult
-from decision_maker import DecisionMaker
-from stats import Stats
+from .firm_result import FirmResult
+from .decision_maker import DecisionMaker
+from .stats import Stats
 
-from firm_history import FirmHistory
-from labor_market_history import LaborMarketHistory
+from .firm_history import FirmHistory
+from .labor_market_history import LaborMarketHistory
 
-from firm_labormarket_action import FirmLaborMarketAction
+from .firm_labormarket_action import FirmLaborMarketAction
 
 
 
