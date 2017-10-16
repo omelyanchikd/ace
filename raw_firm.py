@@ -19,7 +19,7 @@ class RawFirm(Firm):
             if run_config[parameter] is None:
                 if parameter in self.derived_parameters:
                     setattr(self, parameter, 0)
-                else:
+                elif parameter in self.control_parameters:
                     raise ValueError("Parameter " + parameter + " cannot be derived from others. Please define the parameter and restart the model.")
             else:
                 setattr(self, parameter, run_config[parameter])
