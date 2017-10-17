@@ -128,7 +128,7 @@ class Firm:
 
 
     def derive_salary(self, control_parameters):
-        total_salary = [worker.salary for worker in self.workers]
+        total_salary = sum([worker.salary for worker in self.workers])
         if hasattr(self, 'raw') and hasattr(self, 'capital'):
             if set(['price', 'plan', 'raw_budget', 'capital_budget']).issubset(control_parameters):
                 needed_workers = math.floor(self.plan / self.labor_productivity) - len(self.workers)
@@ -270,7 +270,7 @@ class Firm:
 
 
     def derive_price(self, control_parameters):
-        total_salary = [worker.salary for worker in self.workers]
+        total_salary = sum([worker.salary for worker in self.workers])
         if hasattr(self, 'raw') and hasattr(self, 'capital'):
             if set(['salary', 'plan', 'raw_budget', 'capital_budget']).issubset(control_parameters):
                 needed_workers = math.floor(self.plan / self.labor_productivity) - len(self.workers)
@@ -487,9 +487,7 @@ class Firm:
             if set(['salary', 'price']).issubset(control_parameters):
                 try:
                     needed_workers = math.floor(
-                    (1 / (1 + 1 / self.demand_elasticity) * total_salary - self.labor_productivity * self.price *
-                     len(self.workers)) / (
-                    self.labor_productivity * self.price - 1 / (1 + 1 / self.demand_elasticity) * self.salary))
+                    (1 / (1 + 1 / self.demand_elasticity) * total_salary - self.labor_productivity * self.price * len(self.workers)) / (self.labor_productivity * self.price - 1 / (1 + 1 / self.demand_elasticity) * self.salary))
                 except:
                     needed_workers = 0
             elif set(['salary', 'salary_budget']).issubset(control_parameters):
@@ -573,9 +571,7 @@ class Firm:
             if set(['salary', 'price']).issubset(control_parameters):
                 try:
                     needed_workers = math.floor(
-                    (1 / (1 + 1 / self.demand_elasticity) * total_salary - self.labor_productivity * self.price *
-                     len(self.workers)) / (
-                    self.labor_productivity * self.price - 1 / (1 + 1 / self.demand_elasticity) * self.salary))
+                    (1 / (1 + 1 / self.demand_elasticity) * total_salary - self.labor_productivity * self.price * len(self.workers)) / (self.labor_productivity * self.price - 1 / (1 + 1 / self.demand_elasticity) * self.salary))
                 except:
                     needed_workers = 0
             elif set(['salary', 'salary_budget']).issubset(control_parameters):
@@ -784,9 +780,7 @@ class Firm:
                 needed_workers = math.floor(self.labor_capacity - len(self.workers))
             elif set(['salary', 'price']).issubset(control_parameters):
                 try:
-                    needed_workers = math.floor(
-                    (1 / (1 + 1 / self.demand_elasticity) * total_salary - self.labor_productivity * self.price *
-                     len(self.workers)) / (self.price * self.labor_productivity))
+                    needed_workers = math.floor((1 / (1 + 1 / self.demand_elasticity) * total_salary - self.labor_productivity * self.price * len(self.workers)) / (self.price * self.labor_productivity))
                 except:
                     needed_workers = 0
             if needed_workers > 0 or len(self.workers) + needed_workers > 0:
