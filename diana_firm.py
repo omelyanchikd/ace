@@ -11,10 +11,7 @@ import random
 class DianaFirm(DecisionMaker):
     def __init__(self, id, firm):
         super().__init__(id, firm)
-        self.plan = firm.plan
         self.prev_price = 1000
-        self.salary = firm.salary
-        self.offer_count = 0
         self.type = 'DianaFirm'
 
     def decide_salary(self, stats, firm):
@@ -31,26 +28,16 @@ class DianaFirm(DecisionMaker):
             #    already_decreased = True
             #else:
             #    self.plan = self.sold if self.sold > 0 else self.efficiency_coefficient
-        #self.plan = (self.plan - self.stock) // self.efficiency_coefficient * self.efficiency_coefficient
-        firm.plan = firm.plan // firm.labor_productivity * firm.labor_productivity
-        #self.plan = self.plan if self.plan >= 0 else 0
-        self.offer_count = firm.plan // firm.labor_productivity - len(firm.workers)
-        while self.offer_count < 0:
-            firm.fire_worker(random.choice(list(firm.workers)))
-            self.offer_count += 1
-        total_salary = sum([worker.salary for worker in firm.workers])
-        while True:
-            if self.offer_count > 0:
-                firm.salary = 0.9 * (firm.price * (len(firm.workers) + self.offer_count) * firm.labor_productivity  -
-                              total_salary)/self.offer_count
-                if firm.salary > 0:
-                    break
-                firm.price *= 1.05
-            else:
-                break
-        #print(str(self.salary) + " " + str(self.price * self.plan - total_salary - self.salary * self.offer_count))
-        firm.labor_capacity = self.offer_count + len(firm.workers)
-        return FirmLaborMarketAction(self.offer_count, firm.salary, [])
+        control_parameters = ['plan', 'price']
+        if hasattr(firm, 'raw'):
+            firm.raw_budget = stats.raw_price * math.floor(firm.plan / firm.raw_productivity)
+            control_parameters.append('raw_budget')
+        if hasattr(firm, 'capital'):
+            firm.capital_budget = stats.capital_price * math.floor(firm.plan / firm.capital_productivity)
+            control_parameters.append('capital_budget')
+        for parameter in firm.control_parameters:
+            firm.__setattr__(parameter, firm.derive(parameter, control_parameters))
+
 
     def decide_price(self, stats, firm):
         return FirmGoodMarketAction(firm.stock, firm.price, 0)
