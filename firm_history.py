@@ -2,6 +2,10 @@ import csv
 
 class FirmHistory:
     def __init__(self, firm, output = "firm_output.csv"):
+        self.firm_id = firm.id
+        self.firm_type = None
+        self.decision_maker_type = None
+        self.step = []
         self.output = output
         for variable in ['money', 'price', 'salary', 'sold', 'sales', 'stock', 'workers', 'profit', 'plan', 'labor_capacity',
             'salary_budget', 'raw', 'raw_budget', 'raw_need', 'capital', 'capital_budget', 'capital_need', 'capital_expenses']:
@@ -21,8 +25,10 @@ class FirmHistory:
 
 
     def add_record(self, firm):
-        row = [firm.__class__.__name__ + str(firm.id), firm.id, firm.type, firm.decision_maker.type, firm.step]
-        for variable in ['money', 'price', 'salary', 'sold', 'sales', 'stock', 'profit', 'plan', 'labor_capacity',
+        self.firm_type = firm.type
+        self.decision_maker_type = firm.decision_maker.type
+        row = [self.firm_type + str(firm.id), firm.id, self.firm_type, self.decision_maker_type]
+        for variable in ['step', 'money', 'price', 'salary', 'sold', 'sales', 'stock', 'profit', 'plan', 'labor_capacity',
             'salary_budget', 'raw', 'raw_budget', 'raw_need', 'capital', 'capital_budget', 'capital_need', 'capital_expenses']:
             try:
                 value = getattr(firm, variable)
