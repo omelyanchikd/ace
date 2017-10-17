@@ -14,7 +14,8 @@ class RawFirm(Firm):
         self.control_parameters = [parameter for parameter in model_config if model_config[parameter]]
         if len(self.control_parameters) < 2:
             raise AssertionError("Agent needs at least two defined control parameters to make decisions.")
-        self.derived_parameters = [parameter for parameter in model_config if not model_config[parameter]]
+        self.derived_parameters = [parameter for parameter in model_config
+                                   if model_config[parameter] is not None and not model_config[parameter]]
         for parameter in run_config:
             if run_config[parameter] is None:
                 if parameter in self.derived_parameters:
