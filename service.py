@@ -21,6 +21,8 @@ def match(method):
         return "RandomFirm"
     if method == 'oligopoly':
         return "OligopolyFirm"
+    if method == 'svm':
+        return "SvmFirm"
     return "ERROR"
 
 
