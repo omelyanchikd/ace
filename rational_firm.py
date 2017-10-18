@@ -28,7 +28,19 @@ class RationalFirm(DecisionMaker):
         self.p2 = [10000]
 #       self.c = 0
         self.d = 0.25
-        self.plan = 50 * firm.labor_productivity
+        self.e = 0
+        self.f = 0
+        self.g = 0
+        self.h = 0
+        if hasattr(firm, 'raw'):
+            self.e = 10000
+            self.f = - 50
+            self.p3 = numpy.eye(2) * 10000
+        if hasattr(firm, 'capital'):
+            self.g = 10000
+            self.h = - 50
+            self.p4 = numpy.eye(2) * 10000
+
         self.type = "RationalFirm"
 
     def decide_price(self, stats, firm):
@@ -37,16 +49,28 @@ class RationalFirm(DecisionMaker):
     def decide_salary(self, stats, firm):
         self.a, self.b, self.p1 = rls(numpy.array([self.a, self.b]), self.p1, numpy.array([1, firm.sold]), firm.price)
         self.d, self.p2 = rls(numpy.array([self.d]), self.p2, numpy.array([firm.salary]), len(firm.workers))
-        firm.plan = 0.5 * self.a / (-self.b + 1/ (firm.labor_productivity * firm.labor_productivity* self.d))
-        firm.plan = (firm.plan - firm.stock) // firm.labor_productivity * firm.labor_productivity
-        firm.plan = firm.plan if firm.plan >= 0 else 0
-        self.offer_count = math.floor(firm.plan / firm.labor_productivity) - len(firm.workers)
-        while self.offer_count < 0:
-            firm.fire_worker(random.choice(list(firm.workers)))
-            self.offer_count += 1
-        firm.price = self.a + self.b * firm.plan
-        firm.price = firm.price if firm.price > 0 else 0
+        raw_productivity = 1
+        capital_productivity = 1
+        capital_amortization = 1
+        if hasattr(firm, 'raw'):
+            self.e, self.f, self.p3 = rls(numpy.array([self.e, self.f]), self.p3, numpy.array([1, firm.raw]),
+                                          stats.price)
+            raw_productivity = firm.raw_productivity
+        if hasattr(firm, 'capital'):
+            self.g, self.h, self.p4 = rls(numpy.array([self.g, self.h]), self.p4, numpy.array([1, firm.capital]),
+                                          stats.price)
+            capital_productivity = firm.capital_productivity
+            capital_amortization = firm.capital_amortization
+        firm.plan = 0.5 * (self.a - self.e/raw_productivity - capital_amortization * self.g/capital_productivity) / \
+                    (- self.b + 1/ (firm.labor_productivity * firm.labor_productivity* self.d) + self.f/(raw_productivity * raw_productivity) +
+                     capital_amortization * self.h/(capital_productivity * capital_productivity))
         firm.salary = firm.plan / (self.d * firm.labor_productivity)
-        firm.salary = firm.salary if firm.salary > 0 else 0
-        firm.labor_capacity = len(firm.workers) + self.offer_count
-        return FirmLaborMarketAction(self.offer_count, firm.salary, [])
+        control_parameters = ['plan', 'salary']
+        if hasattr(firm, 'raw'):
+            firm.raw_budget = (self.e + self.f * firm.plan/raw_productivity) * firm.plan/raw_productivity
+            control_parameters.append('raw_budget')
+        if hasattr(firm, 'capital'):
+            firm.raw_budget = (self.g + self.h * firm.plan / capital_productivity) * firm.plan / capital_productivity
+            control_parameters.append('capital_budget')
+        for parameter in firm.control_parameters:
+            firm.__setattr__(parameter, firm.derive(parameter, control_parameters))
