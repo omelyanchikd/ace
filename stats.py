@@ -7,7 +7,7 @@ class Stats:
                 setattr(self, type + variable, 0)
         self.unemployment_rate = 0
         for type in ['raw', 'capital']:
-            for variable in ['', '_need', '_budget']:
+            for variable in ['', '_need', '_budget', '_expenses']:
                 setattr(self, type + variable, 0)
         #self.expected_sales_growth = 0
         #self.expected_sold_growth = 0
@@ -50,7 +50,7 @@ class Stats:
             self.__setattr__(type + '_employed', self.__getattribute__(type + '_employed') + len(firm.workers))
             for attribute in ['raw', 'capital']:
                 if hasattr(firm, attribute):
-                    for variable in ['', '_budget', '_need']:
+                    for variable in ['', '_budget', '_need', '_expenses']:
                         self.__setattr__(attribute + variable, self.__getattribute__(attribute + variable) +
                                 getattr(firm, attribute + variable))
         if self.__getattribute__(type + '_sold') > 0:

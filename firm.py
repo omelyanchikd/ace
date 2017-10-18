@@ -72,6 +72,7 @@ class Firm:
                 self.profit -= self.raw_expenses
             if hasattr(self, 'capital'):
                 self.profit -= self.capital_amortization * self.capital_expenses
+            self.raw_expenses = 0
             self.money += self.sales
 
     def add_worker(self, worker, salary):

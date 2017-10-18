@@ -170,6 +170,7 @@ class BasicWorld(World):
                     self.good_market_history.add_record({'step': self.step, 'seller_id': seller.id, 'buyer_id': buyer.id,
                     'quantity': (buyer.raw_need - buyer.raw), 'money':  prices[seller.id] * (buyer.raw_need - buyer.raw)})
                     buyer.raw_budget -= prices[seller.id] * (buyer.raw_need - buyer.raw)
+                    buyer.raw_expenses += prices[seller.id] * (buyer.raw_need - buyer.raw)
                     production_counts[seller.id] -= (buyer.raw_need - buyer.raw)
                     total_sold += (buyer.raw_need - buyer.raw)
                     buyer.raw += (buyer.raw_need - buyer.raw)
@@ -178,6 +179,7 @@ class BasicWorld(World):
                     self.good_market_history.add_record({'step': self.step, 'seller_id': seller.id, 'buyer_id': buyer.id,
                     'quantity': sold, 'money': prices[seller.id] * sold})
                     buyer.raw_budget -= prices[seller.id] * sold
+                    buyer.raw_expenses += prices[seller.id] * sold
                     production_counts[seller.id] -= sold
                     total_sold += sold
                     buyer.raw += sold
@@ -187,6 +189,7 @@ class BasicWorld(World):
                     'quantity': production_counts[seller.id], 'money': prices[seller.id] * production_counts[seller.id]})
 
                     buyer.raw_budget -= prices[seller.id] * production_counts[seller.id]
+                    buyer.raw_expenses += prices[seller.id] * production_counts[seller.id]
                     total_sold += production_counts[seller.id]
                     buyer.raw += production_counts[seller.id]
                     production_counts[seller.id] = 0
@@ -195,6 +198,7 @@ class BasicWorld(World):
                     self.good_market_history.add_record({'step': self.step, 'seller_id': seller.id, 'buyer_id': buyer.id,
                     'quantity': sold, 'money': prices[seller.id]} * sold)
                     buyer.raw_budget -= prices[seller.id] * sold
+                    buyer.raw_expenses += prices[seller.id] * sold
                     production_counts[seller.id] -= sold
                     total_sold += sold
                     buyer.raw += sold

@@ -11,7 +11,7 @@ class WorldHistory:
                 setattr(self, type + variable, [])
         self.unemployment_rate = []
         for type in ['raw', 'capital']:
-            for variable in ['', '_need', '_budget']:
+            for variable in ['', '_need', '_budget', '_expenses']:
                 setattr(self, type + variable, [])
         self.firms = []
         self.raw_firms = []
@@ -36,8 +36,8 @@ class WorldHistory:
                                                 'total_salary', 'raw_total_salary', 'capital_total_salary', 'production_total_salary',
                                                 'salary_budget', 'raw_salary_budget', 'capital_salary_budget',
                                                 'production_salary_budget', 'unemployment_rate',
-                                                'raw', 'raw_need', 'raw_budget',
-                                                'capital', 'capital_need', 'capital_budget'
+                                                'raw', 'raw_need', 'raw_budget', 'raw_expenses',
+                                                'capital', 'capital_need', 'capital_budget', 'capital_expenses'
                                                 ])
             writer.writeheader()
             output_file.close()
@@ -59,8 +59,8 @@ class WorldHistory:
                                                 'total_salary', 'raw_total_salary', 'capital_total_salary', 'production_total_salary',
                                                 'salary_budget', 'raw_salary_budget', 'capital_salary_budget',
                                                 'production_salary_budget', 'unemployment_rate',
-                                                'raw', 'raw_need', 'raw_budget',
-                                                'capital', 'capital_need', 'capital_budget'
+                                                'raw', 'raw_need', 'raw_budget', 'raw_expenses',
+                                                'capital', 'capital_need', 'capital_budget', 'capital_expenses'
                                                 ])
             writer.writerow({**stats.__dict__, **{'date': self.date, 'step': self.step}})
         self.step += 1

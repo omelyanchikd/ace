@@ -27,6 +27,8 @@ class CapitalFirm(Firm):
                 setattr(self, parameter, run_config[parameter])
         for parameter in self.derived_parameters:
             setattr(self, parameter, self.derive(parameter, self.control_parameters))
+        if hasattr(self, 'raw'):
+            self.raw_expenses = 0
         decision_maker = getattr(ace.algorithms, match(learning_method))
         self.decision_maker = decision_maker(id, self)
 
