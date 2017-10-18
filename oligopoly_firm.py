@@ -19,7 +19,6 @@ def rls(a, p, x, y):
 class OligopolyFirm(DecisionMaker):
     def __init__(self, id, firm):
         super().__init__(id, firm)
-        self.salary = firm.price
         self.a = 10000
         self.b = -50
         self.p1 = numpy.eye(2) * 10000
@@ -30,11 +29,14 @@ class OligopolyFirm(DecisionMaker):
 
     def decide_salary(self, stats, firm):
         self.a, self.b, self.p1 = rls(numpy.array([self.a, self.b]), self.p1, numpy.array([1, firm.sold]), firm.price)
-        self.offer_count = math.floor(stats.firms * (self.a - firm.salary / firm.labor_productivity/((stats.firms + 1) * (-self.b * firm.labor_productivity))))- len(firm.workers)
-        while self.offer_count < 0:
-            firm.fire_worker(random.choice(list(firm.workers)))
-            self.offer_count += 1
+        firm.labor_capacity = math.floor(stats.firms * (self.a - firm.salary / firm.labor_productivity/((stats.firms + 1) * (-self.b * firm.labor_productivity))))
         firm.price = (self.a + stats.firms * firm.salary/firm.labor_productivity)/ (stats.firms + 1)
-        firm.price = firm.price if firm.price > 0 else 0
-        firm.labor_capacity = len(firm.workers) + self.offer_count
-        return FirmLaborMarketAction(self.offer_count, firm.salary, [])
+        control_parameters = ['labor_capacity', 'price']
+        if hasattr(firm, 'raw'):
+            firm.raw_budget = stats.raw_price * firm.labor_capacity * firm.labor_productivity / firm.raw_productivity
+            control_parameters.append('raw_budget')
+        if hasattr(firm, 'capital'):
+            firm.capital_budget = stats.capital_price * firm.labor_capacity * firm.labor_productivity / firm.capital_productivity
+            control_parameters.append('capital_budget')
+        for parameter in firm.control_parameters:
+            firm.__setattr__(parameter, firm.derive(parameter, control_parameters))
