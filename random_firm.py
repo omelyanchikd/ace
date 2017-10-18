@@ -9,22 +9,17 @@ import random
 class RandomFirm(DecisionMaker):
     def __init__(self, id, firm):
         super().__init__(id, firm)
-        self.salary = 200
         self.type = 'RandomFirm'
-   #     ['price', 'salary', 'sold', 'workers', 'world_price', 'world_salary',
-   #      'rest_money', 'world_employed', 'world_sold']
-    #    self.prev_state = [20, 200, 500, 50, 20, 200, 0, 500, 5000]
-    #    self.current_state = [20, 200, 500, 50, 20, 200, 0, 500, 5000]
-    #    self.change = [(self.current_state[i] - self.prev_state[i])/self.prev_state[i] if self.prev_state[i] != 0 else self.current_state[i] for i in range(0, len(self.prev_state)) ]
 
 
     def decide_price(self, stats, firm):
-        firm.price = random.uniform(10, 30)
         return FirmGoodMarketAction(firm.stock, firm.price, 0)
 
     def decide_salary(self, stats, firm):
-        firm.salary = random.uniform(150, 250)
-     #   self.current_state = [self.price, self.salary, self.sold, len(self.workers), stats.price, stats.salary, stats.money - ]
+        for parameter in firm.control_parameters:
+            value = getattr(firm, parameter)
+            if parameter in ['plan', 'labor_capacity', 'raw_need', 'capital_need']:
+                firm.__setattr__(parameter, random.randint(value - value//3, value + value//3))
+            else:
+                firm.__setattr__(parameter, random.uniform(0.7 * value, 1.3 * value))
 
-        firm.labor_capacity = len(firm.workers) + 1
-        return FirmLaborMarketAction(1, firm.salary, [])
