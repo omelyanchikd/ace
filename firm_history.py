@@ -8,7 +8,7 @@ class FirmHistory:
         self.step = []
         self.output = output
         for variable in ['money', 'price', 'salary', 'sold', 'sales', 'stock', 'workers', 'profit', 'plan', 'labor_capacity',
-            'salary_budget', 'raw', 'raw_budget', 'raw_need', 'capital', 'capital_budget', 'capital_need', 'capital_expenses']:
+            'total_salary', 'salary_budget', 'raw', 'raw_budget', 'raw_need', 'capital', 'capital_budget', 'capital_need', 'capital_expenses']:
             setattr(self, variable, [])
         try:
             open(self.output, "r")
@@ -17,7 +17,7 @@ class FirmHistory:
             writer = csv.DictWriter(output_file, dialect = 'excel',
                                     fieldnames=['firm_id', 'id', 'firm_type', 'decision_maker_type', 'firm_step',
                                                 'money', 'price', 'salary', 'sold', 'sales', 'stock', 'profit', 'plan',
-                                                'labor_capacity', 'salary_budget', 'raw', 'raw_budget', 'raw_need',
+                                                'labor_capacity', 'totaly_salary', 'salary_budget', 'raw', 'raw_budget', 'raw_need',
                                                 'capital', 'capital_budget', 'capital_need', 'capital_expenses', 'workers'])
             writer.writeheader()
             output_file.close()
@@ -29,7 +29,7 @@ class FirmHistory:
         self.decision_maker_type = firm.decision_maker.type
         row = [self.firm_type + str(firm.id), firm.id, self.firm_type, self.decision_maker_type]
         for variable in ['step', 'money', 'price', 'salary', 'sold', 'sales', 'stock', 'profit', 'plan', 'labor_capacity',
-            'salary_budget', 'raw', 'raw_budget', 'raw_need', 'capital', 'capital_budget', 'capital_need', 'capital_expenses']:
+            'total_salary', 'salary_budget', 'raw', 'raw_budget', 'raw_need', 'capital', 'capital_budget', 'capital_need', 'capital_expenses']:
             try:
                 value = getattr(firm, variable)
             except:

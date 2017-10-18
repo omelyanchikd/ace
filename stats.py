@@ -3,7 +3,7 @@ import ace.world
 class Stats:
     def __init__(self):
         for type in ['raw_', 'capital_', 'production_','']:
-            for variable in ['price', 'salary', 'sold', 'stock', 'sales', 'money', 'employed', 'salary_budget']:
+            for variable in ['price', 'salary', 'sold', 'stock', 'sales', 'money', 'labor_capacity', 'employed', 'total_salary', 'salary_budget']:
                 setattr(self, type + variable, 0)
         self.unemployment_rate = 0
         for type in ['raw', 'capital']:
@@ -34,7 +34,7 @@ class Stats:
         else:
             self.price = 0
         if self.employed > 0:
-            self.salary /= self.employed
+            self.salary = self.total_salary / self.employed
         else:
             self.salary = 0
         #  self.expected_sales_growth = self.config['global']['money_growth']/self.money
@@ -43,14 +43,11 @@ class Stats:
 
     def get_firm_stats(self, world, type):
         for firm in world.__getattribute__(type + '_firms'):
-            for variable in ['sold', 'sales', 'stock', 'money']:
+            for variable in ['sold', 'sales', 'stock', 'money', 'salary_budget', 'labor_capacity', 'total_salary']:
                 self.__setattr__(type + '_' + variable,  self.__getattribute__(type + '_' + variable) + getattr(firm, variable))
                 self.__setattr__(variable, self.__getattribute__(variable) + getattr(firm, variable))
             self.employed += len(firm.workers)
             self.__setattr__(type + '_employed', self.__getattribute__(type + '_employed') + len(firm.workers))
-            for worker in firm.workers:
-                self.salary_budget += worker.salary
-                self.__setattr__(type + '_salary_budget', self.__getattribute__(type + '_salary_budget') + worker.salary)
             for attribute in ['raw', 'capital']:
                 if hasattr(firm, attribute):
                     for variable in ['', '_budget', '_need']:
@@ -61,7 +58,7 @@ class Stats:
         else:
             self.__setattr__(type + '_price', 0)
         if self.__getattribute__(type + '_employed') > 0:
-            self.__setattr__(type + '_salary', self.__getattribute__(type + '_salary_budget') /
+            self.__setattr__(type + '_salary', self.__getattribute__(type + '_total_salary') /
                              self.__getattribute__(type + '_employed'))
         else:
             self.__setattr__(type + '_salary', 0)

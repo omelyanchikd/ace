@@ -7,7 +7,7 @@ class WorldHistory:
         self.step = 0
         self.date = datetime.datetime.now().isoformat()
         for type in ['raw_', 'capital_', 'production_','']:
-            for variable in ['price', 'salary', 'sold', 'stock', 'sales', 'money', 'employed', 'salary_budget']:
+            for variable in ['price', 'salary', 'sold', 'stock', 'sales', 'money', 'employed', 'labor_capacity', 'total_salary', 'salary_budget']:
                 setattr(self, type + variable, [])
         self.unemployment_rate = []
         for type in ['raw', 'capital']:
@@ -32,6 +32,8 @@ class WorldHistory:
                                                 'sales', 'raw_sales', 'capital_sales', 'production_sales',
                                                 'money', 'raw_money', 'capital_money', 'production_money',
                                                 'employed', 'raw_employed', 'capital_employed', 'production_employed',
+                                                'labor_capacity', 'raw_labor_capacity', 'capital_labor_capacity', 'production_labor_capacity',
+                                                'total_salary', 'raw_total_salary', 'capital_total_salary', 'production_total_salary',
                                                 'salary_budget', 'raw_salary_budget', 'capital_salary_budget',
                                                 'production_salary_budget', 'unemployment_rate',
                                                 'raw', 'raw_need', 'raw_budget',
@@ -53,6 +55,8 @@ class WorldHistory:
                                                 'sales', 'raw_sales', 'capital_sales', 'production_sales',
                                                 'money', 'raw_money', 'capital_money', 'production_money',
                                                 'employed', 'raw_employed', 'capital_employed', 'production_employed',
+                                                'labor_capacity', 'raw_labor_capacity', 'capital_labor_capacity', 'production_labor_capacity',
+                                                'total_salary', 'raw_total_salary', 'capital_total_salary', 'production_total_salary',
                                                 'salary_budget', 'raw_salary_budget', 'capital_salary_budget',
                                                 'production_salary_budget', 'unemployment_rate',
                                                 'raw', 'raw_need', 'raw_budget',
