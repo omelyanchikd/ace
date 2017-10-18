@@ -68,9 +68,11 @@ class Firm:
             self.stock -= result.sold_count
             self.sales = self.price * result.sold_count
             self.profit = self.sales - self.total_salary
-            self.money += self.price * result.sold_count
-        if len(self.workers) > 0:
-            self.salary = self.total_salary / len(self.workers)
+            if hasattr(self, 'raw'):
+                self.profit -= self.raw_expenses
+            if hasattr(self, 'capital'):
+                self.profit -= self.capital_amortization * self.capital_expenses
+            self.money += self.sales
 
     def add_worker(self, worker, salary):
         self.labor_market_history.add_record({'step': self.step, 'worker_id': worker.id,
