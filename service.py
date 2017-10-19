@@ -23,6 +23,8 @@ def match(method):
         return "OligopolyFirm"
     if method == 'svm':
         return "SvmFirm"
+    if method == 'budget':
+        return "BudgetFirm"
     return "ERROR"
 
 
