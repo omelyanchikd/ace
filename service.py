@@ -15,6 +15,8 @@ def match(method):
         return 'RuleFirm'
     if method == 'classification_decision_tree':
         return 'TreeFirm'
+    if method == 'regression_decision_tree':
+        return 'RegressionTreeFirm'
     if method == 'perceptron':
         return 'AnnFirm'
     if method == 'random':

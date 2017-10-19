@@ -13,6 +13,7 @@ from .new_firm import NewFirm
 from .tree_firm import TreeFirm
 from .svm_firm import SvmFirm
 from .budget_firm import BudgetFirm
+from .regression_tree_firm import RegressionTreeFirm
 
 from .ideal_world import IdealWorld
 from .basic_world import BasicWorld
