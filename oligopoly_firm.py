@@ -36,7 +36,7 @@ class OligopolyFirm(DecisionMaker):
             firm.raw_budget = stats.raw_price * firm.labor_capacity * firm.labor_productivity / firm.raw_productivity
             control_parameters.append('raw_budget')
         if hasattr(firm, 'capital'):
-            firm.capital_budget = stats.capital_price * firm.labor_capacity * firm.labor_productivity / firm.capital_productivity
+            firm.capital_budget = stats.capital_price * (firm.labor_capacity * firm.labor_productivity / firm.capital_productivity - firm.capital)
             control_parameters.append('capital_budget')
         for parameter in firm.control_parameters:
             firm.__setattr__(parameter, firm.derive(parameter, control_parameters))

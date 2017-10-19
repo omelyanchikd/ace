@@ -33,7 +33,7 @@ class DianaFirm(DecisionMaker):
             firm.raw_budget = stats.raw_price * math.floor(firm.plan / firm.raw_productivity)
             control_parameters.append('raw_budget')
         if hasattr(firm, 'capital'):
-            firm.capital_budget = stats.capital_price * math.floor(firm.plan / firm.capital_productivity)
+            firm.capital_budget = stats.capital_price * (math.floor(firm.plan / firm.capital_productivity) - firm.capital)
             control_parameters.append('capital_budget')
         for parameter in firm.control_parameters:
             firm.__setattr__(parameter, firm.derive(parameter, control_parameters))
