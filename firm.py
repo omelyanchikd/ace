@@ -74,6 +74,8 @@ class Firm:
                 self.profit -= self.capital_amortization * self.capital_expenses
             self.raw_expenses = 0
             self.money += self.sales
+        else:
+            self.profit = 0
 
     def add_worker(self, worker, salary):
         self.labor_market_history.add_record({'step': self.step, 'worker_id': worker.id,
