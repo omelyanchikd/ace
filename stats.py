@@ -9,8 +9,8 @@ class Stats:
         for type in ['raw', 'capital']:
             for variable in ['', '_need', '_budget', '_expenses']:
                 setattr(self, type + variable, 0)
-        #self.expected_sales_growth = 0
-        #self.expected_sold_growth = 0
+        self.expected_sales_growth = 0
+        self.expected_sold_growth = 0
         for type in ['raw_', 'capital_', 'production_', '']:
             setattr(self, type + 'firms', 0)
         self.households = 0
@@ -37,8 +37,8 @@ class Stats:
             self.salary = self.total_salary / self.employed
         else:
             self.salary = 0
-        #  self.expected_sales_growth = self.config['global']['money_growth']/self.money
-        #self.expected_sold_growth = 0.05
+        self.expected_sales_growth = world.money_growth/world.money
+        self.expected_sold_growth = 0.01
 
 
     def get_firm_stats(self, world, type):

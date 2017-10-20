@@ -18,6 +18,8 @@ class WorldHistory:
         self.capital_firms = []
         self.production_firms = []
         self.households = []
+        self.expected_sales_growth = []
+        self.expected_sold_growth = []
 
         try:
             open(self.output, "r")
@@ -37,14 +39,16 @@ class WorldHistory:
                                                 'salary_budget', 'raw_salary_budget', 'capital_salary_budget',
                                                 'production_salary_budget', 'unemployment_rate',
                                                 'raw', 'raw_need', 'raw_budget', 'raw_expenses',
-                                                'capital', 'capital_need', 'capital_budget', 'capital_expenses'
+                                                'capital', 'capital_need', 'capital_budget', 'capital_expenses',
+                                                'expected_sales_growth', 'expected_sold_growth'
                                                 ])
             writer.writeheader()
             output_file.close()
 
     def add_record(self, stats):
         for variable, value in stats.__dict__.items():
-            getattr(self, variable).append(value)
+            if hasattr(self, variable):
+                getattr(self, variable).append(value)
         with open(self.output, "a", newline='') as output_file:
             writer = csv.DictWriter(output_file, dialect = 'excel', fieldnames = ['date', 'step', 'firms', 'raw_firms',
                                                                                 'capital_firms', 'production_firms',
@@ -60,7 +64,8 @@ class WorldHistory:
                                                 'salary_budget', 'raw_salary_budget', 'capital_salary_budget',
                                                 'production_salary_budget', 'unemployment_rate',
                                                 'raw', 'raw_need', 'raw_budget', 'raw_expenses',
-                                                'capital', 'capital_need', 'capital_budget', 'capital_expenses'
+                                                'capital', 'capital_need', 'capital_budget', 'capital_expenses',
+                                                'expected_sales_growth', 'expected_sold_growth'
                                                 ])
             writer.writerow({**stats.__dict__, **{'date': self.date, 'step': self.step}})
         self.step += 1
