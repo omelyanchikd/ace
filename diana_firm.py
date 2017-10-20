@@ -30,10 +30,10 @@ class DianaFirm(DecisionMaker):
             #    self.plan = self.sold if self.sold > 0 else self.efficiency_coefficient
         control_parameters = ['plan', 'price']
         if hasattr(firm, 'raw'):
-            firm.raw_budget = stats.raw_price * math.floor(firm.plan / firm.raw_productivity)
+            firm.raw_budget = stats.raw_price * firm.plan / firm.raw_productivity
             control_parameters.append('raw_budget')
         if hasattr(firm, 'capital'):
-            firm.capital_budget = stats.capital_price * (math.floor(firm.plan / firm.capital_productivity) - firm.capital)
+            firm.capital_budget = stats.capital_price * (firm.plan / firm.capital_productivity) - firm.capital
             control_parameters.append('capital_budget')
         for parameter in firm.control_parameters:
             firm.__setattr__(parameter, firm.derive(parameter, control_parameters))
