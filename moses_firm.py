@@ -72,7 +72,7 @@ class MosesFirm(DecisionMaker):
         firm.price = self.expected / firm.plan if firm.plan > 0 and self.expected > 0 else firm.price
 
         if hasattr(firm, 'raw'):
-            self.raw_price_change = change(firm.raw_budget/firm.raw, self.prev_raw_price)
+            self.raw_price_change = change(firm.raw_budget/firm.raw_bought if firm.raw_bought > 0 else 0, self.prev_raw_price)
             self.stats_raw_price_change = change(stats.raw_price, self.stats_raw_price_change)
             self.exp_raw_price = 0.5 * self.raw_price_change + 0.5 * self.stats_raw_price_change
             self.prev_raw_price = firm.raw_budget/firm.raw
@@ -83,7 +83,7 @@ class MosesFirm(DecisionMaker):
             derived_parameters.append('raw_need')
 
         if hasattr(firm, 'capital'):
-            self.capital_price_change = change(firm.capital_budget / firm.capital, self.prev_capital_price)
+            self.capital_price_change = change(firm.capital_budget / firm.capital_bought if firm.capital_bought > 0 else 0, self.prev_capital_price)
             self.stats_capital_price_change = change(stats.capital_price, self.stats_capital_price_change)
             self.exp_capital_price = 0.5 * self.capital_price_change + 0.5 * self.stats_capital_price_change
             self.prev_capital_price = firm.capital_budget/firm.capital
