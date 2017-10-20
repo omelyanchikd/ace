@@ -12,6 +12,8 @@ import math
 import pandas
 
 def change(new_value, old_value):
+    if isinstance(new_value, set):
+        return (len(new_value) - len(old_value))/len(old_value) if len(old_value) != 0 else 0
     return (new_value - old_value)/old_value if old_value != 0 else 0
 
 def generate_sample_data(sample_size):
@@ -33,8 +35,8 @@ class RegressionTreeFirm(DecisionMaker):
         for parameter in firm.control_parameters:
             setattr(self, 'sample_' + parameter, [generate_sample_data(len(self.external)) for i in range(sample_size)])
             setattr(self, 'regression_' + parameter, DecisionTreeRegressor(max_depth=5))
-            getattr(self, 'regression_' + parameter).fit([getattr(self, 'sample_' + parameter)[:len(self.external) - 1]
-            for i in range(sample_size)], [getattr(self, 'sample_' + parameter)[len(self.external) - 1] for i in range(sample_size)])
+            getattr(self, 'regression_' + parameter).fit([getattr(self, 'sample_' + parameter)[i][:len(self.external) - 1]
+            for i in range(sample_size)], [getattr(self, 'sample_' + parameter)[i][len(self.external) - 1] for i in range(sample_size)])
 
 
 
@@ -49,9 +51,9 @@ class RegressionTreeFirm(DecisionMaker):
         for parameter in firm.control_parameters:
             value = getattr(firm, parameter)
             if parameter in ['plan', 'labor_capacity', 'raw_need', 'capital_need']:
-                firm.__setattr__(parameter, math.floor(value * (1 + self.regression.predict(self.change))))
+                firm.__setattr__(parameter, math.floor(value * (1 + getattr(self, 'regression_' + parameter).predict(self.change[:(len(self.change) - 1)]))))
             else:
-                firm.__setattr__(parameter, value * (1 + self.regression.predict(self.change)))
+                firm.__setattr__(parameter, value * (1 + getattr(self, 'regression_' + parameter).predict(self.change[:(len(self.change) - 1)])))
 
 
     def decide_price(self, stats, firm):
