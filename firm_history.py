@@ -8,8 +8,8 @@ class FirmHistory:
         self.step = []
         self.output = output
         for variable in ['money', 'price', 'salary', 'sold', 'sales', 'stock', 'workers', 'profit', 'plan', 'labor_capacity',
-            'total_salary', 'salary_budget', 'raw', 'raw_budget', 'raw_need', 'raw_expenses', 'capital', 'capital_budget',
-                         'capital_need', 'capital_expenses']:
+            'total_salary', 'salary_budget', 'raw', 'raw_budget', 'raw_need', 'raw_expenses', 'raw_bought', 'capital', 'capital_budget',
+                         'capital_need', 'capital_expenses', 'capital_bought']:
             setattr(self, variable, [])
         try:
             open(self.output, "r")
@@ -19,7 +19,8 @@ class FirmHistory:
                                     fieldnames=['firm_id', 'id', 'firm_type', 'decision_maker_type', 'firm_step',
                                                 'money', 'price', 'salary', 'sold', 'sales', 'stock', 'profit', 'plan',
                                                 'labor_capacity', 'totaly_salary', 'salary_budget', 'raw', 'raw_budget', 'raw_need',
-                                                'raw_expenses', 'capital', 'capital_budget', 'capital_need', 'capital_expenses', 'workers'])
+                                                'raw_expenses', 'raw_bought', 'capital', 'capital_budget', 'capital_need',
+                                                'capital_expenses', 'capital_bought', 'workers'])
             writer.writeheader()
             output_file.close()
 
@@ -30,8 +31,8 @@ class FirmHistory:
         self.decision_maker_type = firm.decision_maker.type
         row = [self.firm_type + str(firm.id), firm.id, self.firm_type, self.decision_maker_type]
         for variable in ['step', 'money', 'price', 'salary', 'sold', 'sales', 'stock', 'profit', 'plan', 'labor_capacity',
-            'total_salary', 'salary_budget', 'raw', 'raw_budget', 'raw_need', 'raw_expenses', 'capital', 'capital_budget',
-                         'capital_need', 'capital_expenses']:
+            'total_salary', 'salary_budget', 'raw', 'raw_budget', 'raw_need', 'raw_expenses', 'raw_bought', 'capital', 'capital_budget',
+                         'capital_need', 'capital_bought', 'capital_expenses']:
             if hasattr(firm, variable):
                 value = getattr(firm, variable)
             else:

@@ -37,6 +37,9 @@ class ProductionFirm(Firm):
             setattr(self, parameter, self.derive(parameter, self.control_parameters))
         if hasattr(self, 'raw'):
             self.raw_expenses = 0
+            self.raw_bought = 0
+        if hasattr(self, 'capital'):
+            self.capital_bought = 0
         decision_maker = getattr(ace.algorithms, match(learning_method))
         self.decision_maker = decision_maker(id, self)
 

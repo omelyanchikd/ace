@@ -171,6 +171,7 @@ class BasicWorld(World):
                     'quantity': (buyer.raw_need - buyer.raw), 'money':  prices[seller.id] * (buyer.raw_need - buyer.raw)})
                     buyer.raw_budget -= prices[seller.id] * (buyer.raw_need - buyer.raw)
                     buyer.raw_expenses += prices[seller.id] * (buyer.raw_need - buyer.raw)
+                    buyer.raw_bought += (buyer.raw_need - buyer.raw)
                     production_counts[seller.id] -= (buyer.raw_need - buyer.raw)
                     total_sold += (buyer.raw_need - buyer.raw)
                     buyer.raw += (buyer.raw_need - buyer.raw)
@@ -180,6 +181,7 @@ class BasicWorld(World):
                     'quantity': sold, 'money': prices[seller.id] * sold})
                     buyer.raw_budget -= prices[seller.id] * sold
                     buyer.raw_expenses += prices[seller.id] * sold
+                    buyer.raw_bought += sold
                     production_counts[seller.id] -= sold
                     total_sold += sold
                     buyer.raw += sold
@@ -187,7 +189,7 @@ class BasicWorld(World):
                 if buyer.raw_budget >= prices[seller.id] * production_counts[seller.id]:
                     self.good_market_history.add_record({'step': self.step, 'seller_id': seller.id, 'buyer_id': 'World',
                     'quantity': production_counts[seller.id], 'money': prices[seller.id] * production_counts[seller.id]})
-
+                    buyer.raw_bought += production_counts[seller.id]
                     buyer.raw_budget -= prices[seller.id] * production_counts[seller.id]
                     buyer.raw_expenses += prices[seller.id] * production_counts[seller.id]
                     total_sold += production_counts[seller.id]
@@ -198,6 +200,7 @@ class BasicWorld(World):
                     self.good_market_history.add_record({'step': self.step, 'seller_id': seller.id, 'buyer_id': buyer.id,
                     'quantity': sold, 'money': prices[seller.id]} * sold)
                     buyer.raw_budget -= prices[seller.id] * sold
+                    buyer.raw_bought += sold
                     buyer.raw_expenses += prices[seller.id] * sold
                     production_counts[seller.id] -= sold
                     total_sold += sold
@@ -255,6 +258,7 @@ class BasicWorld(World):
                     buyer.capital_expenses += prices[seller.id] * (buyer.capital_need - buyer.capital)
                     production_counts[seller.id] -= (buyer.capital_need - buyer.capital)
                     total_sold += (buyer.capital_need - buyer.capital)
+                    buyer.capital_bought += (buyer.capital_need - buyer.capital)
                     buyer.capital += (buyer.capital_need - buyer.capital)
                 else:
                     sold = int(math.floor(buyer.capital_budget / prices[seller.id]))
@@ -263,12 +267,14 @@ class BasicWorld(World):
                     production_counts[seller.id] -= sold
                     total_sold += sold
                     buyer.capital += sold
+                    buyer.capital_bought += sold
             else:
                 if buyer.capital_budget >= prices[seller.id] * production_counts[seller.id]:
                     buyer.capital_budget -= prices[seller.id] * production_counts[seller.id]
                     buyer.capital_expenses += prices[seller.id] * production_counts[seller.id]
                     total_sold += production_counts[seller.id]
                     buyer.capital += production_counts[seller.id]
+                    buyer.capital_bought += production_counts[seller.id]
                     production_counts[seller.id] = 0
                 else:
                     sold = int(math.floor(buyer.capital_budget / prices[seller.id]))
@@ -277,6 +283,7 @@ class BasicWorld(World):
                     production_counts[seller.id] -= sold
                     total_sold += sold
                     buyer.capital += sold
+                    buyer.capital_bought += sold
             if production_counts[seller.id] <= 0:
                 prices[seller.id] = 0
                 inverted_prices[seller.id] = 0
