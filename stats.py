@@ -2,6 +2,7 @@ import ace.world
 
 class Stats:
     def __init__(self):
+        self.step = 0
         for type in ['raw_', 'capital_', 'production_','']:
             for variable in ['price', 'salary', 'sold', 'stock', 'sales', 'money', 'labor_capacity', 'employed', 'total_salary', 'salary_budget']:
                 setattr(self, type + variable, 0)
@@ -18,6 +19,7 @@ class Stats:
 
     def get_stats(self, world):
         self.__init__()
+        self.step = world.step
         for type in ['raw_', 'capital_', 'production_', '']:
             setattr(self, type + 'firms', len(getattr(world, type + 'firms')))
         self.households = len(world.households)

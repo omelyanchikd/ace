@@ -4,7 +4,7 @@ import csv
 class WorldHistory:
     def __init__(self, output = "world_output.csv"):
         self.output = output
-        self.step = 0
+        self.step = []
         self.date = datetime.datetime.now().isoformat()
         for type in ['raw_', 'capital_', 'production_','']:
             for variable in ['price', 'salary', 'sold', 'stock', 'sales', 'money', 'employed', 'labor_capacity', 'total_salary', 'salary_budget']:
@@ -67,5 +67,5 @@ class WorldHistory:
                                                 'capital', 'capital_need', 'capital_budget', 'capital_expenses',
                                                 'expected_sales_growth', 'expected_sold_growth'
                                                 ])
-            writer.writerow({**stats.__dict__, **{'date': self.date, 'step': self.step}})
-        self.step += 1
+            writer.writerow({**stats.__dict__, **{'date': self.date}})
+
