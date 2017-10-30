@@ -44,6 +44,7 @@ class ProductionFirm(Firm):
         self.decision_maker = decision_maker(id, self)
 
     def produce(self):
+        super().produce()
         if hasattr(self, 'raw') and hasattr(self, 'capital'):
             self.stock += min(len(self.workers) * self.labor_productivity, self.capital * self.capital_productivity, self.raw * self.raw_productivity)
             self.raw -= min(len(self.workers) * self.labor_productivity, self.capital * self.capital_productivity, self.raw * self.raw_productivity)/self.raw_productivity
@@ -57,8 +58,6 @@ class ProductionFirm(Firm):
         else:
             self.stock += len(self.workers) * self.labor_productivity
 
-        for worker in self.workers:
-            self.money -= worker.salary
 
 
 

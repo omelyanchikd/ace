@@ -131,6 +131,14 @@ class World:
                 # print(firm)
                 self.firm_goodmarket_actions[firm.id] = firm.decision_maker.decide_price(self.stats, firm)
             self.manage_sales('ProductionFirm')
+            for household in self.households:
+                household.increment_step()
+            if hasattr(self.government, 'profit_tax'):
+                self.government.get_profit_tax(self.firms)
+            if hasattr(self.government, 'income_tax'):
+                self.government.get_income_tax(self.households)
+            if hasattr(self.government, 'coefficient_help'):
+                self.government.provide_help(self.households)
             for firm_id, firm_action in enumerate(self.firm_goodmarket_actions):
                 firm = self.firms[firm_id]
                 firm.apply_goodmarket_result(self.firm_goodmarket_results[firm_id])
