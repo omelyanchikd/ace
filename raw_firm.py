@@ -30,9 +30,10 @@ class RawFirm(Firm):
         self.decision_maker = decision_maker(id, self)
 
     def produce(self):
+        super().produce()
         for worker in self.workers:
             self.stock += len(self.workers) * self.labor_productivity
-            self.money -= worker.salary
+
 
 
 

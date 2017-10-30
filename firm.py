@@ -82,6 +82,8 @@ class Firm:
                             'employer_id': self.id, 'action': 'hire', 'salary': salary})
         worker.employer = self.id
         worker.salary = salary
+        worker.base_salary = salary
+        worker.unemployment_period = 0
         self.workers.add(worker)
 
     def fire_worker(self, worker):
@@ -102,7 +104,10 @@ class Firm:
 
     @abstractmethod
     def produce(self):
-        pass
+        for worker in self.workers:
+            self.money -= worker.salary
+            worker.money += worker.salary
+
 
     def decide(self, stats):
         pass
