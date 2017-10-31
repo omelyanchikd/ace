@@ -1,7 +1,7 @@
 import csv
 
 class GovernmentHistory:
-    def __init__(self, output = "government.csv"):
+    def __init__(self, output = "government_output.csv"):
         self.output = output
         for variable in ['step', 'participant_id', 'action', 'money']:
             setattr(self, variable, [])

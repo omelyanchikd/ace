@@ -143,6 +143,8 @@ class World:
                 firm = self.firms[firm_id]
                 firm.apply_goodmarket_result(self.firm_goodmarket_results[firm_id])
                 firm.history.add_record(firm)
+            if hasattr(self, 'outside_world'):
+                self.outside_world.update()
             self.stats.get_stats(self)
             self.history.add_record(self.stats)  # needs to be rewritten with proper history object in mind
             for j in range(self.birth_rate):
