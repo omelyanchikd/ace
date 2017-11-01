@@ -70,7 +70,7 @@ class BudgetFirm(DecisionMaker):
             value = firm.sales if firm.sales > 0 else firm.money
             firm.__setattr__(parameter.replace('_share', ''), value * self.__getattribute__(parameter))
         firm.labor_capacity = len(firm.workers) + math.floor((firm.salary_budget - firm.total_salary)/firm.salary) if firm.salary > 0 else 0
-        control_parameters = self.shares + ['labor_capacity']
+        control_parameters = [share.replace('_share','') for share in self.shares] + ['labor_capacity']
         for parameter in firm.control_parameters:
             firm.__setattr__(parameter, firm.derive(parameter, control_parameters))
 
