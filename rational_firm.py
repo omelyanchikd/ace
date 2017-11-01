@@ -70,7 +70,7 @@ class RationalFirm(DecisionMaker):
             firm.raw_budget = (self.e + self.f * firm.plan/raw_productivity) * firm.plan/raw_productivity
             control_parameters.append('raw_budget')
         if hasattr(firm, 'capital'):
-            firm.raw_budget = (self.g + self.h * firm.plan / capital_productivity) * firm.plan / capital_productivity
+            firm.capital_budget = (self.g + self.h * firm.plan / capital_productivity) * firm.plan / capital_productivity
             control_parameters.append('capital_budget')
         for parameter in firm.control_parameters:
             firm.__setattr__(parameter, firm.derive(parameter, control_parameters))
