@@ -73,4 +73,5 @@ class RationalFirm(DecisionMaker):
             firm.capital_budget = (self.g + self.h * firm.plan / capital_productivity) * firm.plan / capital_productivity
             control_parameters.append('capital_budget')
         for parameter in firm.control_parameters:
-            firm.__setattr__(parameter, firm.derive(parameter, control_parameters))
+            if parameter not in control_parameters:
+                firm.__setattr__(parameter, firm.derive(parameter, control_parameters))
