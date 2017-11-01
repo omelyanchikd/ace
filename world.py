@@ -24,15 +24,18 @@ class World:
         firm_count = 0
         #if model_config['raw_firm_structure'] is not None:
         self.raw_firms = []
-        for learning_item in run_config['raw_firm_config']['learnings']:
-            for i in range(int(learning_item['count'])):
-                firm = ace.algorithms.RawFirm(firm_count, model_config['raw_firm_structure'], run_config['raw_firm_config'], learning_item['method'])
-                self.raw_firms.append(firm)
-                self.firms.append(firm)
-                firm_count += 1
+
+        if model_config['raw_firm_structure'] is not None:
+            for learning_item in run_config['raw_firm_config']['learnings']:
+                for i in range(int(learning_item['count'])):
+                    firm = ace.algorithms.RawFirm(firm_count, model_config['raw_firm_structure'], run_config['raw_firm_config'], learning_item['method'])
+                    self.raw_firms.append(firm)
+                    self.firms.append(firm)
+                    firm_count += 1
+
+        self.capital_firms = []
 
         if model_config['capital_firm_structure'] is not None:
-            self.capital_firms = []
             for learning_item in run_config['capital_firm_config']['learnings']:
                 for i in range(int(learning_item['count'])):
                     firm = ace.algorithms.CapitalFirm(firm_count, model_config['capital_firm_structure'], run_config['capital_firm_config'], learning_item['method'])
@@ -48,6 +51,7 @@ class World:
                 self.production_firms.append(firm)
                 self.firms.append(firm)
                 firm_count += 1
+
 
 
         if model_config['government_structure'] is not None:
@@ -133,12 +137,13 @@ class World:
             self.manage_sales('ProductionFirm')
             for household in self.households:
                 household.increment_step()
-            if hasattr(self.government, 'profit_tax'):
-                self.government.get_profit_tax(self.firms)
-            if hasattr(self.government, 'income_tax'):
-                self.government.get_income_tax(self.households)
-            if hasattr(self.government, 'coefficient_help'):
-                self.government.provide_help(self.households)
+            if hasattr(self, 'government'):
+                if hasattr(self.government, 'profit_tax'):
+                    self.government.get_profit_tax(self.firms)
+                if hasattr(self.government, 'income_tax'):
+                    self.government.get_income_tax(self.households)
+                if hasattr(self.government, 'coefficient_help'):
+                    self.government.provide_help(self.households)
             for firm_id, firm_action in enumerate(self.firm_goodmarket_actions):
                 firm = self.firms[firm_id]
                 firm.apply_goodmarket_result(self.firm_goodmarket_results[firm_id])
