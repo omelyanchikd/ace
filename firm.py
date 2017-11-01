@@ -60,9 +60,9 @@ class Firm:
                 self.remove_worker(worker)
             for worker in result.new_workers:
                 self.add_worker(worker, result.salary)
-        self.total_salary = sum([worker.salary for worker in self.workers])
 
     def apply_goodmarket_result(self, result):
+        self.total_salary = sum([worker.salary for worker in self.workers])
         if result != 0:
             self.sold = result.sold_count
             self.stock -= result.sold_count
@@ -291,9 +291,12 @@ class Firm:
         if set(['capital_need']).issubset(control_parameters):
             return math.floor(capital_need * capital_productivity)
         if set(['salary', 'price', 'raw_budget', 'capital_budget']).issubset(control_parameters):
-            needed_workers = math.floor((self.total_salary + raw_budget + capital_amortization * (capital_budget +
+            try:
+                needed_workers = math.floor((self.total_salary + raw_budget + capital_amortization * (capital_budget +
                 capital_expenses) - (1 + 1/self.demand_elasticity) * self.labor_productivity * len(self.workers) * self.price)/
                 ((1 + 1/self.demand_elasticity) * self.labor_productivity * self.price - self.salary))
+            except:
+                needed_workers = 0
         elif set(['salary', 'salary_budget']).issubset(control_parameters):
             needed_workers = math.floor((self.salary_budget - self.total_salary) / self.salary)
         elif set(['price', 'salary_budget', 'raw_budget', 'capital_budget']).issubset(control_parameters):
@@ -323,9 +326,12 @@ class Firm:
         if set(['capital_need']).issubset(control_parameters):
             return math.floor(capital_need * capital_productivity/ self.labor_productivity)
         if set(['salary', 'price', 'raw_budget', 'capital_budget']).issubset(control_parameters):
-            needed_workers = math.floor((self.total_salary + raw_budget + capital_amortization * (capital_budget +
+            try:
+                needed_workers = math.floor((self.total_salary + raw_budget + capital_amortization * (capital_budget +
                 capital_expenses) - (1 + 1/self.demand_elasticity) * self.labor_productivity * len(self.workers) * self.price)/
                 ((1 + 1/self.demand_elasticity) * self.labor_productivity * self.price - self.salary))
+            except:
+                needed_workers = 0
         elif set(['salary', 'salary_budget']).issubset(control_parameters):
             needed_workers = math.floor((self.salary_budget - self.total_salary) / self.salary)
         elif set(['price', 'salary_budget', 'raw_budget', 'capital_budget']).issubset(control_parameters):
@@ -433,9 +439,12 @@ class Firm:
         elif set(['salary', 'capital_need']).issubset(control_parameters):
             needed_workers = math.floor(capital_need * capital_productivity / self.labor_productivity) - len(self.workers)
         elif set(['salary', 'price',  'raw_budget', 'capital_budget']).issubset(control_parameters):
-            needed_workers = math.floor((self.salary_budget + raw_budget + capital_amortization *
+            try:
+                needed_workers = math.floor((self.salary_budget + raw_budget + capital_amortization *
                     (capital_expenses + capital_budget) - self.labor_productivity * self.price * len(self.workers) *
                     (1 + 1 / self.demand_elasticity)) / (self.price * self.labor_productivity * (1 + 1 / self.demand_elasticity)))
+            except:
+                needed_workers = 0
         if needed_workers > 0:
             return self.total_salary + self.salary * needed_workers
         return self.total_salary
