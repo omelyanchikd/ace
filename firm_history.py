@@ -18,7 +18,7 @@ class FirmHistory:
             writer = csv.DictWriter(output_file, dialect = 'excel',
                                     fieldnames=['firm_id', 'id', 'firm_type', 'decision_maker_type', 'firm_step',
                                                 'money', 'price', 'salary', 'sold', 'sales', 'stock', 'profit', 'plan',
-                                                'labor_capacity', 'totaly_salary', 'salary_budget', 'raw', 'raw_budget', 'raw_need',
+                                                'labor_capacity', 'total_salary', 'salary_budget', 'raw', 'raw_budget', 'raw_need',
                                                 'raw_expenses', 'raw_bought', 'capital', 'capital_budget', 'capital_need',
                                                 'capital_expenses', 'capital_bought', 'workers'])
             writer.writeheader()
