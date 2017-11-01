@@ -15,7 +15,7 @@ class IntuitiveFirm(DecisionMaker):
         self.period = 3
         self.history = [1000, 1000, 1000]
         self.smoothing_coefficient = 0.5
-        self.type = 'Extrapolation'
+        self.type = 'ExtrapolationFirm'
 
     def decide_price(self, stats, firm):
         return FirmGoodMarketAction(firm.stock, firm.price, 0)
@@ -40,5 +40,6 @@ class IntuitiveFirm(DecisionMaker):
             firm.capital_budget = stats.capital_price * math.floor(firm.plan / firm.capital_productivity)
             control_parameters.append('capital_budget')
         for parameter in firm.control_parameters:
-            firm.__setattr__(parameter, firm.derive(parameter, control_parameters))
+            if parameter not in control_parameters:
+                firm.__setattr__(parameter, firm.derive(parameter, control_parameters))
 
