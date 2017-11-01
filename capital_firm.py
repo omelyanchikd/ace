@@ -26,7 +26,8 @@ class CapitalFirm(Firm):
             else:
                 setattr(self, parameter, run_config[parameter])
         for parameter in self.derived_parameters:
-            setattr(self, parameter, self.derive(parameter, self.control_parameters))
+            if getattr(self, parameter) is None or getattr(self, parameter) == 0:
+                setattr(self, parameter, self.derive(parameter, self.control_parameters))
         if hasattr(self, 'raw'):
             self.raw_expenses = 0
             self.raw_bought = 0

@@ -25,7 +25,8 @@ class RawFirm(Firm):
             else:
                 setattr(self, parameter, run_config[parameter])
         for parameter in self.derived_parameters:
-            setattr(self, parameter, self.derive(parameter, self.control_parameters))
+            if getattr(self, parameter) is None or getattr(self, parameter) == 0:
+                setattr(self, parameter, self.derive(parameter, self.control_parameters))
         decision_maker = getattr(ace.algorithms, match(learning_method))
         self.decision_maker = decision_maker(id, self)
 
