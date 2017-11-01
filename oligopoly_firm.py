@@ -39,4 +39,5 @@ class OligopolyFirm(DecisionMaker):
             firm.capital_budget = stats.capital_price * (firm.labor_capacity * firm.labor_productivity / firm.capital_productivity - firm.capital)
             control_parameters.append('capital_budget')
         for parameter in firm.control_parameters:
-            firm.__setattr__(parameter, firm.derive(parameter, control_parameters))
+            if parameter not in control_parameters:
+                firm.__setattr__(parameter, firm.derive(parameter, control_parameters))
