@@ -36,7 +36,8 @@ class DianaFirm(DecisionMaker):
             firm.capital_budget = stats.capital_price * ((firm.plan / firm.capital_productivity) - firm.capital)
             control_parameters.append('capital_budget')
         for parameter in firm.control_parameters:
-            firm.__setattr__(parameter, firm.derive(parameter, control_parameters))
+            if parameter not in control_parameters:
+                firm.__setattr__(parameter, firm.derive(parameter, control_parameters))
 
 
     def decide_price(self, stats, firm):
