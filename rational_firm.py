@@ -75,3 +75,6 @@ class RationalFirm(DecisionMaker):
         for parameter in firm.control_parameters:
             if parameter not in control_parameters:
                 firm.__setattr__(parameter, firm.derive(parameter, control_parameters))
+        for parameter in firm.derived_parameters:
+            if parameter not in control_parameters:
+                firm.__setattr__(parameter, firm.derive(parameter, control_parameters))
