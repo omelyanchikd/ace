@@ -7,7 +7,8 @@ class Government:
     def __init__(self, model_config, run_config):
         self.control_parameters = [parameter for parameter in model_config if model_config[parameter]]
         for parameter in run_config:
-            setattr(self, parameter, run_config[parameter])
+            if run_config[parameter] is not None:
+                setattr(self, parameter, run_config[parameter])
         self.history = GovernmentHistory()
 
     def get_profit_tax(self, firms):
