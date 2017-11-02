@@ -166,7 +166,17 @@ class World:
             self.money += self.money_growth
             self.step += 1
 
-        return {"world_history": self.history,
-        "firm_history": [firm.history for firm in self.firms],
-        "labor_market_history": [firm.labor_market_history for firm in self.firms],
-        "good_market_history": self.good_market_history}
+        result = {
+            "world_history": self.history,
+            "firm_history": [firm.history for firm in self.firms],
+            "labor_market_history": [firm.labor_market_history for firm in self.firms],
+            "good_market_history": self.good_market_history
+        }
+
+        if hasattr(self, 'government'):
+            result['government_history'] = self.government.history
+
+        if hasattr(self, 'outside_world'):
+            result['outside_world_history'] = self.outside_world.history
+
+        return result
