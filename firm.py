@@ -311,6 +311,8 @@ class Firm:
                 (1 + 1 / self.demand_elasticity)) /(self.price * self.labor_productivity * (1 + 1 / self.demand_elasticity)))
         if needed_workers > 0 or len(self.workers) + needed_workers > 0:
             return math.floor((len(self.workers) + needed_workers) * self.labor_productivity)
+        elif needed_workers != 0:
+            return self.sold
         return 0
 
 
@@ -346,6 +348,8 @@ class Firm:
                 (1 + 1 / self.demand_elasticity)) /(self.price * self.labor_productivity * (1 + 1 / self.demand_elasticity)))
         if needed_workers > 0 or len(self.workers) + needed_workers > 0:
             return (len(self.workers) + needed_workers)
+        elif needed_workers != 0:
+            return math.floor(self.sold/self.labor_productivity)
         return 0
 
 
