@@ -19,6 +19,7 @@ class World:
     __metaclass__ = ABCMeta
 
     def __init__(self, model_config, run_config):
+
         self.step = 0
         self.firms = []
         firm_count = 0
@@ -80,7 +81,7 @@ class World:
 
         # initial worker distribution
         for i in range(household_count):
-            worker = Worker(i)
+            worker = Worker(i, model_config['household_structure'], run_config['household_config'])
             self.households.append(worker)
             if sum([firm.labor_capacity - len(firm.workers) for firm in self.firms]):
                 while True:
@@ -136,7 +137,7 @@ class World:
                 self.firm_goodmarket_actions[firm.id] = firm.decision_maker.decide_price(self.stats, firm)
             self.manage_sales('ProductionFirm')
             for household in self.households:
-                household.increment_step()
+                household.decide_consumption()
             if hasattr(self, 'government'):
                 if hasattr(self.government, 'profit_tax'):
                     self.government.get_profit_tax(self.firms)
@@ -153,7 +154,7 @@ class World:
             self.stats.get_stats(self)
             self.history.add_record(self.stats)  # needs to be rewritten with proper history object in mind
             for j in range(self.birth_rate):
-                worker = Worker(len(self.households))
+                worker = Worker(len(self.households), self.model_config['household_structure'], self.run_config['household_config'])
                 self.households.append(worker)
             for i, firm in enumerate(self.firms):
                 self.firm_labormarket_actions[firm.id] = firm.decide_salary(self.stats)
