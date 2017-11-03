@@ -25,6 +25,12 @@ class Government:
             self.money += income_tax
             self.history.add_record({'step': household.step, 'participant_id': household.id, 'action': 'income_tax', 'money': income_tax})
 
+    def get_import_tax(self, step, transaction):
+        self.money += self.import_tax * transaction
+        self.history.add_record({'step': step, 'participant_id': 'OustsideWorld', 'action': 'import_tax', 'money': self.import_tax * transaction})
+
+
+
     def provide_help(self, households):
         for household in households:
             if household.employer is None:

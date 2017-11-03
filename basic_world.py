@@ -154,6 +154,14 @@ class BasicWorld(World):
 
     def manage_b2c_sales_active(self):
         # Basic selection algorithm for good market
+        if hasattr(self, 'outside_world'):
+            if hasattr(self, 'government'):
+                if hasattr(self.government, 'import_tax'):
+                    import_production_price = self.outside_world.production_price * self.government.import_tax
+                else:
+                    import_production_price = self.outside_world.production_price
+            else:
+                import_production_price = self.outside_world.production_price
         sellers = self.production_firms
         firms = self.production_firms
         buyers = self.households
@@ -167,7 +175,7 @@ class BasicWorld(World):
                 prices.append(0)
         prices = numpy.array(list(prices))
         if hasattr(self, 'outside_world'):
-            prices.append(self.outside_world.raw_price)
+            prices.append(import_production_price)
             sellers.append(self.outside_world)
             buyers.append(self.outside_world)
         inverted_prices = numpy.array(list(invert(x) for x in prices))
@@ -203,14 +211,17 @@ class BasicWorld(World):
             if seller.id == 'OutsideWorld':
                 bought = min(need, budget/self.outside_world.production_price)
                 self.good_market_history.add_record({'step': self.step, 'seller_id': seller.id, 'buyer_id': buyer.id,
-                                                     'quantity': bought, 'money': self.outside_world.raw_price * bought})
+                                                     'quantity': bought, 'money': import_production_price * bought})
                 total_sold += bought
                 self.outside_world.production_sold += bought
                 self.outside_world.production_sales += bought * self.outside_world.production_price
                 buyer.consumption += bought
-                buyer.consumption_expenses += bought * self.outside_world.production_price
+                buyer.consumption_expenses += bought * import_production_price
                 if hasattr(buyer, 'consumption_budget'):
-                    buyer.consumption_budget -= bought * self.outside_world.production_price
+                    buyer.consumption_budget -= bought * import_production_price
+                if hasattr(self, 'government'):
+                    if hasattr(self.government, 'import_tax'):
+                        self.government.get_import_tax(self.step, bought * import_production_price)
             elif buyer.id == 'OutsideWorld':
                 bought = min(1, production_counts[seller.id])
                 self.good_market_history.add_record({'step': self.step, 'seller_id': seller.id, 'buyer_id': buyer.id,
@@ -254,6 +265,14 @@ class BasicWorld(World):
 
     def manage_b2b_sales_raw(self):
         # Basic selection algorithm for good market
+        if hasattr(self, 'outside_world'):
+            if hasattr(self, 'government'):
+                if hasattr(self.government, 'import_tax'):
+                    import_raw_price = self.outside_world.raw_price * self.government.import_tax
+                else:
+                    import_raw_price = self.outside_world.raw_price
+            else:
+                import_raw_price = self.outside_world.raw_price
         sellers = self.raw_firms
         firms = self.raw_firms
         buyers = [firm for firm in self.capital_firms or self.production_firms if hasattr(firm, 'raw_need')]
@@ -267,7 +286,7 @@ class BasicWorld(World):
                 prices.append(0)
         prices = numpy.array(list(prices))
         if hasattr(self, 'outside_world'):
-            prices.append(self.outside_world.raw_price)
+            prices.append(import_raw_price)
             sellers.append(self.outside_world)
             buyers.append(self.outside_world)
         inverted_prices = numpy.array(list(invert(x) for x in prices))
@@ -291,15 +310,18 @@ class BasicWorld(World):
             if seller.id == 'OutsideWorld' and buyer.id == 'OutsideWorld':
                 next
             if seller.id == 'OutsideWorld':
-                bought = min(buyer.raw_need - buyer.raw, buyer.raw_budget/self.outside_world.raw_price)
+                bought = min(buyer.raw_need - buyer.raw, buyer.raw_budget/import_raw_price)
                 self.good_market_history.add_record({'step': self.step, 'seller_id': seller.id, 'buyer_id': buyer.id,
-                                                     'quantity': bought, 'money': self.outside_world.raw_price * bought})
+                                                     'quantity': bought, 'money': self.import_raw_price * bought})
                 total_sold += bought
                 self.outside_world.raw_sold += bought
                 self.outside_world.raw_sales += bought * self.outside_world.raw_price
-                buyer.raw_budget -= bought * self.outside_world.raw_price
+                buyer.raw_budget -= bought * import_raw_price
                 buyer.raw += bought
-                buyer.raw_expenses += bought * self.outside_world.raw_price
+                buyer.raw_expenses += bought * import_raw_price
+                if hasattr(self, 'government'):
+                    if hasattr(self.government, 'import_tax'):
+                        self.government.get_import_tax(self.step, bought * import_raw_price)
             elif buyer.id == 'OutsideWorld':
                 bought = min(1, production_counts[seller.id])
                 self.good_market_history.add_record({'step': self.step, 'seller_id': seller.id, 'buyer_id': buyer.id,
@@ -336,6 +358,14 @@ class BasicWorld(World):
             
     def manage_b2b_sales_capital(self):
         # Basic selection algorithm for good market
+        if hasattr(self, 'outside_world'):
+            if hasattr(self, 'government'):
+                if hasattr(self.government, 'import_tax'):
+                    import_capital_price = self.outside_world.capital_price * self.government.import_tax
+                else:
+                    import_capital_price = self.outside_world.capital_price
+            else:
+                import_capital_price = self.outside_world.capital_price
         sellers = self.capital_firms
         firms = self.capital_firms
         buyers = [firm for firm in self.production_firms if hasattr(firm, 'capital_need')]
@@ -349,7 +379,7 @@ class BasicWorld(World):
                 prices.append(0)
         prices = numpy.array(list(prices))
         if hasattr(self, 'outside_world'):
-            prices.append(self.outside_world.capital_price)
+            prices.append(import_capital_price)
             sellers.append(self.outside_world)
             buyers.append(self.outside_world)
         inverted_prices = numpy.array(list(invert(x) for x in prices))
@@ -373,15 +403,18 @@ class BasicWorld(World):
                 next
             
             if seller.id == 'OutsideWorld':
-                bought = min(buyer.capital_need - buyer.capital, buyer.capital_budget/self.outside_world.capital_price)
+                bought = min(buyer.capital_need - buyer.capital, buyer.capital_budget/import_capital_price)
                 self.good_market_history.add_record({'step': self.step, 'seller_id': seller.id, 'buyer_id': buyer.id,
-                                                     'quantity': bought, 'money': self.outside_world.capital_price * bought})
+                                                     'quantity': bought, 'money': import_capital_price * bought})
                 total_sold += bought
                 self.outside_world.capital_sold += bought
                 self.outside_world.capital_sales += bought * self.outside_world.capital_price
-                buyer.capital_budget -= bought * self.outside_world.capital_price
+                buyer.capital_budget -= bought * import_capital_price
                 buyer.capital += bought
-                buyer.capital_expenses += bought * self.outside_world.capital_price
+                buyer.capital_expenses += bought * import_capital_price
+                if hasattr(self, 'government'):
+                    if hasattr(self.government, 'import_tax'):
+                        self.government.get_import_tax(self.step, bought * import_capital_price)
             elif buyer.id == 'OutsideWorld':
                 bought = min(1, production_counts[seller.id])
                 self.good_market_history.add_record({'step': self.step, 'seller_id': seller.id, 'buyer_id': buyer.id,
