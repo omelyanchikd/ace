@@ -2,7 +2,11 @@ import csv
 import math
 import random
 
+import ace.algorithms
+
 from abc import ABCMeta, abstractmethod
+
+from .service import match
 
 from .firm_result import FirmResult
 from .decision_maker import DecisionMaker
@@ -18,7 +22,7 @@ from .firm_labormarket_action import FirmLaborMarketAction
 class Firm:
     __metaclass__ = ABCMeta
 
-    def __init__(self, id):
+    def __init__(self, id, model_config, run_config, learning_method):
         self.id = id
         self.workers = set()
         self.stock = 0
@@ -31,6 +35,25 @@ class Firm:
         self.decision_maker = DecisionMaker(id, self)
         self.history = FirmHistory(self)
         self.labor_market_history = LaborMarketHistory()
+        self.control_parameters = [parameter for parameter in model_config if model_config[parameter]]
+        if len(self.control_parameters) == 2 and set(['price', 'salary']).issubset(self.control_parameters):
+            raise ValueError('It is impossible to derive other parameters only from salary and price in two-parameter case')
+        self.derived_parameters = [parameter for parameter in model_config
+                                   if model_config[parameter] is not None and not model_config[parameter]]
+        for parameter in run_config:
+            if run_config[parameter] is None:
+                if parameter in self.derived_parameters:
+                    setattr(self, parameter, 0)
+                elif parameter in self.control_parameters:
+                    raise ValueError(
+                        "Parameter " + parameter + " cannot be derived from others. Please define the parameter and restart the model.")
+            else:
+                setattr(self, parameter, run_config[parameter])
+        for parameter in self.derived_parameters:
+            if getattr(self, parameter) is None or getattr(self, parameter) == 0:
+                setattr(self, parameter, self.derive(parameter, self.control_parameters))
+        decision_maker = getattr(ace.algorithms, match(learning_method))
+        self.decision_maker = decision_maker(id, self)
 
 
     def apply_result(self, result):
@@ -556,3 +579,8 @@ class Firm:
             return (self.price * (len(self.workers) + needed_workers) * self.labor_productivity * (
             1 + 1 / self.demand_elasticity) - self.salary_budget - raw_budget - capital_amortization *
             capital_expenses)/capital_amortization
+
+
+
+
+
