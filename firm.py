@@ -143,7 +143,7 @@ class Firm:
         if self.decision_maker.type not in ['DianaFirm', 'ExtrapolationFirm', 'OligopolyFirm', 'RationalFirm']:
             for parameter in self.derived_parameters:
                 self.__setattr__(parameter, self.derive(parameter, self.control_parameters))
-        while self.labor_capacity - len(self.workers) < 0:
+        while self.labor_capacity - len(self.workers) < 0 and len(self.workers) > 0:
             self.fire_worker(random.choice(list(self.workers)))
         return FirmLaborMarketAction(self.labor_capacity - len(self.workers), self.salary, [])
 
@@ -230,6 +230,8 @@ class Firm:
         control_parameters = control_parameters + ['raw_budget', 'capital_budget']
 
         if set(['salary', 'plan', 'raw_budget', 'capital_budget']).issubset(control_parameters):
+            if self.plan <= 0:
+                return self.price
             needed_workers = math.floor(self.plan / self.labor_productivity) - len(self.workers)
             if needed_workers > 0:
                 return 1/(1 + 1/self.demand_elasticity) *  (self.total_salary + self.salary * needed_workers + raw_budget +
@@ -237,6 +239,8 @@ class Firm:
             return 1/(1 + 1/self.demand_elasticity) *  (self.total_salary + raw_budget +
                     capital_amortization * (capital_budget + capital_expenses))/ self.plan
         if set(['salary', 'labor_capacity', 'raw_budget', 'capital_budget']).issubset(control_parameters):
+            if self.labor_capacity <= 0:
+                return self.price
             needed_workers = math.floor(self.labor_capacity - len(self.workers))
             if needed_workers > 0:
                 return 1/(1 + 1/self.demand_elasticity) *  (self.total_salary + self.salary * needed_workers + raw_budget +
@@ -245,6 +249,8 @@ class Firm:
             return 1 / (1 + 1 / self.demand_elasticity) * (self.total_salary + raw_budget + capital_amortization *
                     (capital_budget + capital_expenses)) / (self.labor_capacity * self.labor_productivity)
         if set(['salary', 'raw_need', 'raw_budget', 'capital_budget']).issubset(control_parameters):
+            if self.raw_need <= 0:
+                return self.price
             needed_workers = math.floor(raw_productivity * raw_need / self.labor_productivity) - len(self.workers)
             if needed_workers > 0:
                 return 1 / (1 + 1 / self.demand_elasticity) *  (self.total_salary + self.salary * needed_workers + raw_budget +
@@ -254,6 +260,8 @@ class Firm:
             capital_amortization * (capital_budget + capital_expenses)) / \
                    (raw_need * raw_productivity)
         if set(['salary', 'capital_need', 'raw_budget', 'capital_budget']).issubset(control_parameters):
+            if self.capital_need <= 0:
+                return self.price
             needed_workers = math.floor(capital_productivity * capital_need / self.labor_productivity) - len(self.workers)
             if needed_workers > 0:
                 return 1 / (1 + 1 / self.demand_elasticity) *  (self.total_salary + self.salary * needed_workers + raw_budget +
