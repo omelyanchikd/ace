@@ -29,14 +29,20 @@ class OligopolyFirm(DecisionMaker):
 
     def decide_salary(self, stats, firm):
         self.a, self.b, self.p1 = rls(numpy.array([self.a, self.b]), self.p1, numpy.array([1, firm.sold]), firm.price)
-        firm.labor_capacity = math.floor(stats.firms * (self.a - firm.salary / firm.labor_productivity/((stats.firms + 1) * (-self.b * firm.labor_productivity))))
-        firm.price = (self.a + stats.firms * firm.salary/firm.labor_productivity)/ (stats.firms + 1)
-        control_parameters = ['labor_capacity', 'price']
+        net_cost = firm.total_salary
         if hasattr(firm, 'raw'):
-            firm.raw_budget = stats.raw_price * firm.labor_capacity * firm.labor_productivity / firm.raw_productivity
+            net_cost += firm.raw_expenses
+        if hasattr(firm, 'capital'):
+            net_cost += firm.capital_amortization * firm.capital_expenses
+        net_cost /= firm.plan
+        firm.plan = math.floor(stats.firms * (self.a - net_cost)/((stats.firms + 1) * (-self.b)))
+        firm.price = (self.a + stats.firms * net_cost)/ (stats.firms + 1)
+        control_parameters = ['plan', 'price']
+        if hasattr(firm, 'raw'):
+            firm.raw_budget = stats.raw_price * firm.plan / firm.raw_productivity
             control_parameters.append('raw_budget')
         if hasattr(firm, 'capital'):
-            firm.capital_budget = stats.capital_price * (firm.labor_capacity * firm.labor_productivity / firm.capital_productivity - firm.capital)
+            firm.capital_budget = stats.capital_price * (firm.plan / firm.capital_productivity - firm.capital)
             control_parameters.append('capital_budget')
         for parameter in firm.control_parameters:
             if parameter not in control_parameters:
