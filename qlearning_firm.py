@@ -22,7 +22,7 @@ class QlearningFirm(DecisionMaker):
         super().__init__(id, firm)
         self.actions = []
         for i in range(math.floor(math.pow(2, len(firm.control_parameters)))):
-            action_list = get_action_list('{:0>2}'.format(toStr(i, 2)))
+            action_list = get_action_list(('{:0>' + str(len(firm.control_parameters)) + '}').format(toStr(i, 2)))
             action = ()
             for a, parameter in enumerate(firm.control_parameters):
                 increment = 1

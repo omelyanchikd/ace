@@ -18,8 +18,6 @@ def transform(x):
 
 def update(probabilities, reward, action):
     new_probabilities = probabilities
-    if reward != 0:
-        print(transform(reward))
     if reward < 0:
         for i in range(0, len(probabilities)):
             if i == action:
@@ -42,7 +40,7 @@ class NonconsciousFirm(DecisionMaker):
         self.probabilities = [1/math.pow(3, len(firm.control_parameters))] * math.floor(math.pow(3, len(firm.control_parameters)))
         self.actions = []
         for i in range(len(self.probabilities)):
-            action_list = get_action_list('{:0>3}'.format(toStr(i, 3)))
+            action_list = get_action_list(('{:0>' + str(len(firm.control_parameters)) + '}').format(toStr(i, 3)))
             action = ()
             for a, parameter in enumerate(firm.control_parameters):
                 increment = 1
@@ -63,7 +61,7 @@ class NonconsciousFirm(DecisionMaker):
         return FirmAction(0, 0, 0, 0, 0, 0, [])
 
     def decide_salary(self, stats, firm):
-        self.probabilities = update(self.probabilities, firm.sold * firm.profit/firm.price, self.actions.index(self.action))
+        self.probabilities = update(self.probabilities, firm.profit, self.actions.index(self.action))
         distribution = numpy.array(self.probabilities)
         indexes = [i for i in range(0, len(self.probabilities))]
         self.action = self.actions[numpy.random.choice(indexes, replace = False, p = distribution/sum(distribution))]
