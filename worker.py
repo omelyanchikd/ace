@@ -26,15 +26,19 @@ class Worker:
     def decide_consumption(self):
         self.income += self.salary
         self.step += 1
-        self.money -= self.consumption_expenses
         self.history.add_record(self)
         if hasattr(self, 'consumption_budget'):
             self.consumption_budget = self.money - self.savings_coefficient * (self.money - self.f * self.income/
                                     self.step) if self.money > self.f * self.income/self.step else self.money
+            self.money -= self.consumption_expenses
+            self.consumption = 0
+            self.consumption_expenses = 0
         if hasattr(self, 'consumption_need'):
             self.consumption_need = self.consumption_need + 1 if self.consumption == self.consumption_need else self.consumption_need
-        self.consumption = 0
-        self.consumption_expenses = 0
+            self.money -= self.consumption_expenses
+            self.consumption = 0
+            self.consumption_expenses = 0
+
 
 
 
