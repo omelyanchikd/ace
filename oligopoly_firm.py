@@ -8,6 +8,8 @@ import random
 import math
 import numpy
 
+from sklearn.linear_model import LinearRegression
+
 
 def rls(a, p, x, y):
     K = numpy.dot(p, x.T)/(numpy.dot(numpy.dot(x, p),x.T) + 1)
@@ -19,24 +21,26 @@ def rls(a, p, x, y):
 class OligopolyFirm(DecisionMaker):
     def __init__(self, id, firm):
         super().__init__(id, firm)
-        self.a = 10000
-        self.b = -50
-        self.p1 = numpy.eye(2) * 10000
+        self.price_regression = LinearRegression()
         self.type = "OligopolyFirm"
+        self.x = [[0]]
+        self.y = [0]
 
     def decide_price(self, stats, firm):
         return FirmGoodMarketAction(firm.stock, firm.price, 0)
 
     def decide_salary(self, stats, firm):
-        self.a, self.b, self.p1 = rls(numpy.array([self.a, self.b]), self.p1, numpy.array([1, firm.sold]), firm.price)
+        self.x.append([-firm.sold])
+        self.y.append(firm.price)
+        self.price_regression.fit(numpy.array(self.x), numpy.array(self.y))
         net_cost = firm.total_salary
         if hasattr(firm, 'raw'):
             net_cost += firm.raw_expenses
         if hasattr(firm, 'capital'):
             net_cost += firm.capital_amortization * firm.capital_expenses
-        net_cost /= firm.plan
-        firm.plan = math.floor(stats.firms * (self.a - net_cost)/((stats.firms + 1) * (-self.b)))
-        firm.price = (self.a + stats.firms * net_cost)/ (stats.firms + 1)
+        net_cost = net_cost/firm.sold if firm.sold > 0 else net_cost/firm.plan
+        firm.plan = math.floor(random.uniform(0.8, 1.2) * stats.firms * (self.price_regression.intercept_ - net_cost)/((stats.firms + 1) * self.price_regression.coef_[0]))
+        firm.price = random.uniform(0.8, 1.2) * (self.price_regression.intercept_ + stats.firms * net_cost)/ (stats.firms + 1)
         control_parameters = ['plan', 'price']
         if hasattr(firm, 'raw'):
             firm.raw_budget = stats.raw_price * firm.plan / firm.raw_productivity
