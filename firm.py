@@ -80,7 +80,7 @@ class Firm:
     def apply_labormarket_result(self, result):
         if result != 0:
             for worker in result.quit_workers:
-                self.remove_worker(worker)
+                self.fire_worker(worker)
             for worker in result.new_workers:
                 self.add_worker(worker, result.salary)
 
@@ -113,11 +113,10 @@ class Firm:
         self.labor_market_history.add_record({'step': self.step, 'worker_id': worker.id,
                             'employer_id': self.id, 'action': 'fire', 'salary': worker.salary})
         worker.employer = None
+        self.total_salary -= worker.salary
         worker.salary = 0
         self.workers.remove(worker)
 
-    def remove_worker(self, worker):
-        self.workers.remove(worker)
 
     def bankrupt(self):
         for worker in self.workers:
@@ -459,18 +458,8 @@ class Firm:
         capital_productivity = self.capital_productivity if hasattr(self, 'capital') else 1
         control_parameters = control_parameters + ['raw_budget', 'capital_budget']
 
-        if set(['price', 'plan', 'raw_budget', 'capital_budget']).issubset(control_parameters):
-            return self.price * self.plan * (1 + 1 / self.demand_elasticity) - raw_budget - capital_amortization *\
-                (capital_budget + capital_expenses)
-        if set(['price', 'labor_capacity', 'raw_budget', 'capital_budget']).issubset(control_parameters):
-            return self.price * self.labor_capacity * self.labor_productivity * (1 + 1 / self.demand_elasticity) - \
-                raw_budget - capital_amortization * (capital_budget + capital_expenses)
-        if set(['price', 'raw_need', 'raw_budget', 'capital_budget']).issubset(control_parameters):
-            return self.price * raw_need * raw_productivity * (1 + 1 / self.demand_elasticity) - \
-                raw_budget - capital_amortization * (capital_budget + capital_expenses)
-        if set(['price', 'capital_need', 'raw_budget', 'capital_budget']).issubset(control_parameters):
-            return self.price * capital_need * capital_productivity * (1 + 1 / self.demand_elasticity) - \
-                raw_budget - capital_amortization * (capital_budget + capital_expenses)
+        needed_workers = 0
+
         if set(['salary', 'plan']).issubset(control_parameters):
             needed_workers = math.floor(self.plan / self.labor_productivity) - len(self.workers)
         elif set(['salary', 'labor_capacity']).issubset(control_parameters):
@@ -488,6 +477,18 @@ class Firm:
                 needed_workers = 0
         if needed_workers > 0:
             return self.total_salary + self.salary * needed_workers
+        if set(['price', 'plan', 'raw_budget', 'capital_budget']).issubset(control_parameters):
+            return self.price * self.plan * (1 + 1 / self.demand_elasticity) - raw_budget - capital_amortization *\
+                (capital_budget + capital_expenses)
+        if set(['price', 'labor_capacity', 'raw_budget', 'capital_budget']).issubset(control_parameters):
+            return self.price * self.labor_capacity * self.labor_productivity * (1 + 1 / self.demand_elasticity) - \
+                raw_budget - capital_amortization * (capital_budget + capital_expenses)
+        if set(['price', 'raw_need', 'raw_budget', 'capital_budget']).issubset(control_parameters):
+            return self.price * raw_need * raw_productivity * (1 + 1 / self.demand_elasticity) - \
+                raw_budget - capital_amortization * (capital_budget + capital_expenses)
+        if set(['price', 'capital_need', 'raw_budget', 'capital_budget']).issubset(control_parameters):
+            return self.price * capital_need * capital_productivity * (1 + 1 / self.demand_elasticity) - \
+                raw_budget - capital_amortization * (capital_budget + capital_expenses)
         return self.total_salary
 
 

@@ -45,9 +45,11 @@ class MosesFirm(DecisionMaker):
         self.stats_capital_price_change = 0
 
         self.exp_sales = 0.1
-        self.exp_sold = 0.1
-        self.exp_raw_price = 0.1
-        self.exp_capital_price = 0.1
+        self.exp_sold = 0.5
+        self.exp_raw_price_change = 0.1
+        self.exp_capital_price_change = 0.1
+        self.exp_raw_price = 5
+        self.exp_capital_price = 5
 
         self.expected = 0
         self.type = "MosesFirm"
@@ -62,20 +64,21 @@ class MosesFirm(DecisionMaker):
         self.prev_sold = firm.sold
         self.prev_sales = firm.sales
 
-        self.exp_sales = 0.5 * self.sales_change + 0.5 * stats.expected_sales_growth
-        self.exp_sold = 0.5 * self.sold_change + 0.5 * stats.expected_sold_growth
+        self.exp_sales = 0.5 * (0.5 * self.sales_change + 0.5 * stats.expected_sales_growth) + 0.5 * self.exp_sales
+        self.exp_sold = 0.5 * (0.5 * self.sold_change + 0.5 * stats.expected_sold_growth) +  0.5 * self.exp_sold
 
-        self.expected = (1 + self.exp_sales) * firm.sales
+        self.expected = random.uniform(0.8, 1.2) * (1 + self.exp_sales) * firm.sales
         self.expected = self.expected if self.expected >= 0 else 0
 
-        firm.plan = (1 + self.exp_sold) * firm.sold
+        firm.plan = (1 + self.exp_sold) * firm.plan
         firm.price = self.expected / firm.plan if firm.plan > 0 and self.expected > 0 else firm.price
 
         if hasattr(firm, 'raw'):
             self.raw_price_change = change(firm.raw_budget/firm.raw_bought if firm.raw_bought > 0 else 0, self.prev_raw_price)
             self.stats_raw_price_change = change(stats.raw_price, self.stats_raw_price_change)
-            self.exp_raw_price = 0.5 * self.raw_price_change + 0.5 * self.stats_raw_price_change
-            self.prev_raw_price = firm.raw_budget/firm.raw
+            self.exp_raw_price_change = 0.5 * (0.5 * self.raw_price_change + 0.5 * self.stats_raw_price_change) + 0.5 * self.exp_raw_price
+            self.exp_raw_price = (1 + self.exp_raw_price_change) * firm.raw_expenses/firm.raw_bought
+            self.prev_raw_price = firm.raw_expenses/firm.raw_bought
             self.prev_stats_raw_price = stats.raw_price
 
             firm.raw_budget = firm.plan / firm.raw_productivity * (1 + self.exp_raw_price) * stats.raw_price
@@ -85,8 +88,9 @@ class MosesFirm(DecisionMaker):
         if hasattr(firm, 'capital'):
             self.capital_price_change = change(firm.capital_budget / firm.capital_bought if firm.capital_bought > 0 else 0, self.prev_capital_price)
             self.stats_capital_price_change = change(stats.capital_price, self.stats_capital_price_change)
-            self.exp_capital_price = 0.5 * self.capital_price_change + 0.5 * self.stats_capital_price_change
-            self.prev_capital_price = firm.capital_budget/firm.capital
+            self.exp_capital_price_change = 0.5 * (0.5 * self.capital_price_change + 0.5 * self.stats_capital_price_change) + 0.5 * self.exp_capital_price_change
+            self.exp_capital_price = (1 + self.exp_capital_price_change) * firm.capital_budget/firm.capital_bought
+            self.prev_capital_price = firm.capital_budget/firm.capital_bought
             self.prev_stats_capital_price = stats.capital_price
 
             firm.capital_budget = (firm.plan / firm.capital_productivity - firm.capital) * stats.capital_price * (1 + self.capital_raw_price)
@@ -98,8 +102,9 @@ class MosesFirm(DecisionMaker):
         tries = 0
 
         while not (check_margin(firm, control_parameters, derived_parameters, self.expected)) and self.expected != 0 and tries < 100:
-            if firm.profit >= 0:
-                firm.salary *= 0.95
+            if expected_profit_margin(firm, self.expected) >= 0:
+                if math.floor(firm.plan/firm.labor_productivity) > len(firm.workers):
+                    firm.salary *= 0.95
             else:
                 firm.plan = math.floor(firm.plan / firm.labor_productivity) - 1
                 firm.price = self.expected / firm.plan if firm.plan > 0 and self.expected > 0 else firm.price
