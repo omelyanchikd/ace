@@ -1,5 +1,6 @@
 import datetime
 import csv
+import sqlite3
 
 class WorldHistory:
     def __init__(self, output = "world_output.csv"):
@@ -49,6 +50,7 @@ class WorldHistory:
         for variable, value in stats.__dict__.items():
             if hasattr(self, variable):
                 getattr(self, variable).append(value)
+
         with open(self.output, "a", newline='') as output_file:
             writer = csv.DictWriter(output_file, dialect = 'excel', fieldnames = ['date', 'step', 'firms', 'raw_firms',
                                                                                 'capital_firms', 'production_firms',
@@ -68,4 +70,18 @@ class WorldHistory:
                                                 'expected_sales_growth', 'expected_sold_growth'
                                                 ])
             writer.writerow({**stats.__dict__, **{'date': self.date}})
+
+
+    def add_database_record(self, stats):
+        record = {**stats.__dict__}
+        record = {key: value for key, value in record.items()
+             if key != 'expected_sales_growth' and key != 'expected_sold_growth'}
+
+        conn = sqlite3.connect("D:\multiagent projects\phdjango\phdjango\db.sqlite3")
+        c = conn.cursor()
+        c.execute("INSERT INTO models_worldresult(" + ','.join(record.keys()) + ") VALUES(" + ','.join(
+            ['?'] * len(record.keys())) + ")",
+                  tuple(record.values()))
+        conn.commit()
+        conn.close()
 

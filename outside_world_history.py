@@ -1,4 +1,5 @@
 import csv
+import sqlite3
 
 class OutsideWorldHistory:
     def __init__(self, output = "outside_world_output.csv"):
@@ -27,6 +28,15 @@ class OutsideWorldHistory:
         with open(self.output, "a", newline='') as output_file:
             writer = csv.DictWriter(output_file, dialect='excel', fieldnames=['step', 'participant_id', 'action', 'money'])
             writer.writerow(record)
+
+
+    def add_database_record(self, record):
+        conn = sqlite3.connect("D:\multiagent projects\phdjango\phdjango\db.sqlite3")
+        c = conn.cursor()
+        c.execute("INSERT INTO models_outsideworldresult(" + ','.join(record.keys()) + ") VALUES(?, ?, ?, ?, ?)",
+                  tuple(record.values()))
+        conn.commit()
+        conn.close()
 
 
 

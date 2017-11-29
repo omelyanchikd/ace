@@ -133,7 +133,7 @@ class BasicWorld(World):
             else:
                 if money >= prices[seller.id]:
                     self.good_market_history.add_record({'step': self.step, 'seller_id': seller.id, 'buyer_id': 'World',
-                                                         'quantity': 1, 'money': prices[seller.id]})
+                                                         'quantity': 1, 'money': prices[seller.id].item()})
                     sales[seller.id] += 1
                     total_sold += 1
                     production_counts[seller.id] -= 1

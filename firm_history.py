@@ -1,4 +1,5 @@
 import csv
+import sqlite3
 
 class FirmHistory:
     def __init__(self, firm, output = "firm_output.csv"):
@@ -16,7 +17,7 @@ class FirmHistory:
         except:
             output_file = open(self.output, "w", newline='')
             writer = csv.DictWriter(output_file, dialect = 'excel',
-                                    fieldnames=['firm_id', 'id', 'firm_type', 'decision_maker_type', 'firm_step',
+                                    fieldnames=['firm_id', 'firm_type', 'decision_maker_type', 'step',
                                                 'money', 'price', 'salary', 'sold', 'sales', 'stock', 'profit', 'plan',
                                                 'labor_capacity', 'total_salary', 'salary_budget', 'raw', 'raw_budget', 'raw_need',
                                                 'raw_expenses', 'raw_bought', 'capital', 'capital_budget', 'capital_need',
@@ -29,7 +30,7 @@ class FirmHistory:
     def add_record(self, firm):
         self.firm_type = firm.type
         self.decision_maker_type = firm.decision_maker.type
-        row = [self.firm_type + str(firm.id), firm.id, self.firm_type, self.decision_maker_type]
+        row = [firm.id, self.firm_type, self.decision_maker_type]
         for variable in ['step', 'money', 'price', 'salary', 'sold', 'sales', 'stock', 'profit', 'plan', 'labor_capacity',
             'total_salary', 'salary_budget', 'raw', 'raw_budget', 'raw_need', 'raw_expenses', 'raw_bought', 'capital', 'capital_budget',
                          'capital_need', 'capital_bought', 'capital_expenses']:
@@ -41,9 +42,40 @@ class FirmHistory:
             row.append(value)
         self.workers.append(len(firm.workers))
         row.append(len(firm.workers))
+
         with open(self.output, "a", newline='') as output_file:
             writer = csv.writer(output_file, dialect='excel')
             writer.writerow(row)
+
+
+    def add_database_record(self, firm):
+        self.firm_type = firm.type
+        self.decision_maker_type = firm.decision_maker.type
+        row = [firm.id, self.firm_type, self.decision_maker_type]
+        for variable in ['step', 'money', 'price', 'salary', 'sold', 'sales', 'stock', 'profit', 'plan', 'labor_capacity',
+            'total_salary', 'salary_budget', 'raw', 'raw_budget', 'raw_need', 'raw_expenses', 'raw_bought', 'capital', 'capital_budget',
+                         'capital_need', 'capital_bought', 'capital_expenses']:
+            if hasattr(firm, variable):
+                value = getattr(firm, variable)
+            else:
+                value = None
+            row.append(value)
+        row.append(len(firm.workers))
+
+        fieldnames = ['firm_id', 'firm_type', 'decision_maker_type', 'step',
+                                                'money', 'price', 'salary', 'sold', 'sales', 'stock', 'profit', 'plan',
+                                                'labor_capacity', 'total_salary', 'salary_budget', 'raw', 'raw_budget', 'raw_need',
+                                                'raw_expenses', 'raw_bought', 'capital', 'capital_budget', 'capital_need',
+                                                'capital_expenses', 'capital_bought', 'workers']
+
+        conn = sqlite3.connect("D:\multiagent projects\phdjango\phdjango\db.sqlite3")
+        c = conn.cursor()
+        c.execute("INSERT INTO models_firmresult(" + ','.join(fieldnames) + ") VALUES(" + ','.join(['?'] * len(fieldnames)) + ")",
+                  row)
+
+        conn.commit()
+        conn.close()
+
 
 
 
