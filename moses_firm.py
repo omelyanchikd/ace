@@ -27,8 +27,8 @@ def check_margin(firm, control_parameters, derived_parameters, expected):
 
 
 class MosesFirm(DecisionMaker):
-    def __init__(self, id, firm):
-        super().__init__(id, firm)
+    def __init__(self, id, firm, learning_data):
+        super().__init__(id)
 
         self.sold_change = 0
         self.sales_change = 0
@@ -106,7 +106,7 @@ class MosesFirm(DecisionMaker):
                 if math.floor(firm.plan/firm.labor_productivity) > len(firm.workers):
                     firm.salary *= 0.95
             else:
-                firm.plan = math.floor(firm.plan / firm.labor_productivity) - 1
+                firm.plan = math.floor((firm.plan / firm.labor_productivity - 1) * firm.labor_productivity)
                 firm.price = self.expected / firm.plan if firm.plan > 0 and self.expected > 0 else firm.price
                 if hasattr(firm, 'raw'):
                     firm.raw_budget = firm.plan / firm.raw_productivity * self.exp_raw_price

@@ -18,18 +18,18 @@ from .worker import Worker
 class World:
     __metaclass__ = ABCMeta
 
-    def __init__(self, model_config, run_config):
+    def __init__(self, model_config, run_config, learning_data):
 
         self.step = 0
         self.firms = []
         firm_count = 0
-        #if model_config['raw_firm_structure'] is not None:
+
         self.raw_firms = []
 
         if model_config['raw_firm_structure'] is not None:
             for learning_item in run_config['raw_firm_config']['learnings']:
                 for i in range(int(learning_item['count'])):
-                    firm = ace.algorithms.RawFirm(firm_count, model_config['raw_firm_structure'], run_config['raw_firm_config'], learning_item['method'])
+                    firm = ace.algorithms.RawFirm(firm_count, model_config['raw_firm_structure'], run_config['raw_firm_config'], learning_item['method'], learning_data)
                     self.raw_firms.append(firm)
                     self.firms.append(firm)
                     firm_count += 1
@@ -39,7 +39,7 @@ class World:
         if model_config['capital_firm_structure'] is not None:
             for learning_item in run_config['capital_firm_config']['learnings']:
                 for i in range(int(learning_item['count'])):
-                    firm = ace.algorithms.CapitalFirm(firm_count, model_config['capital_firm_structure'], run_config['capital_firm_config'], learning_item['method'])
+                    firm = ace.algorithms.CapitalFirm(firm_count, model_config['capital_firm_structure'], run_config['capital_firm_config'], learning_item['method'], learning_data)
                     self.capital_firms.append(firm)
                     self.firms.append(firm)
                     firm_count += 1
@@ -48,7 +48,7 @@ class World:
         self.production_firms = []
         for learning_item in run_config['production_firm_config']['learnings']:
             for i in range(int(learning_item['count'])):
-                firm = ace.algorithms.ProductionFirm(firm_count, model_config['production_firm_structure'], run_config['production_firm_config'], learning_item['method'])
+                firm = ace.algorithms.ProductionFirm(firm_count, model_config['production_firm_structure'], run_config['production_firm_config'], learning_item['method'], learning_data)
                 self.production_firms.append(firm)
                 self.firms.append(firm)
                 firm_count += 1
@@ -56,7 +56,8 @@ class World:
 
 
         if model_config['government_structure'] is not None:
-            self.government = ace.algorithms.Government(model_config['government_structure'], run_config['government_config'])
+            #self.government = ace.algorithms.Government(model_config['government_structure'], run_config['government_config'])
+            self.government = ace.algorithms.Government({'profit_tax': True}, {'money': 100000, 'profit_tax': 0.1})
 
         if model_config['outside_world']:
             self.outside_world = ace.algorithms.OutsideWorld(run_config['outside_world_config'])
@@ -138,6 +139,9 @@ class World:
             self.manage_sales('ProductionFirm')
             for household in self.households:
                 household.decide_consumption()
+            for firm_id, firm_action in enumerate(self.firm_goodmarket_actions):
+                firm = self.firms[firm_id]
+                firm.apply_goodmarket_result(self.firm_goodmarket_results[firm_id])
             if hasattr(self, 'government'):
                 if hasattr(self.government, 'profit_tax'):
                     self.government.get_profit_tax(self.firms)
@@ -147,7 +151,6 @@ class World:
                     self.government.provide_help(self.households)
             for firm_id, firm_action in enumerate(self.firm_goodmarket_actions):
                 firm = self.firms[firm_id]
-                firm.apply_goodmarket_result(self.firm_goodmarket_results[firm_id])
                 firm.history.add_record(firm)
             if hasattr(self, 'outside_world'):
                 self.outside_world.update()

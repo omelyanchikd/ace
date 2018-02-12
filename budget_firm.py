@@ -10,7 +10,7 @@ import math
 import numpy
 
 def transform(x):
-    return 2/math.pi * math.atan(x/500000)
+    return 2/math.pi * math.atan(x/100)
 
 def update(probabilities, reward, action):
     new_probabilities = probabilities
@@ -30,18 +30,19 @@ def update(probabilities, reward, action):
 
 
 class BudgetFirm(DecisionMaker):
-    def __init__(self, id, firm):
-        super().__init__(id, firm)
+    def __init__(self, id, firm, learning_data):
+        super().__init__(id)
         self.shares = ['salary_budget_share']
         self.salary_budget_share = 0
-        if hasattr(self, 'raw'):
+        if hasattr(firm, 'raw'):
             self.raw_budget_share = 0
             self.shares.append('raw_budget_share')
-        if hasattr(self, 'capital'):
+        if hasattr(firm, 'capital'):
             self.capital_budget_share = 0
             self.shares.append('capital_budget_share')
+        expected = firm.price * firm.plan
         for share in self.shares:
-            setattr(self, share, 1/(len(self.shares) + 1))
+            setattr(self, share, getattr(firm, share.replace('_share', ''))/expected)
         self.probabilities = [1 / math.pow(3, len(self.shares))] * math.floor(math.pow(3, len(self.shares)))
         self.actions = []
         for i in range(len(self.probabilities)):
@@ -65,12 +66,36 @@ class BudgetFirm(DecisionMaker):
         self.action = self.actions[numpy.random.choice(indexes, replace = False, p = distribution/sum(distribution))]
         for i, parameter in enumerate(self.shares):
             self.__setattr__(parameter, self.__getattribute__(parameter) * (1 + self.action[i]))
-            value = firm.sales if firm.sales > 0 else firm.money
-            firm.__setattr__(parameter.replace('_share', ''), value * self.__getattribute__(parameter))
-        firm.labor_capacity = len(firm.workers) + math.floor((firm.salary_budget - firm.total_salary)/firm.salary) if firm.salary > 0 else 0
-        control_parameters = [share.replace('_share','') for share in self.shares] + ['labor_capacity']
+            if firm.sales > 0:
+                if firm.sold >= firm.plan:
+                    firm.__setattr__(parameter.replace('_share', ''), 1.5 * firm.sales * self.__getattribute__(parameter))
+                else:
+                    firm.__setattr__(parameter.replace('_share', ''), firm.sales * self.__getattribute__(parameter))
+            else:
+                firm.__setattr__(parameter.replace('_share', ''), random.uniform(0.33, 0.66) * firm.money * self.__getattribute__(parameter))
+
+            #if firm.sold >= firm.plan:
+            #    if firm.sales > 0:
+            #        firm.__setattr__(parameter.replace('_share', ''), firm.sales * (1 + self.__getattribute__(parameter)))
+            #    else:
+            #        firm.__setattr__(parameter.replace('_share', ''), firm.money * (1 - self.__getattribute__(parameter)))
+            #else:
+            #    if firm.sales > 0:
+            #        firm.__setattr__(parameter.replace('_share', ''), firm.sales * self.__getattribute__(parameter))
+            #    else:
+            #        firm.__setattr__(parameter.replace('_share', ''), firm.money * self.__getattribute__(parameter))
+        if len(firm.workers) < firm.labor_capacity:
+            firm.salary *= 1.01
+        else:
+            firm.salary *= 0.99
+        #firm.labor_capacity = len(firm.workers) + math.ceil((firm.salary_budget - firm.total_salary)/firm.salary) if firm.salary > 0 else 1
+        control_parameters = [share.replace('_share','') for share in self.shares] + ['salary']
         for parameter in firm.control_parameters:
-            firm.__setattr__(parameter, firm.derive(parameter, control_parameters))
+            if parameter not in control_parameters:
+                firm.__setattr__(parameter, firm.derive(parameter, control_parameters))
+        for parameter in firm.derived_parameters:
+            if parameter not in control_parameters:
+                firm.__setattr__(parameter, firm.derive(parameter, control_parameters))
 
 
 

@@ -10,8 +10,8 @@ import numpy
 
 
 class IntuitiveFirm(DecisionMaker):
-    def __init__(self, id, firm):
-        super().__init__(id, firm)
+    def __init__(self, id, firm, learning_data):
+        super().__init__(id)
         self.period = 3
         self.history = [1000, 1000, 1000]
         self.smoothing_coefficient = 0.5

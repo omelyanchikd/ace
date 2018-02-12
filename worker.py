@@ -9,6 +9,7 @@ class Worker:
         self.employer = None
         self.productivity = 1
         self.unemployment_period = 0
+        self.money = 0
         self.history = HouseholdHistory()
         self.control_parameters = [parameter for parameter in model_config if model_config[parameter]]
         for parameter in run_config:

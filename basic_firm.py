@@ -6,8 +6,8 @@ from .firm_labormarket_action import FirmLaborMarketAction
 
 
 class BasicFirm(DecisionMaker):
-    def __init__(self, id):
-        super().__init__(id)
+    def __init__(self, id, firm, learning_data):
+        super().__init__(id, firm, learning_data)
         self.type = 'BasicFirm'
 
     def decide_price(self, stats):

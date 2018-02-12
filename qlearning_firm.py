@@ -18,8 +18,8 @@ def argmax(two_dimensional_list, dimension):
     return arg_max
 
 class QlearningFirm(DecisionMaker):
-    def __init__(self, id, firm):
-        super().__init__(id, firm)
+    def __init__(self, id, firm, learning_data):
+        super().__init__(id)
         self.actions = []
         for i in range(math.floor(math.pow(2, len(firm.control_parameters)))):
             action_list = get_action_list(('{:0>' + str(len(firm.control_parameters)) + '}').format(toStr(i, 2)))

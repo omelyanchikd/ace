@@ -34,8 +34,8 @@ def update(probabilities, reward, action):
 
 
 class NonconsciousFirm(DecisionMaker):
-    def __init__(self, id, firm):
-        super().__init__(id, firm)
+    def __init__(self, id, firm, learning_data):
+        super().__init__(id)
         self.offer_count = 0
         self.probabilities = [1/math.pow(3, len(firm.control_parameters))] * math.floor(math.pow(3, len(firm.control_parameters)))
         self.actions = []

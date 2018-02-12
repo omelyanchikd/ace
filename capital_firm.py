@@ -7,8 +7,8 @@ from .firm import Firm
 
 class CapitalFirm(Firm):
 
-    def __init__(self, id, model_config, run_config, learning_method):
-        super().__init__(id, model_config, run_config, learning_method)
+    def __init__(self, id, model_config, run_config, learning_method, learning_data):
+        super().__init__(id, model_config, run_config, learning_method, learning_data)
         self.type = "CapitalFirm"
         if ('raw_budget' in self.control_parameters or 'raw_need' in self.control_parameters) and len(self.control_parameters) < 3:
             raise AssertionError("Agent needs at least three defined control parameters to make decisions, when raw is part of the model.")

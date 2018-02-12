@@ -16,8 +16,7 @@ class RawFirm(Firm):
 
     def produce(self):
         super().produce()
-        for worker in self.workers:
-            self.stock += len(self.workers) * self.labor_productivity
+        self.stock += len(self.workers) * self.labor_productivity
 
 
 

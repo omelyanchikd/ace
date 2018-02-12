@@ -132,12 +132,13 @@ class BasicWorld(World):
                     self.outside_world.production_sold += 1
             else:
                 if money >= prices[seller.id]:
+                    quantity = min(1, production_counts[seller.id])
                     self.good_market_history.add_record({'step': self.step, 'seller_id': seller.id, 'buyer_id': 'World',
-                                                         'quantity': 1, 'money': prices[seller.id].item()})
-                    sales[seller.id] += 1
-                    total_sold += 1
-                    production_counts[seller.id] -= 1
-                    money -= prices[seller.id]
+                                                         'quantity': quantity, 'money': prices[seller.id].item()})
+                    sales[seller.id] += quantity
+                    total_sold += quantity
+                    production_counts[seller.id] -= quantity
+                    money -= prices[seller.id] * quantity
                     if production_counts[seller.id] <= 0:
                         prices[seller.id] = 0
                         inverted_prices[seller.id] = 0
@@ -192,7 +193,7 @@ class BasicWorld(World):
             else:
                 production_counts.append(firm_action.production_count)
         production_counts = numpy.array(list(production_counts))
-        while sum(selected_inverted_prices) > 0 and len(buyers) > 1:
+        while sum(selected_inverted_prices) > 0 and len(buyers) > 0:
             if hasattr(buyers[0], 'consumption_need'):
                 if sum([buyer.consumption_need - buyer.consumption for buyer in buyers]) <= 0:
                     break
@@ -275,7 +276,7 @@ class BasicWorld(World):
                 import_raw_price = self.outside_world.raw_price
         sellers = self.raw_firms
         firms = self.raw_firms
-        buyers = [firm for firm in self.capital_firms or self.production_firms if hasattr(firm, 'raw_need')]
+        buyers = [firm for firm in self.capital_firms + self.production_firms if hasattr(firm, 'raw_need')]
         prices = []
         for firm_action in self.firm_goodmarket_actions:
             if firm_action == 0:
@@ -303,21 +304,22 @@ class BasicWorld(World):
             else:
                 production_counts.append(firm_action.production_count)
         production_counts = numpy.array(list(production_counts))
-        while sum(selected_inverted_prices) > 0 and len(buyers) > 1 and sum([firm.raw_need - firm.raw for firm in buyers if firm.id != 'OutsideWorld']) > 0 and min([price for price in prices if price != 0]) <= max([firm.raw_budget for firm in buyers if firm.id != 'OutsideWorld']):
+        while sum(selected_inverted_prices) > 0 and len(buyers) > 0 and sum([firm.raw_need - firm.raw for firm in buyers if firm.id != 'OutsideWorld']) > 0 and min([price for price in prices if price != 0]) <= max([firm.raw_budget - firm.raw_expenses for firm in buyers if firm.id != 'OutsideWorld']):
             seller = numpy.random.choice(sellers, replace=False, p=selected_inverted_prices / sum(selected_inverted_prices))
             buyer = random.choice(buyers)
 
             if seller.id == 'OutsideWorld' and buyer.id == 'OutsideWorld':
                 next
             if seller.id == 'OutsideWorld':
-                bought = min(buyer.raw_need - buyer.raw, buyer.raw_budget/import_raw_price)
+                bought = min(buyer.raw_need - buyer.raw, (buyer.raw_budget - buyer.raw_expenses)/import_raw_price)
                 self.good_market_history.add_record({'step': self.step, 'seller_id': seller.id, 'buyer_id': buyer.id,
                                                      'quantity': bought, 'money': self.import_raw_price * bought})
                 total_sold += bought
                 self.outside_world.raw_sold += bought
                 self.outside_world.raw_sales += bought * self.outside_world.raw_price
-                buyer.raw_budget -= bought * import_raw_price
+                #buyer.raw_budget -= bought * import_raw_price
                 buyer.raw += bought
+                buyer.raw_bought += bought
                 buyer.raw_expenses += bought * import_raw_price
                 if hasattr(self, 'government'):
                     if hasattr(self.government, 'import_tax'):
@@ -332,12 +334,13 @@ class BasicWorld(World):
                 sales[seller.id] += bought
                 production_counts[seller.id] -= bought
             else:
-                bought = min(buyer.raw_need - buyer.raw, production_counts[seller.id], buyer.raw_budget/prices[seller.id])
+                bought = min(buyer.raw_need - buyer.raw, production_counts[seller.id], (buyer.raw_budget - buyer.raw_expenses)/prices[seller.id])
                 self.good_market_history.add_record({'step': self.step, 'seller_id': seller.id, 'buyer_id': buyer.id,
                                                      'quantity': bought, 'money': prices[seller.id] * bought})
                 total_sold += bought
-                buyer.raw_budget -= bought * prices[seller.id]
+                #buyer.raw_budget -= bought * prices[seller.id]
                 buyer.raw += bought
+                buyer.raw_bought += bought
                 buyer.raw_expenses += bought * prices[seller.id]
                 sales[seller.id] += bought
                 production_counts[seller.id] -= bought
@@ -345,7 +348,7 @@ class BasicWorld(World):
                     prices[seller.id] = 0
                     inverted_prices[seller.id] = 0
                     selected_inverted_prices = inverted_prices[[firm.id for firm in firms]]
-            if buyer.raw_need - buyer.capital <= 0 or buyer.raw_budget <= 0:
+            if buyer.raw_need - buyer.raw <= 0 or buyer.raw_expenses >= buyer.raw_budget:
                 buyers.remove(buyer)
 
         #if total_sold < 2000:
@@ -396,22 +399,24 @@ class BasicWorld(World):
             else:
                 production_counts.append(firm_action.production_count)
         production_counts = numpy.array(list(production_counts))
-        while sum(selected_inverted_prices) > 0 and len(buyers) > 1 and sum([firm.capital_need - firm.capital for firm in buyers if firm.id != 'OutsideWorld']) > 0 and min([price for price in prices if price != 0]) <= max([firm.capital_budget for firm in buyers if firm.id != 'OutsideWorld']):
+        while sum(selected_inverted_prices) > 0 and len(buyers) > 0 and sum([firm.capital_need - firm.capital for firm in buyers if firm.id != 'OutsideWorld']) > 0 and min([price for price in prices if price != 0]) <= max([firm.capital_budget - firm.capital_expenses for firm in buyers if firm.id != 'OutsideWorld']):
             seller = numpy.random.choice(sellers, replace=False, p=selected_inverted_prices / sum(selected_inverted_prices))
             buyer = random.choice(buyers)
             if buyer.id == 'OutsideWorld' and seller.id == 'OutsideWorld':
                 next
             
             if seller.id == 'OutsideWorld':
-                bought = min(buyer.capital_need - buyer.capital, buyer.capital_budget/import_capital_price)
+                bought = min(buyer.capital_need - buyer.capital, (buyer.capital_budget - buyer.capital_expenses)/import_capital_price)
                 self.good_market_history.add_record({'step': self.step, 'seller_id': seller.id, 'buyer_id': buyer.id,
                                                      'quantity': bought, 'money': import_capital_price * bought})
                 total_sold += bought
                 self.outside_world.capital_sold += bought
                 self.outside_world.capital_sales += bought * self.outside_world.capital_price
-                buyer.capital_budget -= bought * import_capital_price
+                # buyer.capital_budget -= bought * import_capital_price
                 buyer.capital += bought
+                buyer.capital_bought += bought
                 buyer.capital_expenses += bought * import_capital_price
+                buyer.total_capital_expenses += bought * import_capital_price
                 if hasattr(self, 'government'):
                     if hasattr(self.government, 'import_tax'):
                         self.government.get_import_tax(self.step, bought * import_capital_price)
@@ -425,20 +430,22 @@ class BasicWorld(World):
                 sales[seller.id] += bought
                 production_counts[seller.id] -= bought
             else:
-                bought = min(buyer.capital_need - buyer.capital, production_counts[seller.id], buyer.capital_budget/prices[seller.id])
+                bought = min(buyer.capital_need - buyer.capital, production_counts[seller.id], (buyer.capital_budget - buyer.capital_expenses)/prices[seller.id])
                 self.good_market_history.add_record({'step': self.step, 'seller_id': seller.id, 'buyer_id': buyer.id,
                                                      'quantity': bought, 'money': prices[seller.id] * bought})
                 total_sold += bought
                 sales[seller.id] += bought
-                buyer.capital_budget -= bought * prices[seller.id]
+                #buyer.capital_budget -= bought * prices[seller.id]
                 buyer.capital += bought
+                buyer.capital_bought += bought
                 buyer.capital_expenses += bought * prices[seller.id]
+                buyer.total_capital_expenses += bought * prices[seller.id]
                 production_counts[seller.id] -= bought
                 if production_counts[seller.id] <= 0:
                     prices[seller.id] = 0
                     inverted_prices[seller.id] = 0
                     selected_inverted_prices = inverted_prices[[firm.id for firm in firms]]
-            if buyer.capital_need - buyer.capital <= 0 or buyer.capital_budget <= 0:
+            if buyer.capital_need - buyer.capital <= 0 or buyer.capital_budget - buyer.capital_expenses <= 0:
                 buyers.remove(buyer)
 
 

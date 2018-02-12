@@ -3,7 +3,7 @@ from abc import ABCMeta, abstractmethod
 class DecisionMaker:
     __metaclass__ = ABCMeta
 
-    def __init__(self, id, firm):
+    def __init__(self, id):
         self.id = id
 
     @abstractmethod
